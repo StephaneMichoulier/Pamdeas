@@ -177,7 +177,7 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader,5);     Reader >> dustfrac0; 
     ReadVoid(Reader,8);     Reader >> H0R0; 
     ReadVoid(Reader,6);     Reader >> p;
-	ReadVoid(Reader,3);     Reader >> q;
+    ReadVoid(Reader,3);     Reader >> q;
     ReadVoid(Reader,2);     Reader >> alpha; 
     ReadVoid(Reader,6);     Reader >> ibr;
     ReadVoid(Reader,5);     Reader >> ibump; 
@@ -197,11 +197,11 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader,15);    Reader >> phiini; 
     ReadVoid(Reader,5);     Reader >> youngmod0;
     ReadVoid(Reader,11);    Reader >> esurf;
-	ReadVoid(Reader,13);    Reader >> Yd0; 
+    ReadVoid(Reader,13);    Reader >> Yd0; 
     ReadVoid(Reader,9);     Reader >> Ydpower;
-	ReadVoid(Reader,9);     Reader >> constvfrag;
-	ReadVoid(Reader,7);     Reader >> philim;
-	ReadVoid(Reader,8);     Reader >> philimbounce; 
+    ReadVoid(Reader,9);     Reader >> constvfrag;
+    ReadVoid(Reader,7);     Reader >> philim;
+    ReadVoid(Reader,8);     Reader >> philimbounce; 
 
     ReadVoid(Reader,14);    Reader >> Rbump;
     ReadVoid(Reader,6);     Reader >> dustfracmax;
@@ -247,16 +247,16 @@ void WriteInputFile()
     writerinput << "massorsize = 0          >(dm/dt = 0, ds/dt = 1)" << endl << endl;;
 
     writerinput << "#-Time options" << endl;
-	writerinput << "      tend = 1.0e6      >End time (yrs)" << endl;
-	writerinput << "stepmethod = 1          >(Fixe=0, Fraction of orbital period=1, Adaptative dt=2)" << endl;
-	writerinput << "      step = 1          >(stepmethod=0 -> step in yrs, stepmethod=1 -> step in fraction of orbital time)" << endl << endl;  
+    writerinput << "      tend = 1.0e6      >End time (yrs)" << endl;
+    writerinput << "stepmethod = 1          >(Fixe=0, Fraction of orbital period=1, Adaptative dt=2)" << endl;
+    writerinput << "      step = 1          >(stepmethod=0 -> step in yrs, stepmethod=1 -> step in fraction of orbital time)" << endl << endl;  
 
     writerinput << "#-Disk profiles" << endl;
-	writerinput << "     profile  = 0       >(0=no, 1=yes)" << endl << endl;
+    writerinput << "     profile  = 0       >(0=no, 1=yes)" << endl << endl;
 
     writerinput << "#-Gas disk properties" << endl << endl;
 
-	writerinput << "     Mstar = 1.         >Star mass (Msol)" << endl;
+    writerinput << "     Mstar = 1.         >Star mass (Msol)" << endl;
     writerinput << "     Mdisk = 0.01       >Disk mass (Mstar)" << endl;
     writerinput << "      Rin  = 3.         >Inner radius (AU)" << endl;
     writerinput << "      Rout = 300.       >Outer radius (AU)" << endl;
@@ -273,24 +273,24 @@ void WriteInputFile()
 
     writerinput << " iporosity = 1          >(compact=0, porous=1)" << endl;
     writerinput << "   sizeini = 1.0e-7     >Initial size (m)" << endl;
-	writerinput << "        a0 = 1.0e-7     >Monomer size (m)" << endl;
-	writerinput << "      rhod = 917        >Dust density (kg/m³)" << endl << endl;
+    writerinput << "        a0 = 1.0e-7     >Monomer size (m)" << endl;
+    writerinput << "      rhod = 917        >Dust density (kg/m³)" << endl << endl;
 
     writerinput << "#-Grain options" << endl << endl;
-   	writerinput << "    idrift = 0          >Drift (0=no, 1=yes)" << endl;
+    writerinput << "    idrift = 0          >Drift (0=no, 1=yes)" << endl;
     writerinput << "   ibounce = 0          >Bounce (0=no, 1=yes)" << endl;
-   	writerinput << "     ifrag = 0          >Fragmentation (0=no, 1=hardfrag, 2=smoothfrag)" << endl;
-   	writerinput << "     vfrag = 15         >Fragmentation threshold (m/s)" << endl;
+    writerinput << "     ifrag = 0          >Fragmentation (0=no, 1=hardfrag, 2=smoothfrag)" << endl;
+    writerinput << "     vfrag = 15         >Fragmentation threshold (m/s)" << endl;
     writerinput << "   maxsize = 1.0e3      >Maximum size to stop the simulation" << endl << endl;
 
     writerinput << "#-Porosity properties, Available if iporosity = 1" << endl << endl;
-	writerinput << "    phiini = 1          >Initial filling factor" << endl;
+    writerinput << "    phiini = 1          >Initial filling factor" << endl;
     writerinput << " Youngmod0 = 9.4e9      >Young Modulus for ice [Yamamoto et al. 2014] (Pa)" << endl;
-	writerinput << "     Esurf = 7.3e-2     >Suface energy for ice grains J/m² [Yamamoto et al. 2014] (Pa)" << endl;
-	writerinput << "       Yd0 = 9.8e6      >Dynamic compression resistance constant for ice (Pa)" << endl;
+    writerinput << "     Esurf = 7.3e-2     >Suface energy for ice grains J/m² [Yamamoto et al. 2014] (Pa)" << endl;
+    writerinput << "       Yd0 = 9.8e6      >Dynamic compression resistance constant for ice (Pa)" << endl;
     writerinput << "   Ydpower = 4          >Dynamic compression resistance for ice [Mellor, 1975]" << endl;
     writerinput << "constvfrag = 1          >Constant fragmentation threshold (0=no, 1=yes)" << endl;
-	writerinput << "    philim = 0.01       >Filling factor dynamic compression resistance limit" << endl;
+    writerinput << "    philim = 0.01       >Filling factor dynamic compression resistance limit" << endl;
     writerinput << "   philimb = 0.3        >Filling factor bounce limit" << endl << endl;
 
     writerinput << "#-Pressure bump option, Available if ibump = 1" << endl << endl;
@@ -304,14 +304,14 @@ void WriteInputFile()
     writerinput << "   ngrains = 10         >Number of dust grains" << endl << endl;
 	
     writerinput << "   Initial radii (AU)" << endl;
-	writerinput << "       R01 = 5" << endl;
-	writerinput << "       R02 = 10" << endl;
-	writerinput << "       R03 = 20" << endl;
+    writerinput << "       R01 = 5" << endl;
+    writerinput << "       R02 = 10" << endl;
+    writerinput << "       R03 = 20" << endl;
     writerinput << "       R04 = 50" << endl;
-	writerinput << "       R05 = 75" << endl;
+    writerinput << "       R05 = 75" << endl;
     writerinput << "       R06 = 100" << endl;
-	writerinput << "       R07 = 150" << endl;
-	writerinput << "       R08 = 200" << endl;
+    writerinput << "       R07 = 150" << endl;
+    writerinput << "       R08 = 200" << endl;
     writerinput << "       R09 = 250" << endl;
     writerinput << "       R10 = 300" << endl << endl;
 
