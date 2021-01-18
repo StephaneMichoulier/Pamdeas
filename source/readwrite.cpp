@@ -329,6 +329,7 @@ void WriteProfileFile(ofstream& outputprofile, const double& Rprofile, const dou
     WriteValue(outputprofile,10,6,dustfrac);
     WriteValue(outputprofile,10,6,Pg);
     WriteValue(outputprofile,10,6,T);
+    outputprofile << endl;
 }
 
 void WriteProfileColumns()
@@ -364,6 +365,7 @@ void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, co
     WriteValue(outputfile,10,6,drdt);
     WriteValue(outputfile,10,6,dvardt);
     WriteValue(outputfile,1,1,iregime);
+    outputfile << endl;
 }
 
 void WriteOutputColumns(const double& massorsize)
@@ -564,7 +566,7 @@ string FileName(const int& massorsize, const double& Rini, const int& iporosity)
 
 void WriteValue(ostream& writer, const int& width, const double& precision, const double& value)
 {
-    writer << setw(width) << setprecision(precision) << value << "\t";
+    writer << setw(width)<< setprecision(precision) << value << " ";
 }
 
 void ReadVoid (ifstream& reader,int nbvoid)
