@@ -256,8 +256,9 @@ double PhiMGas(const double& R, const double& Mstar, const double& p, const doub
 {
     
     double m0 = GrainMass(a0,1.,rhos);
-    return pow((m0*a0*DeltaV(R,Mstar,p,q,cg)*OmegaK(R,Mstar))/(eroll*M_PI*st),3./7.)*pow(massf/m0,1./7.);
-    /*switch (iregime)
+    double phigas;
+    //return pow((m0*a0*DeltaV(R,Mstar,p,q,cg)*OmegaK(R,Mstar))/(eroll*M_PI*st),3./7.)*pow(massf/m0,1./7.);
+    switch (iregime)
     {   
         case (1): case (3):
         {   
@@ -269,7 +270,8 @@ double PhiMGas(const double& R, const double& Mstar, const double& p, const doub
             phigas = pow(6.*a0*a0*DeltaV(R,Mstar,p,q,cg)*NuMolGas(rhog,cg)*rhog/(eroll),3./8.)*pow(massf/m0,-0.125);
             break;
         }
-    }*/
+    }
+    return phigas;
 }
 
 double PhiMGrav(const double& massf, const double& rhos, const double& a0, const double& eroll)
