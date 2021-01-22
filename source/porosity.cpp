@@ -88,7 +88,7 @@ double M3(const double& m1_on_m0, const double& m2_on_m0)
 
 double M3(const double& cparam, const double& rhog, const double& cg, const double& a0)
 {
-    return pow(cparam/(2.*(pow(2.,0.075)-1.)),3.)*pow(cparam*cg*a0/(9.*NuMolGas(rhog,cg)*(pow(2.,0.2)-1.)),8./3.);
+    return pow(cparam/(2.*(pow(2.,0.075)-1.)),3.)*pow(cparam*cg*a0/(9.*NuMolGas(rhog,cg)*(pow(2.,0.2)-1.)),-8./3.);
 }
 
 double M4(const double& R, const double cparam, const double& Mstar, const double& rhog,// ->
@@ -198,6 +198,7 @@ double PhiMColl(const double& R, const double& Mstar, const double& rhog, const 
     double m4;
     double m5;
     double phicoll;
+    cout << M3(m1,m2)<<" " <<M3(cparam,rhog,cg,a0)<<endl;
 
     if (st < 1.)
     {          
