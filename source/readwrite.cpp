@@ -286,9 +286,9 @@ void WriteInputFile()
     writerinput << "#-Porosity properties, Available if iporosity = 1" << endl << endl;
     writerinput << "    phiini = 1          >Initial filling factor" << endl;
     writerinput << " Youngmod0 = 9.4e9      >Young Modulus for ice [Yamamoto et al. 2014] (Pa)" << endl;
-    writerinput << "     Esurf = 7.3e-2     >Suface energy for ice grains J/m² [Yamamoto et al. 2014] (Pa)" << endl;
+    writerinput << "     Esurf = 7.3e-2     >Surface energy for ice grains J/m² [Yamamoto et al. 2014] (J/m²)" << endl;
     writerinput << "       Yd0 = 9.8e6      >Dynamic compression resistance constant for ice (Pa)" << endl;
-    writerinput << "   Ydpower = 4          >Dynamic compression resistance for ice [Mellor, 1975]" << endl;
+    writerinput << "   Ydpower = 4          >Dynamic compression resistance power for ice [Mellor, 1975]" << endl;
     writerinput << "constvfrag = 1          >Constant fragmentation threshold (0=no, 1=yes)" << endl;
     writerinput << "    philim = 0.01       >Filling factor dynamic compression resistance limit" << endl;
     writerinput << "   philimb = 0.3        >Filling factor bounce limit" << endl << endl;

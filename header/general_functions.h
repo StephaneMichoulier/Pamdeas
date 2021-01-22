@@ -108,7 +108,7 @@ double St(const double& R, const double& Mstar, const double& rhog, const double
           const double& phi, const double& rhos, int& iregime);
 
 // Velocity difference between gas and dust [m/s]
-double DeltaV(const double& R, const double& Mstar, const double& p, const double& q, const double& cg);
+double DeltaV(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st);
 
 // Compute dust to gas ratio (dustfrac(R)) if ibump=1
 double DustFrac(const double& dustfrac0, const double& dustfracmax, const double& R, const double& Rbump,//-> 

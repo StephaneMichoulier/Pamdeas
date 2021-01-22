@@ -123,7 +123,7 @@ double PhiSColl(const double& R, const double& Mstar, const double& rhog, const 
 
 // Filling factor due to gas compression
 double PhiSGas(const double& R, const double& Mstar, const double& p, const double& q, const double& rhog, const double& cg,// ->
-               const double& sizef, const double& eroll, const double& a0, const int& iregime, double& phipow);
+               const double& sizef, const double& eroll, const double& a0, const double& st, const int& iregime, double& phipow);
 
 // Filling factor due to self-gravity
 double PhiSGrav(const double& sizef, const double& rhos, const double& a0, const double& eroll);

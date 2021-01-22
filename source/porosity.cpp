@@ -198,7 +198,6 @@ double PhiMColl(const double& R, const double& Mstar, const double& rhog, const 
     double m4;
     double m5;
     double phicoll;
-    cout << M3(m1,m2)<<" " <<M3(cparam,rhog,cg,a0)<<endl;
 
     if (st < 1.)
     {          
@@ -258,17 +257,17 @@ double PhiMGas(const double& R, const double& Mstar, const double& p, const doub
     
     double m0 = GrainMass(a0,1.,rhos);
     double phigas;
-    //return pow((m0*a0*DeltaV(R,Mstar,p,q,cg)*OmegaK(R,Mstar))/(eroll*M_PI*st),3./7.)*pow(massf/m0,1./7.);
+    //return pow((m0*a0*DeltaV(R,Mstar,p,q,cg,st)*OmegaK(R,Mstar))/(eroll*M_PI*st),3./7.)*pow(massf/m0,1./7.);
     switch (iregime)
     {   
         case (1): case (3):
         {   
-            phigas = pow(m0*rhog*DeltaV(R,Mstar,p,q,cg)*cg/(M_PI*eroll*rhos),1./3.);
+            phigas = pow(m0*rhog*DeltaV(R,Mstar,p,q,cg,st)*cg/(M_PI*eroll*rhos),1./3.);
             break;
         }
         case (2): case (4): 
         { 
-            phigas = pow(6.*a0*a0*DeltaV(R,Mstar,p,q,cg)*NuMolGas(rhog,cg)*rhog/(eroll),3./8.)*pow(massf/m0,-0.125);
+            phigas = pow(6.*a0*a0*DeltaV(R,Mstar,p,q,cg,st)*NuMolGas(rhog,cg)*rhog/(eroll),3./8.)*pow(massf/m0,-0.125);
             break;
         }
     }
@@ -567,7 +566,7 @@ double PhiSColl(const double& R, const double& Mstar, const double& rhog, const 
 /* ------------------------ KATAOKA ------------------------*/
 
 double PhiSGas(const double& R, const double& Mstar, const double& p, const double& q, const double& rhog, const double& cg,// ->
-               const double& sizef, const double& eroll, const double& a0, const int& iregime, double& phipow)
+               const double& sizef, const double& eroll, const double& a0, const double& st, const int& iregime, double& phipow)
 {
     double phigas;
 
@@ -576,13 +575,13 @@ double PhiSGas(const double& R, const double& Mstar, const double& p, const doub
         case (1): case (3):
         {   
             phipow = 0.;
-            phigas = pow(4.*a0*a0*a0*DeltaV(R,Mstar,p,q,cg)*rhog*cg/(3.*eroll),1./3.);
+            phigas = pow(4.*a0*a0*a0*DeltaV(R,Mstar,p,q,cg,st)*rhog*cg/(3.*eroll),1./3.);
             break;
         }
         case (2): case (4): 
         { 
             phipow = -1./3.;
-            phigas = pow(6.*a0*a0*a0*DeltaV(R,Mstar,p,q,cg)*NuMolGas(rhog,cg)*rhog/(sizef*eroll),1./3.);
+            phigas = pow(6.*a0*a0*a0*DeltaV(R,Mstar,p,q,cg,st)*NuMolGas(rhog,cg)*rhog/(sizef*eroll),1./3.);
             break;
         }
     }
@@ -602,7 +601,7 @@ double PhiMinSColGasGrav(const double& R, const double& Mstar, const double& p, 
     double phimin;
     double powgas;
     double phicoll = PhiSColl(R,Mstar,rhog,cg,st,sizef,eroll,a0,rhos,alpha,iregime,phipow);
-    double phigas  = PhiSGas(R,Mstar,p,q,rhog,cg,sizef,eroll,a0,iregime,powgas);
+    double phigas  = PhiSGas(R,Mstar,p,q,rhog,cg,sizef,eroll,a0,st,iregime,powgas);
     double phigrav = PhiSGrav(sizef,rhos,a0,eroll);
 
     if (phigas < phicoll)
