@@ -15,10 +15,10 @@ using namespace std;
 /* ------------------------ READING ------------------------*/
 
 void CheckData(const int& massorsize, const double& tend, const int& stepmethod, const double& step, const int& profile,// ->
-               const double& Mstar, const double& Mdisk, const double& Rin, const double& Rout, const double& R0,// -> 
+               const double& Mstar, const double& Mdisk, const double& Rin, const double& Rout, const double& R0,// ->
                const double& dustfrac0, const double& H0R0, const double& p, const double& q, const double& alpha, // ->
                const int& iporosity, const double& sizeini, const double& phiini, const double& a0, const double& rhos,// ->
-               const double& youngmod0, const double& esurf, const double& Yd0, const double& Ydpower, const int& idrift,// -> 
+               const double& youngmod0, const double& esurf, const double& Yd0, const double& Ydpower, const int& idrift,// ->
                const int& ibounce, const int& idisrupt, const int& ifrag, const int& ibr, const int& ibump,// ->
                const double& vfragi, const int& constvfrag, const double& philim, const double& philimbounce,// ->
                const double& limsize, const double& Rbump, const double& dustfracmax, const double& bumpwidth,// ->
@@ -27,10 +27,10 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
     bool error = false;
 
     if (massorsize != 0 && massorsize != 1)     Error(error, "massorsize != 0 & != 1");
-    
+
     if (tend <= 0)                              Error(error, "tend <= 0");
 
-    if (stepmethod != 0 && stepmethod != 1 && stepmethod != 2)                       
+    if (stepmethod != 0 && stepmethod != 1 && stepmethod != 2)
                                                 Error(error, "stepmethod != 0 & != 1 & != 2");
 
     if (stepmethod != 2)
@@ -53,7 +53,7 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
     if (R0 <= 0)                                Error(error, "R0 <= 0");
 
     if (dustfrac0 <= 0 || dustfrac0 >= 1)
-    {   
+    {
         if (dustfrac0 >= 1 )                    Error(error, "dustfrac0 >= 1");
         else                                    Error(error, "dustfrac0 <= 0");
     }
@@ -70,14 +70,14 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 
     if (sizeini <= 0)                           Error(error, "sizeini <= 0");
 
-    if (phiini <= 0 || phiini > 1)              
-    {   
+    if (phiini <= 0 || phiini > 1)
+    {
         if(phiini > 1)                          Error(error, "phiini > 1");
         else                                    Error(error, "phiini <= 0");
     }
 
-    if (a0 <= 0 || a0 > sizeini)                                
-    {   
+    if (a0 <= 0 || a0 > sizeini)
+    {
         if(a0 <= 0)                             Error(error, "a0 <= 0");
         else                                    Error(error, "a0 > sizeini");
     }
@@ -102,30 +102,30 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 
     if (vfragi < 0)                             Error(error, "vfragi < 0");
 
+    if (limsize <= sizeini)                     Error(error, "limsize <= sizeini");
+
     if (constvfrag != 0 && constvfrag != 1)     Error(error, "constvfrag != 0 & != 1");
 
-    if (philim < 0 || philim > 1)           
-    {   
+    if (philim < 0 || philim > 1)
+    {
         if(philim > 1)                          Error(error, "philim > 1");
         else                                    Error(error, "philim < 0");
     }
 
-    if (philimbounce < 0 || philimbounce > 1)   
-    {   
+    if (philimbounce < 0 || philimbounce > 1)
+    {
         if(philimbounce > 1)                    Error(error, "philimbounce > 1");
         else                                    Error(error, "philimbounce < 0");
     }
 
-    if (limsize <= sizeini)                     Error(error, "limsize <= sizeini");
-
     if (Rbump < Rin || Rbump > Rout)
-    {   
+    {
         if (Rbump < Rin )                       Error(error, "Rbump < Rin");
         else                                    Error(error, "Rbump > Rout");
     }
 
     if (dustfracmax < dustfrac0 || dustfracmax >= 1)
-    {   
+    {
         if (dustfracmax >= 1 )                  Error(error, "dustfracmax >= 1");
         else                                    Error(error, "dustfracmax < dustfrac0");
     }
@@ -148,16 +148,16 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 
     if (error == true)                          exit(1);
 
-} 
+}
 
 
 void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, double& Mstar, double& Mdisk,// ->
               double& Rin, double& Rout, double& R0, double& dustfrac0, double& H0R0, double& p, double& q,// ->
               double& alpha, int& iporosity, double& sizeini, double& phiini, double& a0, double& rhos, double& youngmod0,// ->
               double& esurf, double& Yd0, double& Ydpower, int& idrift, int& ibounce, int& idisrupt, int& ifrag, int& ibr,// ->
-              int& ibump, double& vfragi, int& constvfrag, double& philim, double& philimbounce, double& limsize,// -> 
+              int& ibump, double& vfragi, int& constvfrag, double& philim, double& philimbounce, double& limsize,// ->
               double& Rbump, double& dustfracmax, double& bumpwidth, double& bumpheight, int& ngrains, vector <double>& Rini)
-{   
+{
     ifstream Reader("input.in");
     if (!Reader)
    	{   cout << "Fatal error, input.in is missing " << endl;
@@ -171,40 +171,39 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader,5);     Reader >> stepmethod;
     ReadVoid(Reader,9);     Reader >> step;
     ReadVoid(Reader,17);    Reader >> profile;
-    ReadVoid(Reader,7);     Reader >> Mstar; 
+    ReadVoid(Reader,7);     Reader >> Mstar;
     ReadVoid(Reader,5);     Reader >> Mdisk;
-    ReadVoid(Reader,5);     Reader >> Rin; 
+    ReadVoid(Reader,5);     Reader >> Rin;
     ReadVoid(Reader,5);     Reader >> Rout;
-    ReadVoid(Reader,5);     Reader >> R0; 
-    ReadVoid(Reader,5);     Reader >> dustfrac0; 
-    ReadVoid(Reader,8);     Reader >> H0R0; 
+    ReadVoid(Reader,5);     Reader >> R0;
+    ReadVoid(Reader,5);     Reader >> dustfrac0;
+    ReadVoid(Reader,8);     Reader >> H0R0;
     ReadVoid(Reader,6);     Reader >> p;
     ReadVoid(Reader,3);     Reader >> q;
-    ReadVoid(Reader,2);     Reader >> alpha; 
+    ReadVoid(Reader,2);     Reader >> alpha;
     ReadVoid(Reader,6);     Reader >> ibr;
-    ReadVoid(Reader,5);     Reader >> ibump; 
+    ReadVoid(Reader,5);     Reader >> ibump;
 
-    
-    ReadVoid(Reader,8);     Reader >> iporosity; 
-    ReadVoid(Reader,4);     Reader >> sizeini; 
-    ReadVoid(Reader,5);     Reader >> a0; 
-    ReadVoid(Reader,5);     Reader >> rhos; 
-    
+    ReadVoid(Reader,8);     Reader >> iporosity;
+    ReadVoid(Reader,4);     Reader >> sizeini;
+    ReadVoid(Reader,5);     Reader >> a0;
+    ReadVoid(Reader,5);     Reader >> rhos;
+
     ReadVoid(Reader,7);     Reader >> idrift;
     ReadVoid(Reader,5);     Reader >> ibounce;
-    ReadVoid(Reader,5);     Reader >> idisrupt; 
-    ReadVoid(Reader,6);     Reader >> ifrag; 
-    ReadVoid(Reader,6);     Reader >> vfragi; 
+    ReadVoid(Reader,5);     Reader >> idisrupt;
+    ReadVoid(Reader,6);     Reader >> ifrag;
+    ReadVoid(Reader,6);     Reader >> vfragi;
     ReadVoid(Reader,5);     Reader >> limsize;
 
-    ReadVoid(Reader,15);    Reader >> phiini; 
+    ReadVoid(Reader,15);    Reader >> phiini;
     ReadVoid(Reader,5);     Reader >> youngmod0;
     ReadVoid(Reader,11);    Reader >> esurf;
-    ReadVoid(Reader,13);    Reader >> Yd0; 
+    ReadVoid(Reader,13);    Reader >> Yd0;
     ReadVoid(Reader,9);     Reader >> Ydpower;
-    ReadVoid(Reader,9);     Reader >> constvfrag;
+    ReadVoid(Reader,10);    Reader >> constvfrag;
     ReadVoid(Reader,7);     Reader >> philim;
-    ReadVoid(Reader,8);     Reader >> philimbounce; 
+    ReadVoid(Reader,8);     Reader >> philimbounce;
 
     ReadVoid(Reader,14);    Reader >> Rbump;
     ReadVoid(Reader,6);     Reader >> dustfracmax;
@@ -252,7 +251,7 @@ void WriteInputFile()
     writerinput << "#-Time options" << endl;
     writerinput << "      tend = 1.0e6      >End time (yrs)" << endl;
     writerinput << "stepmethod = 1          >(Fixe=0, Fraction of orbital period=1, Adaptative dt=2)" << endl;
-    writerinput << "      step = 1          >(stepmethod=0 -> step in yrs, stepmethod=1 -> step in fraction of orbital time)" << endl << endl;  
+    writerinput << "      step = 1          >(stepmethod=0 -> step in yrs, stepmethod=1 -> step in fraction of orbital time)" << endl << endl;
 
     writerinput << "#-Disk profiles" << endl;
     writerinput << "     profile  = 0       >(0=no, 1=yes)" << endl << endl;
@@ -263,13 +262,13 @@ void WriteInputFile()
     writerinput << "     Mdisk = 0.01       >Disk mass (Mstar)" << endl;
     writerinput << "      Rin  = 3.         >Inner radius (AU)" << endl;
     writerinput << "      Rout = 300.       >Outer radius (AU)" << endl;
-    writerinput << "      Rref = 100.       >Reference radius (AU)" << endl;	
+    writerinput << "      Rref = 100.       >Reference radius (AU)" << endl;
     writerinput << " dustfrac0 = 0.01       >Dust to gas ratio at Rref" << endl;
     writerinput << "     H0/R0 = 0.05       >H/R at Rref" << endl;
     writerinput << "   p index = 1.5        " << endl;
     writerinput << "   q index = 0.75       " << endl;
     writerinput << "     alpha = 0.01       >Turbulence Shakura & Sunyaev" << endl;
-    writerinput << "       ibr = 0          >Back-reaction (0=no, 1=yes)" << endl; 
+    writerinput << "       ibr = 0          >Back-reaction (0=no, 1=yes)" << endl;
     writerinput << "     ibump = 0          >Pressure bump (0=no, 1=yes)" << endl << endl;
 
     writerinput << "#-Dust properties" << endl << endl;
@@ -306,7 +305,7 @@ void WriteInputFile()
     writerinput << "#-Number of dust grains and initial radii" << endl << endl;
 
     writerinput << "   ngrains = 10         >Number of dust grains" << endl << endl;
-	
+
     writerinput << "   Initial radii (AU)" << endl;
     writerinput << "       R01 = 5" << endl;
     writerinput << "       R02 = 10" << endl;
@@ -353,7 +352,7 @@ void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, co
                      const double& sizef, const double& St, const double& cg, const double& sigma,// ->
                      const double& rhog, const double& dustfrac, const double& vrel, const double& omegak,// ->
                      const double& drdt, const double& dvardt, const int& iregime)
-{   
+{
     WriteValue(outputfile,10,6,t);
     WriteValue(outputfile,10,6,Rf);
     WriteValue(outputfile,10,6,massf);
@@ -393,14 +392,14 @@ void WriteOutputColumns(const double& massorsize)
     {   writecol << "dmdt" << endl;  }
     else
     {   writecol << "dsdt" << endl;  }
-    
+
     writecol << "regime" << endl;
 }
 
 void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const double& Mstar,// ->
-                   const double& Mdisk, const double& Rin, const double& Rout, const double& R0, const double& Rbump,// -> 
+                   const double& Mdisk, const double& Rin, const double& Rout, const double& R0, const double& Rbump,// ->
                    const double& dustfrac0, const double& H0R0, const double& p, const double& q, const double& alpha,// ->
-                   const int& iporosity, const double& sizeini, const double& phiini, const double& a0, const double& rhos,// -> 
+                   const int& iporosity, const double& sizeini, const double& phiini, const double& a0, const double& rhos,// ->
                    const int& idrift, const int& ibounce, const int& ifrag, const int& ibr, const int& ibump,// ->
                    const int& idisrupt, const double& vfragi, const int& ngrains, const double& sigma0, const double& rhog0,// ->
                    const double& cg0, const double& runningtime)
@@ -444,23 +443,23 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     switch (stepmethod)
     {
         case (0):
-        {   
-            writerdoc << "Fixe" << endl;  
-            writerdoc << "                     dt: " << dt << " yrs" << endl << endl;
-            break; 
-        }
-        case (1):    
-        {   
-            writerdoc << "Fraction of orbital period" << endl;  
-            writerdoc << "                     dt: " << dt << endl << endl;
-            break;  
-        }
-        case (2):    
         {
-            writerdoc << "Adaptative" << endl << endl;    
-            break; 
+            writerdoc << "Fixe" << endl;
+            writerdoc << "                     dt: " << dt << " yrs" << endl << endl;
+            break;
         }
-    } 
+        case (1):
+        {
+            writerdoc << "Fraction of orbital period" << endl;
+            writerdoc << "                     dt: " << dt << endl << endl;
+            break;
+        }
+        case (2):
+        {
+            writerdoc << "Adaptative" << endl << endl;
+            break;
+        }
+    }
 
     writerdoc << "   -------- Gas disk properties --------" << endl<< endl;
     writerdoc << "              Star mass: " << KgToMsol(Mstar) << " Msol" << endl;
@@ -483,7 +482,7 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
 
     if (ibump == 0)     writerdoc << "no" << endl;
     else
-    {            
+    {
         writerdoc << "yes" << endl;
         writerdoc << "   Pressure bump radius: " << Rbump << " AU" << endl << endl;
     }
@@ -518,29 +517,29 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
 
     if (idisrupt == 0)  writerdoc << "no" << endl;
     else                writerdoc << "yes" << endl;
-    
+
     writerdoc << "          Fragmentation: ";
 
     switch (ifrag)
     {
         case (0):
-        {    
-            writerdoc << "no" << endl;  
-            break; 
-        }
-        case (1):    
-        {   
-            writerdoc << "Hard model" << endl;  
-            break;  
-        }
-        case (2):    
         {
-            writerdoc << "Smooth model" << endl;    
-            break; 
+            writerdoc << "no" << endl;
+            break;
         }
-    } 
+        case (1):
+        {
+            writerdoc << "Hard model" << endl;
+            break;
+        }
+        case (2):
+        {
+            writerdoc << "Smooth model" << endl;
+            break;
+        }
+    }
     writerdoc << endl;
-    
+
     writerdoc.close();
 }
 
@@ -584,4 +583,3 @@ void ReadVoid (ifstream& reader,int nbvoid)
     for (int i = 0; i < nbvoid; i++)
     {   reader>>blank;  }
 }
-
