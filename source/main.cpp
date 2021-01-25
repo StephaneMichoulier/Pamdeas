@@ -11,6 +11,7 @@
 #include "../header/general_functions.h"
 #include "../header/porosity.h"
 #include "../header/evol.h"
+#include "../header/disruption.h"
 #include "../header/readwrite.h"
 
 using namespace std;
@@ -26,26 +27,28 @@ void Presentation()
 }
 
 // Terminal waiting animation
-void Animation(const double& time, const double timeend, const double& RfRin, const double& sizelimsize, const string& outputfile)
+void Animation(const double& time, const double timeend, const double& RfRin, const double& sizelimsize, const bool& disrupted, const string& outputfile)
 {   
     cout << "\rProgression: " << setprecision(4) << time*100./(timeend) <<" %     "<< flush;
 
-    if (time>=timeend || RfRin < 1. || sizelimsize > 1.) 
+    if (time>=timeend || RfRin < 1. || sizelimsize > 1. || disrupted == true) 
     {   
         cout << "\rProgression: " << time*100./(timeend) <<" %             ";
 
         if (RfRin < 1.)
-        {   cout<<endl<<"R < Rin: particle accreted               "<<flush; }
+        {   cout << endl << "R < Rin: particle accreted               "<<flush; }
         if (sizelimsize > 1.)
-        {   cout<<endl<<"Particle size bigger than max size       "<<flush;}
+        {   cout << endl << "Particle size bigger than max size       "<<flush;}
+        if (disrupted == true)
+        {   cout << endl << "Particle disrupted by spinning motion    "<<flush;}
 
-        cout<<endl<<outputfile<<" written"<<endl<<endl;
+        cout <<endl <<outputfile << " written" <<endl << endl;
     }
 }
 
 // Running time
 void Runningtime(const double& runningtime)
-{   cout<<endl<<"Running time: "<<runningtime<<" s"<<endl;  }
+{   cout << endl << "Running time: " << runningtime << " s" << endl;  }
 
 // End 
 void End()
@@ -93,6 +96,7 @@ int main()
     int    ifrag;           // Fragmention option
     int    ibump;           // Pressure bump option
     int    ibr;             // Back-reaction option
+    int    idisrupt;        // Disruption by spinning motion
     double vfragi;          // Initial fragmentation threshold (when fragmentation enabled)
     int    constvfrag;      // Constant vfrag option (when fragmentation enabled)
     double philim;          // Filling factor dynamic compression resistance limit (when fragmentation enabled)
@@ -138,6 +142,7 @@ int main()
     double drdt = 0;        // Variation of radius per unit of time (drift velocity)
     int    ireg;            // Regime of the dust grain (growth, h&s, Ep-St<1, frag etc)
     double phipow;          // Power of the dominante filling factor to remove dsdt degeneracy
+    bool disrupted = false; // Is grain disrupted by spinning motion
 
     double Rprofile;        // Radius to compute disk profiles
 
@@ -151,7 +156,7 @@ int main()
     /*------------------------ READ INPUT FILE ------------------------*/
 
     ReadFile(massorsize,tend,stepmethod,step,profile,Mstar,Mdisk,Rin,Rout,R0,dustfrac0,H0R0,p,q,alpha,iporosity,sizeini,
-             phiini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,ifrag,ibr,ibump,vfragi,constvfrag,philim,
+             phiini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,vfragi,constvfrag,philim,
              philimbounce,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini);
 
     Presentation();
@@ -179,7 +184,7 @@ int main()
             dustfrac = DustFrac(dustfrac0,dustfracmax,Rprofile,Rbump,bumpwidth,ibump);    
             rhog = Rhog(sigma,hg); 
             WriteProfileFile(writebump,Rprofile,hg,cg ,sigma,rhog,dustfrac,Pg(rhog,cg),T(Rprofile,q,R0,cg));
-            Animation(Rprofile,Rout-0.01,2,0,"diskprofiles.out");
+            Animation(Rprofile,Rout-0.01,2,0,false,"diskprofiles.out");
         }
         WriteProfileColumns();
     }
@@ -222,7 +227,7 @@ int main()
         {
             case(0):
             {
-                while(Rf > Rin && t < tend && sizef < limsize)
+                while(Rf > Rin && t < tend && sizef < limsize && disrupted != true)
                 {   
                     // Compute additionnal quantities for ifrag = 1 or 2, ibounce = 1 and idrift = 1 
                     if (ifrag > 0)  vfrag = Vfrag(phif,philim,vfragi,constvfrag);
@@ -297,8 +302,12 @@ int main()
                     // Write in output file quantities at time t
                     WriteOutputFile(writer,t,Rf,massf,phif,sizef,st,cg,sigma,rhog,dustfrac,vrel,OmegaK(Rf,Mstar),drdt,dmdt,ireg);
 
+                    // Disruption by spinning motion
+                    if (idisrupt == true)
+                    {   disrupted = Disrupt(Rf,Mstar,p,q,cg,st,phif,sizef,rhos,0.1,esurf,a0);   }
+
                     // Waiting animation
-                    Animation(t,tend,Rf/Rin,sizef/limsize,outputfile);
+                    Animation(t,tend,Rf/Rin,sizef/limsize,disrupted,outputfile);
                 }
                 break;
             }
@@ -369,8 +378,12 @@ int main()
                     // Write in output file quantities at time t
                     WriteOutputFile(writer,t,Rf,massf,phif,sizef,st,cg,sigma,rhog,dustfrac,vrel,OmegaK(Rf,Mstar),drdt,dsdt,ireg);
 
+                    // Disruption by spinning motion
+                    if (idisrupt == true)
+                    {   disrupted = Disrupt(Rf,Mstar,p,q,cg,st,phif,sizef,rhos,0.1,esurf,a0);   }
+
                     // Waiting animation
-                    Animation(t,tend,Rf/Rin,sizef/limsize,outputfile);
+                    Animation(t,tend,Rf/Rin,sizef/limsize,disrupted,outputfile);
                 }
             break;
             }
@@ -387,7 +400,8 @@ int main()
 
     // Write initials conditions
     WriteInitFile(massorsize,tend,stepmethod,step,Mstar,Mdisk,Rin,Rout,R0,Rbump,dustfrac0,H0R0,p,q,alpha,iporosity,sizeini,
-                 phiini,a0,rhos,idrift,ibounce,ifrag,ibr,ibump,vfragi,ngrains,sigma0,rhog0,cg0,(t2-t1)/(1.*CLOCKS_PER_SEC));
+                  phiini,a0,rhos,idrift,ibounce,idisrupt,ifrag,ibr,ibump,vfragi,ngrains,sigma0,rhog0,cg0,
+                  (t2-t1)/(1.*CLOCKS_PER_SEC));
     WriteOutputColumns(massorsize);
     End();
 

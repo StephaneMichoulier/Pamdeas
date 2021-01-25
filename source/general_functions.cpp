@@ -176,7 +176,7 @@ double St(const double& R, const double& Mstar, const double& rhog, const double
 }
 
 double DeltaV(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st)
-{   return 0.5*st*st/(st*st+1)*(p+0.5*q+1.5)*cg*cg/Vk(R,Mstar);   }
+{   return 0.5*(p+0.5*q+1.5)*cg*cg/Vk(R,Mstar);   }
 
 double DustFrac(const double& dustfrac0, const double& dustfracmax, const double& R, const double& Rbump, 
                 const double& bumpwidth, const int& ibump)
