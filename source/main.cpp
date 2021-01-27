@@ -279,7 +279,7 @@ int main()
                         if (ibounce == 1)   ncoll = Ncoll(dt,Tcoll(sizef,rhog,phif,rhos,dustfrac,vrel));
 
                         // Compute the new filling factor after dt
-                        phif = PhiMFinal(Ri,Mstar,p,q,rhog,cg,st,massf,massi,phii,a0,rhos,eroll,alpha,ncoll,ifrag,
+                        phif = PhiMFinal(Ri,Mstar,rhog,cg,DeltaV(Rf,Mstar,p,q,cg,st),st,massf,massi,phii,a0,rhos,eroll,alpha,ncoll,ifrag,
                                          ibounce,vfrag,vrel,vstick,probabounce,philim,Yd0,Ydpower,ireg);
                     }
 
@@ -353,7 +353,7 @@ int main()
                     if (iporosity == 1)
                     {
                         // Compute the new filling factor after dt
-                        phif = PhiSFinal(Ri,Mstar,p,q,rhog,cg,st,sizef,sizei,phii,a0,rhos,eroll,alpha,
+                        phif = PhiSFinal(Ri,Mstar,rhog,cg,DeltaV(Rf,Mstar,p,q,cg,st),st,sizef,sizei,phii,a0,rhos,eroll,alpha,
                                          ifrag,vfrag,vrel,ireg,phipow);
                     }
 

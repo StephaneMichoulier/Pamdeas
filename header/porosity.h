@@ -65,9 +65,8 @@ double PhiMColl(const double& R, const double& Mstar, const double& rhog, const 
 /* ------------------------ KATAOKA ------------------------*/
 
 // Filling factor due to gas compression
-double PhiMGas(const double& R, const double& Mstar, const double& p, const double& q, const double& rhog,// ->
-               const double& cg, const double& st, const double& massf, const double& rhos, const double& eroll, 
-               const double& a0, const int& iregime);
+double PhiMGas(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& deltav,// ->
+               const double& massf, const double& rhos, const double& eroll, const double& a0, const int& iregime);
 
 // Filling factor due to self-gravity
 double PhiMGrav(const double& massf, const double& rhos, const double& a0, const double& eroll);
@@ -76,16 +75,16 @@ double PhiMGrav(const double& massf, const double& rhos, const double& a0, const
 /* ------------------------ FINAL FILLING FACTOR ------------------------*/
 
 // Return the minimum filling factor between PhiMColl, PhiMGas and PhiMgrav
-double PhiMinMColGasGrav(const double& R, const double& Mstar, const double& p, const double& q, const double& rhog,// ->
-                         const double& cg, const double st, const double& massf, const double& rhos, const double& eroll,// ->
-                         const double& a0, const double& alpha, const int& iregime);
+double PhiMinMColGasGrav(const double& R, const double& Mstar, const double& rhog, const double cg, const double& deltav,// ->
+                         const double st, const double& massf, const double& rhos, const double& eroll, const double& a0,// ->
+                         const double& alpha, const int& iregime);
 
 // Return the minimum filling factor between phiMGr, PhiMinMColGasGrav and PhiMBounce
-double PhiMFinal(const double& R, const double& Mstar, const double& p, const double& q, const double& rhog,// -> 
-                 const double& cg, const double st, const double& massf, const double& massi, const double& phii,// ->
-                 const double& a0, const double& rhos, const double& eroll, const double& alpha, const double& ncoll,// ->
-                 const int& ifrag, const int& ibounce, const double& vfrag, const double& vrel, const double& vstick,// ->
-                 const double& probabounce, const double& philim, const double& Yd0, const double& Ydpower, const int& iregime);
+double PhiMFinal(const double& R, const double& Mstar, const double& rhog, const double& cg, const double deltav, const double st,// ->
+                 const double& massf, const double& massi, const double& phii, const double& a0, const double& rhos, const double& eroll,// ->
+                 const double& alpha, const double& ncoll, const int& ifrag, const int& ibounce, const double& vfrag, const double& vrel,// ->
+                 const double& vstick, const double& probabounce, const double& philim, const double& Yd0, const double& Ydpower,// ->
+                 const int& iregime);
 
 
 /* ------------------------ SIZE MODEL ------------------------ */
@@ -122,8 +121,8 @@ double PhiSColl(const double& R, const double& Mstar, const double& rhog, const 
 /* ------------------------ KATAOKA ------------------------*/
 
 // Filling factor due to gas compression
-double PhiSGas(const double& R, const double& Mstar, const double& p, const double& q, const double& rhog, const double& cg,// ->
-               const double& sizef, const double& eroll, const double& a0, const double& st, const int& iregime, double& phipow);
+double PhiSGas(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& deltav,// ->
+               const double& sizef, const double& eroll, const double& a0, const int& iregime, double& phipow);
 
 // Filling factor due to self-gravity
 double PhiSGrav(const double& sizef, const double& rhos, const double& a0, const double& eroll);
@@ -132,14 +131,13 @@ double PhiSGrav(const double& sizef, const double& rhos, const double& a0, const
 /* ------------------------ FINAL FILLING FACTOR ------------------------*/
 
 // Return the min filling factor between PhiSColl, PhiSGas and PhiSgrav
-double PhiMinSColGasGrav(const double& R, const double& Mstar, const double& p, const double& q, const double& rhog,// -> 
-                         const double& cg, const double st, const double& sizef, const double& rhos, const double& eroll,// ->
-                         const double& a0, const double& alpha, const int& iregime, double& phipow);
+double PhiMinSColGasGrav(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& deltav,// ->
+                         const double st, const double& sizef, const double& rhos, const double& eroll, const double& a0,// ->
+                         const double& alpha, const int& iregime, double& phipow);
 
 // Return the min filling factor between phiSGr and PhiMinSColGasGrav
-double PhiSFinal(const double& R, const double& Mstar, const double& p, const double& q, const double& rhog,// ->
-                 const double& cg, const double st, const double& sizef, const double& sizei, const double& phii,// -> 
-                 const double& a0, const double& rhos, const double& eroll, const double& alpha, const int& ifrag,// -> 
-                 const double& vfrag, const double& vrel, const int& iregime, double& phipow);
+double PhiSFinal(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& deltav, const double st,// ->
+                 const double& sizef, const double& sizei, const double& phii, const double& a0, const double& rhos, const double& eroll,// -> 
+                 const double& alpha, const int& ifrag, const double& vfrag, const double& vrel, const int& iregime, double& phipow);
 
 #endif // POROSITY_H_INCLUDED
