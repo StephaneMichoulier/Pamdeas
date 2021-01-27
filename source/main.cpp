@@ -23,16 +23,16 @@ void Presentation()
     cout << "!+-----                 -----+!" << endl << endl;
     cout << "      Welcome in EDEN !" << endl << endl;
     cout << "!+-----                 -----+!" << endl;
-    cout << "\e[0m" << endl << endl; 
+    cout << "\e[0m" << endl << endl;
 }
 
 // Terminal waiting animation
 void Animation(const double& time, const double timeend, const double& RfRin, const double& sizelimsize, const bool& disrupted, const string& outputfile)
-{   
+{
     cout << "\rProgression: " << setprecision(4) << time*100./(timeend) <<" %     "<< flush;
 
-    if (time>=timeend || RfRin < 1. || sizelimsize > 1. || disrupted == true) 
-    {   
+    if (time>=timeend || RfRin < 1. || sizelimsize > 1. || disrupted == true)
+    {
         cout << "\rProgression: " << time*100./(timeend) <<" %             ";
 
         if (RfRin < 1.)
@@ -50,21 +50,21 @@ void Animation(const double& time, const double timeend, const double& RfRin, co
 void Runningtime(const double& runningtime)
 {   cout << endl << "Running time: " << runningtime << " s" << endl;  }
 
-// End 
+// End
 void End()
 {   cout << "\e[1m" << endl;
     cout << "Job done ! " << endl;
-    cout << "\e[0m" << endl; 
+    cout << "\e[0m" << endl;
 }
 
-/* ------------------------ MAIN ------------------------*/      
+/* ------------------------ MAIN ------------------------*/
 
 int main()
-{   
+{
     /*------------------------ INITIALS PARAMETERS FROM THE USER ------------------------*/
 
-    int    massorsize;      // choose between dm/dt or ds/dt      
-    double tend;            // End time of the simulation 
+    int    massorsize;      // choose between dm/dt or ds/dt
+    double tend;            // End time of the simulation
     int    stepmethod;      // Choose a time-stepping method
     double step;            // time step related to stepmethod
     int    profile;         // Compute disk profiles
@@ -97,6 +97,7 @@ int main()
     int    ibump;           // Pressure bump option
     int    ibr;             // Back-reaction option
     int    idisrupt;        // Disruption by spinning motion
+    double gammaft;         // Force-to-torque efficiency
     double vfragi;          // Initial fragmentation threshold (when fragmentation enabled)
     int    constvfrag;      // Constant vfrag option (when fragmentation enabled)
     double philim;          // Filling factor dynamic compression resistance limit (when fragmentation enabled)
@@ -149,15 +150,15 @@ int main()
     string outputfile;      // Variable for the name of the output file
 
     clock_t t1, t2 = 0;     // sets of two variable to determine running time
-   
+
     t1 = clock();
 
 
     /*------------------------ READ INPUT FILE ------------------------*/
 
     ReadFile(massorsize,tend,stepmethod,step,profile,Mstar,Mdisk,Rin,Rout,R0,dustfrac0,H0R0,p,q,alpha,iporosity,sizeini,
-             phiini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,vfragi,constvfrag,philim,
-             philimbounce,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini);
+             phiini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,gammaft,vfragi,constvfrag,
+             philim,philimbounce,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini);
 
     Presentation();
 
@@ -181,8 +182,8 @@ int main()
         {   hg = Hg(Rprofile,q,R0,h0);
             cg = Cg(Rprofile,Mstar,hg);
             sigma = Sigma(Rprofile,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
-            dustfrac = DustFrac(dustfrac0,dustfracmax,Rprofile,Rbump,bumpwidth,ibump);    
-            rhog = Rhog(sigma,hg); 
+            dustfrac = DustFrac(dustfrac0,dustfracmax,Rprofile,Rbump,bumpwidth,ibump);
+            rhog = Rhog(sigma,hg);
             WriteProfileFile(writebump,Rprofile,hg,cg ,sigma,rhog,dustfrac,Pg(rhog,cg),T(Rprofile,q,R0,cg));
             Animation(Rprofile,Rout-0.01,2,0,false,"diskprofiles.out");
         }
@@ -192,12 +193,12 @@ int main()
     /*------------------------ TIME LOOP FOR SIMULATION------------------------*/
 
     for (int j = 0; j < ngrains; j++)
-    {   
+    {
         // Set output file name
         ofstream writer;
         outputfile = FileName(massorsize,Rini[j],iporosity);
         writer.open(outputfile.c_str());
-        
+
         // Initialize loop parameters
         dt = step;
         sizei = sizeini;
@@ -214,8 +215,8 @@ int main()
         hg = Hg(Rf,q,R0,h0);
         sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
         dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
-        cg = Cg(Rf,Mstar,hg);    
-        rhog = Rhog(sigma,hg); 
+        cg = Cg(Rf,Mstar,hg);
+        rhog = Rhog(sigma,hg);
         st = St(Ri,Mstar,rhog,cg,sizef,phiini,rhos,ireg);
         vrel = Vrel(cg,st,alpha);
 
@@ -228,12 +229,12 @@ int main()
             case(0):
             {
                 while(Rf > Rin && t < tend && sizef < limsize && disrupted != true)
-                {   
-                    // Compute additionnal quantities for ifrag = 1 or 2, ibounce = 1 and idrift = 1 
+                {
+                    // Compute additionnal quantities for ifrag = 1 or 2, ibounce = 1 and idrift = 1
                     if (ifrag > 0)  vfrag = Vfrag(phif,philim,vfragi,constvfrag);
 
                     // Compute additionnal quantities for ibounce = 1
-                    if (ibounce == 1) 
+                    if (ibounce == 1)
                     {
                         vstick = Vstick(sizef,phif,rhos,esurf,youngmod0);
                         probabounce = ProbaBounce(phif,philimbounce,vrel,vstick,Vend(vstick));
@@ -241,10 +242,7 @@ int main()
 
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
-                    {   
-                        drdt = DRDt(Rf,Mstar,p,q,hg,rhog,cg,sigma,sigma0,R0,h0,alpha,
-                                    dustfrac,st,ibr,ibump,Rbump,bumpwidth,bumpheight);
-                    }
+                    {   drdt = DRDt(Rf,Mstar,p,q,hg,rhog,cg,sigma0,R0,h0,dustfrac,st,ibr,ibump,Rbump,bumpwidth,bumpheight); }
 
                     // Compute dm/dt
                     dmdt = DmDt(sizef,rhog,dustfrac,vrel,ifrag,ibounce,vfrag,vstick,probabounce);
@@ -252,13 +250,13 @@ int main()
                     // Compute new dt and new time t
                     switch (stepmethod)
                     {   case (0):   break;
-                        case (1):   
-                        {   
+                        case (1):
+                        {
                             dt = KepletDt(step,OmegaK(Rf,Mstar));
                             break;
                         }
                         case (2):
-                        {   dt = AdaptativeDt(t,tend,massorsize,ibump,massf,Rf,dmdt,drdt);      
+                        {   dt = AdaptativeDt(t,tend,massorsize,ibump,massf,Rf,dmdt,drdt);
                             break;
                         }
                     }
@@ -269,16 +267,16 @@ int main()
 
                     // Compute new mass after dt
                     massf += dmdt*YearToSec(dt);
-                    
+
                     // Check if new mass < monomer mass
-                    if (massf < GrainMass(a0,1.,rhos))  
+                    if (massf < GrainMass(a0,1.,rhos))
                     {   massf = GrainMass(a0,1.,rhos);  }
 
                     // Compute filling factor for porous grains
                     if (iporosity == 1)
                     {
                         // Compute additionnal quantities for ibounce = 1
-                        if (ibounce == 1)   ncoll = Ncoll(dt,Tcoll(sizef,rhog,phif,rhos,dustfrac,vrel)); 
+                        if (ibounce == 1)   ncoll = Ncoll(dt,Tcoll(sizef,rhog,phif,rhos,dustfrac,vrel));
 
                         // Compute the new filling factor after dt
                         phif = PhiMFinal(Ri,Mstar,p,q,rhog,cg,st,massf,massi,phii,a0,rhos,eroll,alpha,ncoll,ifrag,
@@ -286,17 +284,18 @@ int main()
                     }
 
                     // Compute gas and dust quantities at time t and radius R for a new loop
+
                     if (idrift == 1)   Ri = Rf;
-                    massi = massf; 
-                    phii = phif;                
-                    sizef = GrainMassToSize(massf,phif,rhos); 
-                    
+                    massi = massf;
+                    phii = phif;
+                    sizef = GrainMassToSize(massf,phif,rhos);
+
                     hg = Hg(Rf,q,R0,h0);
                     sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
                     dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
                     cg = Cg(Rf,Mstar,hg);
                     rhog = Rhog(sigma,hg);
-                    st = St(Rf,Mstar,rhog,cg,sizef,phif,rhos,ireg); 
+                    st = St(Rf,Mstar,rhog,cg,sizef,phif,rhos,ireg);
                     vrel = Vrel(cg,st,alpha);
 
                     // Write in output file quantities at time t
@@ -304,8 +303,8 @@ int main()
 
                     // Disruption by spinning motion
                     if (idisrupt == true)
-                    {   disrupted = Disrupt(Rf,Mstar,p,q,cg,st,phif,sizef,rhos,0.1,esurf,a0);   }
-
+                    {   disrupted = Disrupt(Rf,Mstar,p,q,cg,st,phif,sizef,rhos,gammaft,esurf,a0);   }
+                    
                     // Waiting animation
                     Animation(t,tend,Rf/Rin,sizef/limsize,disrupted,outputfile);
                 }
@@ -314,16 +313,13 @@ int main()
             case (1):
             {
                 while(Rf > Rin && t < tend && sizef < limsize)
-                {   
-                    // Compute additionnal quantities for ifrag = 1 or 2, ibounce = 1 and idrift = 1 
+                {
+                    // Compute additionnal quantities for ifrag = 1 or 2, ibounce = 1 and idrift = 1
                     if (ifrag > 0)  vfrag = Vfrag(phif,philim,vfragi,constvfrag);
 
-                    // Compute additionnal quantities for idrift = 1: vdrift=drdt 
-                    if (idrift == 1)    
-                    {
-                        drdt = DRDt(Rf,Mstar,p,q,hg,rhog,cg,sigma,sigma0,R0,h0,alpha,
-                                    dustfrac,st,ibr,ibump,Rbump,bumpwidth,bumpheight);
-                    }
+                    // Compute additionnal quantities for idrift = 1: vdrift=drdt
+                    if (idrift == 1)
+                    {   drdt = DRDt(Rf,Mstar,p,q,hg,rhog,cg,sigma0,R0,h0,dustfrac,st,ibr,ibump,Rbump,bumpwidth,bumpheight);  }
 
                     // Compute ds/dt
                     dsdt = DsDt(phif,rhog,rhos,dustfrac,vrel,ifrag,vfrag,phipow);
@@ -331,14 +327,14 @@ int main()
                     // Compute new dt and new time t
                     switch (stepmethod)
                     {   case (0):   break;
-                        case (1):   
-                        {   
-                            dt = KepletDt(step,OmegaK(Rf,Mstar));     
+                        case (1):
+                        {
+                            dt = KepletDt(step,OmegaK(Rf,Mstar));
                             break;
                         }
-                        case (2):   
-                        {   
-                            dt = AdaptativeDt(t,tend,massorsize,ibump,sizef,Rf,dsdt,drdt);      
+                        case (2):
+                        {
+                            dt = AdaptativeDt(t,tend,massorsize,ibump,sizef,Rf,dsdt,drdt);
                             break;
                         }
                     }
@@ -347,7 +343,7 @@ int main()
                     // Compute new radius after dt if idrift=1
                     if (idrift == 1)    Rf += drdt*YearToSec(dt);
 
-                    // Compute new size after dt                    
+                    // Compute new size after dt
                     sizef += dsdt*YearToSec(dt);
 
                     // Check if new size < monomer size
@@ -360,18 +356,18 @@ int main()
                         phif = PhiSFinal(Ri,Mstar,p,q,rhog,cg,st,sizef,sizei,phii,a0,rhos,eroll,alpha,
                                          ifrag,vfrag,vrel,ireg,phipow);
                     }
-                    
+
                     // Compute gas and dust quantities at time t and radius R for a new loop
                     if (idrift == 1)   Ri = Rf;
-                    sizei = sizef; 
-                    phii = phif;                
+                    sizei = sizef;
+                    phii = phif;
                     massf = GrainMass(sizef,phif,rhos);
 
                     hg = Hg(Rf,q,R0,h0);
                     sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
                     dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
                     cg = Cg(Rf,Mstar,hg);
-                    rhog = Rhog(sigma,hg);  
+                    rhog = Rhog(sigma,hg);
                     st = St(Rf,Mstar,rhog,cg,sizef,phif,rhos,ireg);
                     vrel = Vrel(cg,st,alpha);
 
@@ -380,7 +376,7 @@ int main()
 
                     // Disruption by spinning motion
                     if (idisrupt == true)
-                    {   disrupted = Disrupt(Rf,Mstar,p,q,cg,st,phif,sizef,rhos,0.1,esurf,a0);   }
+                    {   disrupted = Disrupt(Rf,Mstar,p,q,cg,st,phif,sizef,rhos,gammaft,esurf,a0);   }
 
                     // Waiting animation
                     Animation(t,tend,Rf/Rin,sizef/limsize,disrupted,outputfile);
@@ -389,9 +385,10 @@ int main()
             }
         }
         // Reinitialize time for a new particle
-        t = 0; 
+        t = 0;
         dt = 1;
-        writer.close();     
+        if (idisrupt == true) disrupted = false;
+        writer.close();
     }
 
     // Compute running time

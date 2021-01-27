@@ -40,9 +40,9 @@ double GrainMassToSize(const double& mass, const double& phi, const double& rhos
 {   return pow(3.*mass/(4.*M_PI*rhos*phi),1./3.);   }
 
 double GrainVolumeMass(const double& mass, const double& phi, const double& rhos)
-{   
+{
     double size = GrainMassToSize(mass,phi,rhos);
-    return 4.*M_PI*size*size*size/3.;    
+    return 4.*M_PI*size*size*size/3.;
 }
 
 double GrainVolumeSize(const double& size, const double& phi, const double& rhos)
@@ -60,22 +60,22 @@ double Sigma0(const double& Rin, const double& Rout, const double& R0, const dou
     {   sigma0 = AUtoMeter(R0)*AUtoMeter(R0)/(2.-p)*(pow(Rout/R0,2.-p)-pow(Rin/R0,2.-p));  }
     else
     {   sigma0 = AUtoMeter(R0)*AUtoMeter(R0)*log(Rout/Rin);    }
- 
+
     if (ibump == 1)
-    {   
+    {
         double bumpin = (Rin-Rbump)/(M_SQRT2*bumpwidth);
-        double bumpout = (Rout-Rbump)/(M_SQRT2*bumpwidth); 
+        double bumpout = (Rout-Rbump)/(M_SQRT2*bumpwidth);
 
         sigma0 += bumpheight*AUtoMeter(bumpwidth)*(M_SQRT_PI/M_SQRT2*AUtoMeter(Rbump)*(erf(bumpout)-erf(bumpin))
         +AUtoMeter(bumpwidth)*(exp(-bumpin*bumpin)-exp(-bumpout*bumpout)));
     }
-    
+
     return (Mdisk/2./M_PI)/sigma0;
 }
 
 double Sigma(const double& R, const double& p, const double& R0, const double& sigma0,
              const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
-{   
+{
     double sigma = sigma0*pow(R/R0,-p);
 
     if (ibump == 1)
@@ -113,7 +113,7 @@ double Rhog(const double& sigma, const double& Hg)
 
 double Rhog(const double& R, const double& p, const double& q, const double& sigma0, const double& R0,//->
             const double& Hg0,const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
-{   
+{
     return Sigma(R,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight)/(AUtoMeter(Hg(R,q,R0,Hg0))*M_SQRT2*M_SQRT_PI);
 }
 
@@ -123,7 +123,7 @@ double Pg(const double& rhog, const double& cg)
 double Pg(const double& R, const double& Mstar, const double& p, const double& q,
           const double& sigma0, const double& R0, const double& Hg0,const int& ibump, const double& Rbump,//->
           const double& bumpwidth, const double& bumpheight)
-{  
+{
     double cg = Cg(R,Mstar,q,R0,Hg0);
     return Rhog(R,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight)*cg*cg;
 }
@@ -136,7 +136,7 @@ double NuTurbGas(const double& R, const double& Mstar, const double& alpha, cons
 
 double NuTurbGas(const double& R, const double& Mstar, const double& q, const double& R0,//->
                  const double& Hg0, const double& alpha)
-{   
+{
     double cg = Cg(R,Mstar,q,R0,Hg0);
     return alpha*cg*cg/OmegaK(R,Mstar);
 }
@@ -152,11 +152,11 @@ double TransRegEpSt(const double& rhog, const double& cg, const double& size)
 
 double St(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& size,// ->
           const double& phi, const double& rhos, int& iregime)
-{   
+{
     double st;
 
     if (TransRegEpSt(rhog,cg,size) < 1.)
-    {   
+    {
         iregime = 1;
         st = rhos*phi*size*OmegaK(R,Mstar)/(cg*rhog);
 
@@ -164,7 +164,7 @@ double St(const double& R, const double& Mstar, const double& rhog, const double
         {   iregime = 3;   }
     }
     else
-    {   
+    {
         iregime = 2;
         st = rhos*phi*size*size*OmegaK(R,Mstar)/(4.5*NuMolGas(rhog,cg)*rhog);
 
@@ -172,19 +172,19 @@ double St(const double& R, const double& Mstar, const double& rhog, const double
         {   iregime = 4;    }
     }
 
-    return st;    
+    return st;
 }
 
 double DeltaV(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st)
 {   return 0.5*(p+0.5*q+1.5)*cg*cg/Vk(R,Mstar);   }
 
-double DustFrac(const double& dustfrac0, const double& dustfracmax, const double& R, const double& Rbump, 
+double DustFrac(const double& dustfrac0, const double& dustfracmax, const double& R, const double& Rbump,
                 const double& bumpwidth, const int& ibump)
-{   
+{
     if (ibump == 0)
     {   return dustfrac0;   }
     else
-    {   return dustfrac0 + ibump*(dustfracmax-dustfrac0)*exp(-(R-Rbump)*(R-Rbump)/(2.*bumpwidth*bumpwidth));    }   
+    {   return dustfrac0 + ibump*(dustfracmax-dustfrac0)*exp(-(R-Rbump)*(R-Rbump)/(2.*bumpwidth*bumpwidth));    }
 }
 
 /* ------------------------ ENERGIES & VELOCITIES ------------------------ */
@@ -218,7 +218,7 @@ double Yd(const double& phi, const double& philim, const double& Yd0, const doub
 }
 
 double Vstick(const double& size, const double& phi, const double& rhos, const double& esurf, const double& youngmod0)
-{   
+{
     double mass = GrainMass(size,phi,rhos);
     return 4.23*pow(pow(esurf,5.)*pow(size,4.)/(mass*mass*mass*YoungMod(phi,youngmod0)*YoungMod(phi,youngmod0)),1./6.);
 }
@@ -276,4 +276,3 @@ double CoeffRest(const double& vrel, const double& vstick, const double& vyield)
         }
     }
 }
-

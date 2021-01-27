@@ -10,7 +10,7 @@ using namespace std;
 
 /* ------------------------ SHARED FUNCTIONS ------------------------ */
 
-double CParam(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& eroll,// -> 
+double CParam(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& eroll,// ->
               const double& a0, const double& rhos, const double& alpha)
 {
     return (243.*M_SQRT2*M_PI/15625.)*(Rossby*alpha*pow(a0,4.)*rhos*rhos*cg*OmegaK(R,Mstar)/(rhog*b_oku*eroll));
@@ -25,22 +25,22 @@ double Porosity(const double& phifinal)
 double ProbaBounce(const double& phi, const double& philimbounce, const double& vrel, const double& vstick, const double& vend)
 {
     if (phi >= philimbounce)
-    {   
-        if (vrel <= vstick)    
+    {
+        if (vrel <= vstick)
         {   return 1.;  }
         else
         {
-            if (vrel <= vend)   
+            if (vrel <= vend)
             {   return (log(vrel)-log(vend))/(log(vstick)-log(vend));   }
-            else                
+            else
             {   return 0.;  }
         }
     }
-    else    
+    else
     {   return 1.;  }
 }
 
-double VarVolumeBounce(const double& phi, const double& philim, const double& coeffrest, const double& ekin,// -> 
+double VarVolumeBounce(const double& phi, const double& philim, const double& coeffrest, const double& ekin,// ->
                        const double& volume, const double& Yd0, const double& Ydpower)
 {
     double compactvol = (1.-coeffrest*coeffrest)*ekin/Yd(phi,philim,Yd0,Ydpower);
@@ -107,9 +107,9 @@ double M5(const double& R, const double cparam, const double& Mstar, const doubl
 double PhiMGr(const double& massf, const double& massi, const double& phii, const double& rhos, const double& eroll, const double& vrel)
 {
     double power;
-    if (Ekin(massi,vrel)/(3.*b_oku*eroll) <= 1.) 
+    if (Ekin(massi,vrel)/(3.*b_oku*eroll) <= 1.)
     {   power = cratio;   }
-    else         
+    else
     {   power = -0.2; }
 
     return phii*pow(massf/massi,power);
@@ -130,56 +130,56 @@ double PhiMGr(const double& massf, const double& massi, const double& phii, cons
 
     if (m1 <= m2)
     {
-        if (m <= m1)  
-        {   
+        if (m <= m1)
+        {
             phicoll = pow(m,cratio);   // Phi h&s
         }
         else
-        {   
+        {
             if (m3 <= m4)
-            {   
+            {
                 if (m <= m3)
-                {   
+                {
                     phicoll = pow(m1,cratio+0.125)*pow(m,-0.125);   // Phi Ep-St<1
                 }
                 else
-                {   
+                {
                     if (m <= m5)
-                    {   
+                    {
                         phicoll = pow(m2,cratio);   // Phi St-St<1
                     }
                     else
-                    {   
+                    {
                         phicoll = pow(m2,cratio)*pow(m5/m,0.2);  // Phi St-St>1
                     }
                 }
             }
             else
-            {   
+            {
                 if (m <= m4)
-                {   
+                {
                     phicoll = pow(m1,cratio+0.125)*pow(m,-0.125);   // Phi Ep-St<1
                 }
                 else
-                {   
+                {
                     phicoll = pow(m1,cratio+0.125)*pow(m4,-0.125)*pow(m4/m,0.2);   // Phi Ep-St>1
                 }
             }
         }
     }
     else
-    {   if (m <= m2)  
-        {   
+    {   if (m <= m2)
+        {
             phicoll = pow(m,cratio);   // Phi h&s
         }
         else
-        {   
-            if (m <= m5)  
-            {   
+        {
+            if (m <= m5)
+            {
                 phicoll = pow(m2,cratio);   // Phi St-St<1
             }
-            else          
-            {   
+            else
+            {
                 phicoll = pow(m2,cratio)*pow(m5/m,0.2);  // Phi St-St>1
             }
         }
@@ -200,24 +200,24 @@ double PhiMColl(const double& R, const double& Mstar, const double& rhog, const 
     double phicoll;
 
     if (st < 1.)
-    {          
+    {
         if (m1 <= m2)
         {
-            if (m <= m1)  
+            if (m <= m1)
             {   phicoll = pow(m,cratio);    }   // Phi h&s
             else
-            {   if (m <= M3(m1,m2))   
+            {   if (m <= M3(m1,m2))
                 {
                     phicoll = pow(m1,cratio+0.125)*pow(m,-0.125);   // Phi Ep-St<1
                 }
                 else
-                {  
+                {
                     phicoll = pow(m2,cratio);   // Phi St-St<1
                 }
             }
         }
         else
-        {   
+        {
             if (m <= m2)
             {   phicoll = pow(m,cratio);    }   // Phi h&s
             else
@@ -225,7 +225,7 @@ double PhiMColl(const double& R, const double& Mstar, const double& rhog, const 
         }
     }
     else
-    {   
+    {
         m4 = M4(R,cparam,Mstar,rhog,cg,a0,rhos);
         m5 = M5(R,cparam,Mstar,rhog,cg,a0,rhos);
 
@@ -251,27 +251,28 @@ double PhiMColl(const double& R, const double& Mstar, const double& rhog, const 
 }*/
 
 double PhiMGas(const double& R, const double& Mstar, const double& p, const double& q, const double& rhog,// ->
-               const double& cg, const double& st, const double& massf, const double& rhos, const double& eroll, 
+               const double& cg, const double& st, const double& massf, const double& rhos, const double& eroll,
                const double& a0, const int& iregime)
 {
-    
+
     double m0 = GrainMass(a0,1.,rhos);
     double phigas;
-    //return pow((m0*a0*DeltaV(R,Mstar,p,q,cg,st)*OmegaK(R,Mstar))/(eroll*M_PI*st),3./7.)*pow(massf/m0,1./7.);
     switch (iregime)
-    {   
+    {
         case (1): case (3):
-        {   
+        {
             phigas = pow(m0*rhog*DeltaV(R,Mstar,p,q,cg,st)*cg/(M_PI*eroll*rhos),1./3.);
             break;
         }
-        case (2): case (4): 
-        { 
+        case (2): case (4):
+        {
             phigas = pow(6.*a0*a0*DeltaV(R,Mstar,p,q,cg,st)*NuMolGas(rhog,cg)*rhog/(eroll),3./8.)*pow(massf/m0,-0.125);
             break;
         }
     }
     return phigas;
+    //return pow((m0*a0*DeltaV(R,Mstar,p,q,cg,st)*OmegaK(R,Mstar))/(eroll*M_PI*st),3./7.)*pow(massf/m0,1./7.);
+
 }
 
 double PhiMGrav(const double& massf, const double& rhos, const double& a0, const double& eroll)
@@ -293,27 +294,27 @@ double PhiMinMColGasGrav(const double& R, const double& Mstar, const double& p, 
     double phigrav = PhiMGrav(massf,rhos,a0,eroll);
 
     if (phigas < phicoll)
-    {   
-        if (phigrav < phicoll)   
+    {
+        if (phigrav < phicoll)
         {   phimin = phicoll;   }
-        else                     
+        else
         {   phimin = phigrav;   }
     }
     else
     {
-        if (phigrav < phigas)   
+        if (phigrav < phigas)
         {   phimin = phigas;    }
-        else                    
+        else
         {   phimin = phigrav;   }
     }
 
-    if (phimin > 1.) 
+    if (phimin > 1.)
     {   phimin = 1.;    }
 
     return phimin;
 }
 
-double PhiMFinal(const double& R, const double& Mstar, const double& p, const double& q, const double& rhog,// -> 
+double PhiMFinal(const double& R, const double& Mstar, const double& p, const double& q, const double& rhog,// ->
                  const double& cg, const double st, const double& massf, const double& massi, const double& phii,// ->
                  const double& a0, const double& rhos, const double& eroll, const double& alpha, const double& ncoll,// ->
                  const int& ifrag, const int& ibounce, const double& vfrag, const double& vrel, const double& vstick,// ->
@@ -323,63 +324,63 @@ double PhiMFinal(const double& R, const double& Mstar, const double& p, const do
     double sizei = GrainMassToSize(massi,phii,rhos);
     double phimincollgasgrav = PhiMinMColGasGrav(R,Mstar,p,q,rhog,cg,st,massf,rhos,eroll,a0,alpha,iregime);
     double phigr = PhiMGr(massf,massi,phii,rhos,eroll,vrel);
-    
+
     if (sizei > a0)
     {
         switch (ibounce)
         {   case (0):
             {
                 if ((vrel < vfrag && ifrag > 0) || (ifrag == 0 ))
-                {   
+                {
                     phif = phigr;
                     break;
                 }
                 else
-                {   
+                {
                     phif = phii;
-                    break;  
+                    break;
                 }
             }
             case (1):
-            {   
-                if ((vrel < vfrag && ifrag > 0) || (ifrag == 0 )) 
-                {  
+            {
+                if ((vrel < vfrag && ifrag > 0) || (ifrag == 0 ))
+                {
                     if (vrel <= vstick)
-                    {   
+                    {
                         phif = phigr;
-                        break;   
+                        break;
                     }
                     else
-                    {   
+                    {
                         double phibounce = PhiBounce(sizei,phii,rhos,philim,vrel,vstick,Vyield(vstick),ncoll,Yd0,Ydpower);
-                        
+
                         if (vrel < Vend(vstick))
                         {
-                            if (phigr < phimincollgasgrav)  
-                            {   phif = phimincollgasgrav;   }   
-                            else                            
+                            if (phigr < phimincollgasgrav)
+                            {   phif = phimincollgasgrav;   }
+                            else
                             {   phif = phigr;   }
 
                             phif = phif*probabounce+(1.-probabounce)*phibounce;
                             break;
                         }
                         else
-                        {   
+                        {
                             phif = phibounce;
-                            break;   
+                            break;
                         }
                     }
                 }
                 else
-                {   
+                {
                     phif = phii;
-                    break;  
-                }     
-            }    
+                    break;
+                }
+            }
         }
-        if (phif < phimincollgasgrav)   
+        if (phif < phimincollgasgrav)
         {   return phimincollgasgrav;   }
-        else                            
+        else
         {   return phif;    }
     }
     else
@@ -417,9 +418,9 @@ double PhiSGr(const double& sizef, const double& sizei, const double& phii,// ->
               const double& rhos, const double& eroll, const double& vrel)
 {
     double power;
-    if (Ekin(sizei,phii,rhos,vrel)/(3.*b_oku*eroll) <= 1.) 
+    if (Ekin(sizei,phii,rhos,vrel)/(3.*b_oku*eroll) <= 1.)
     {   power = 3.*cratio/(1.-cratio);  }
-    else                                                
+    else
     {   power = -0.5;   }
 
     return phii*pow(sizef/sizei,power);
@@ -440,43 +441,43 @@ double PhiSGr(const double& sizef, const double& sizei, const double& phii,// ->
 
     if (s1 <= s2)
     {
-        if (s <= s1)  
-        {   
+        if (s <= s1)
+        {
             phipow = 3.*cratio/(1.-cratio);
             phicoll = pow(s,phipow);   // Phi h&s
         }
         else
-        {   
+        {
             if (s3 <= s4)
-            {   
+            {
                 if (s <= s3)
-                {   
+                {
                     phipow = -1./3.;
                     phicoll = pow(s1,(1.+8.*cratio)/(3.*(1.-cratio)))*pow(s,phipow);   // Phi Ep-St<1
                 }
                 else
-                {   
+                {
                     if (s <= s5)
-                    {   
+                    {
                         phipow = 0.;
                         phicoll = pow(s2,3.*cratio/(1.-cratio));   // Phi St-St<1
                     }
                     else
-                    {   
+                    {
                         phicoll = pow(s2,3.*cratio/(1.-cratio))*sqrt(s5/s);  // Phi St-St>1
                         phipow = -0.5;
                     }
                 }
             }
             else
-            {   
+            {
                 if (s <= s4)
-                {   
+                {
                     phipow = -1./3.;
                     phicoll = pow(s1,(1.+8.*cratio)/(3.*(1.-cratio)))*pow(s,phipow);   // Phi Ep-St<1
                 }
                 else
-                {   
+                {
                     phicoll = pow(s1,(1.+8.*cratio)/(3.*(1.-cratio)))*pow(s4,-1./3.)*sqrt(s4/s);   // Phi Ep-St>1
                     phipow = -0.5;
                 }
@@ -484,20 +485,20 @@ double PhiSGr(const double& sizef, const double& sizei, const double& phii,// ->
         }
     }
     else
-    {   if (s <= s2)  
-        {   
+    {   if (s <= s2)
+        {
             phipow = 3.*cratio/(1.-cratio);
             phicoll = pow(s,phipow);   // Phi h&s
         }
         else
-        {   
-            if (s <= s5)  
-            {   
+        {
+            if (s <= s5)
+            {
                 phipow = 0.;
                 phicoll = pow(s2,3.*cratio/(1.-cratio));   // Phi St-St<1
             }
-            else          
-            {   
+            else
+            {
                 phicoll = pow(s2,3.*cratio/(1.-cratio))*sqrt(s5/s);  // Phi St-St>1
                 phipow = -0.5;
             }
@@ -521,8 +522,8 @@ double PhiSColl(const double& R, const double& Mstar, const double& rhog, const 
     if (st < 1.)
     {   if (s1 <= s2)
         {
-            if (s <= s1)  
-            {   
+            if (s <= s1)
+            {
                 phipow = 3.*cratio/(1.-cratio);
                 phicoll = pow(s,phipow);   // Phi h&s
             }
@@ -532,7 +533,7 @@ double PhiSColl(const double& R, const double& Mstar, const double& rhog, const 
                     phipow = -1./3.;
                     phicoll = pow(s1,(1.+8.*cratio)/(3.*(1.-cratio)))*pow(s,phipow);   // Phi Ep-St<1
                 }
-                else  
+                else
                 {   phipow = 0.;
                     phicoll = pow(s2,3.*cratio/(1.-cratio));   // Phi St-St<1
 
@@ -540,21 +541,21 @@ double PhiSColl(const double& R, const double& Mstar, const double& rhog, const 
             }
         }
         else
-        {   
+        {
             if (s <= s2)
-            {   
+            {
                 phipow = 3.*cratio/(1.-cratio);
                 phicoll = pow(s,phipow);   // Phi h&s
             }
             else
-            {   
+            {
                 phipow = 0.;
                 phicoll = pow(s2,3.*cratio/(1.-cratio));   // Phi St-St<1
             }
         }
     }
     else
-    {  
+    {
         phicoll = pow((cparam*rhog*cg)/(2*rhos*a0*OmegaK(R,Mstar)),0.25)/sqrt(s);
         if (s4 <= s5)    phicoll *= pow(pow(2.,0.075)-1.,-0.25);
         else             phicoll *= pow(pow(2.,0.2)-1.,-0.25);
@@ -571,15 +572,15 @@ double PhiSGas(const double& R, const double& Mstar, const double& p, const doub
     double phigas;
 
     switch (iregime)
-    {   
+    {
         case (1): case (3):
-        {   
+        {
             phipow = 0.;
             phigas = pow(4.*a0*a0*a0*DeltaV(R,Mstar,p,q,cg,st)*rhog*cg/(3.*eroll),1./3.);
             break;
         }
-        case (2): case (4): 
-        { 
+        case (2): case (4):
+        {
             phipow = -1./3.;
             phigas = pow(6.*a0*a0*a0*DeltaV(R,Mstar,p,q,cg,st)*NuMolGas(rhog,cg)*rhog/(sizef*eroll),1./3.);
             break;
@@ -594,7 +595,7 @@ double PhiSGrav(const double& sizef, const double& rhos, const double& a0, const
 
 /* ------------------------ FINAL FILLING FACTOR ------------------------*/
 
-double PhiMinSColGasGrav(const double& R, const double& Mstar, const double& p, const double& q, const double& rhog,// -> 
+double PhiMinSColGasGrav(const double& R, const double& Mstar, const double& p, const double& q, const double& rhog,// ->
                          const double& cg, const double st, const double& sizef, const double& rhos, const double& eroll,// ->
                          const double& a0, const double& alpha, const int& iregime, double& phipow)
 {
@@ -605,39 +606,39 @@ double PhiMinSColGasGrav(const double& R, const double& Mstar, const double& p, 
     double phigrav = PhiSGrav(sizef,rhos,a0,eroll);
 
     if (phigas < phicoll)
-    {   
-        if (phigrav < phicoll)   
+    {
+        if (phigrav < phicoll)
         {   phimin = phicoll;   }
-        else                     
-        {   
+        else
+        {
             phimin = phigrav;
             phipow = powgas;
         }
     }
     else
     {
-        if (phigrav < phigas)   
-        {   
+        if (phigrav < phigas)
+        {
             phimin = phigas;
             phipow = powgas;
         }
-        else                    
-        {   
+        else
+        {
             phimin = phigrav;
             phipow = 2.;
         }
     }
 
-    if (phimin > 1.) 
-    {   
-        phimin = 1.;    
+    if (phimin > 1.)
+    {
+        phimin = 1.;
     }
     return phimin;
 }
 
 double PhiSFinal(const double& R, const double& Mstar, const double& p, const double& q, const double& rhog,// ->
-                 const double& cg, const double st, const double& sizef, const double& sizei, const double& phii,// -> 
-                 const double& a0, const double& rhos, const double& eroll, const double& alpha, const int& ifrag,// -> 
+                 const double& cg, const double st, const double& sizef, const double& sizei, const double& phii,// ->
+                 const double& a0, const double& rhos, const double& eroll, const double& alpha, const int& ifrag,// ->
                  const double& vfrag, const double& vrel, const int& iregime, double& phipow)
 {
     double phif = 1.;
@@ -645,16 +646,16 @@ double PhiSFinal(const double& R, const double& Mstar, const double& p, const do
     double phigr = PhiSGr(sizef,sizei,phii,rhos,eroll,vrel);
 
     if ((vrel < vfrag && ifrag > 0) || (ifrag == 0 ))
-    {   
+    {
         phif = phigr;
     }
     else
-    {   
+    {
         phif = phii;
     }
-      
-    if (phif <= phimincollgasgrav)  
+
+    if (phif <= phimincollgasgrav)
     {   return phimincollgasgrav;     }
-    else                            
+    else
     {   return phif;    }
 }

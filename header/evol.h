@@ -20,9 +20,8 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
 
 // Compute radial drift velocity v=dR/dt
 double DRDt(const double& R, const double& Mstar, double p, double q, const double& hg, const double& rhog, const double& cg,// ->
-            const double sigma, const double& sigma0, const double& R0, const double& Hg0, const double& alpha,// ->
-            const double& dustfrac, const double& st, const int& ibr, const int& ibump, const double& Rbump,// -> 
-            const double& bumpwidth, const double& bumpheight);
+            const double& sigma0, const double& R0, const double& Hg0, const double& dustfrac, const double& st, const int& ibr,// ->
+            const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight);
 
 
 /* ------------------------  GROWTH-FRAG-BOUNCE dm/dt ------------------------ */
