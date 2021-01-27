@@ -62,8 +62,8 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
 
 /* ------------------------ DRIFT ------------------------*/
 
-double DRDt(const double& R, const double& Mstar, double p, double q, const double& hg, const double& rhog, const double& cg,// ->
-            const double& sigma0, const double& R0, const double& Hg0, const double& dustfrac, const double& st, const int& ibr,// ->
+double DRDt(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+            const double& sigma0, const double& Hg0, const double& dustfrac, const double& st, const int& ibr,// ->
             const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
     double deriver;
@@ -76,8 +76,8 @@ double DRDt(const double& R, const double& Mstar, double p, double q, const doub
 
     if (ibr == 1)   dfbr = dustfrac;
 
-    vdrift = (AUtoMeter(hg)*AUtoMeter(hg))/(AUtoMeter(R)*Pg(rhog,cg))*deriver;
-    vdrift *= Vk(R,Mstar)*st/((1.+dfbr)*(1.+dfbr)+st*st);
+    vdrift = deriver*cg*cg*AUtoMeter(R)/Pg(rhog,cg)/Vk(R,Mstar);
+    vdrift *= st/((1.+dfbr)*(1.+dfbr)+st*st);
 
     return MeterToAU(vdrift);
 }

@@ -20,9 +20,9 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
                const int& iporosity, const double& sizeini, const double& phiini, const double& a0, const double& rhos,// ->
                const double& youngmod0, const double& esurf, const double& Yd0, const double& Ydpower, const int& idrift,// ->
                const int& ibounce, const int& idisrupt, const int& ifrag, const int& ibr, const int& ibump,// ->
-               const double& vfragi, const int& constvfrag, const double& philim, const double& philimbounce,// ->
-               const double& limsize, const double& Rbump, const double& dustfracmax, const double& bumpwidth,// ->
-               const double& bumpheight, const int& ngrains, const vector <double>& Rini)
+               const double& gammaft, const double& vfragi, const int& constvfrag, const double& philim,// ->
+               const double& philimbounce, const double& limsize, const double& Rbump, const double& dustfracmax,// ->
+               const double& bumpwidth, const double& bumpheight, const int& ngrains, const vector <double>& Rini)
 {
     bool error = false;
 
@@ -102,6 +102,12 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 
     if (vfragi < 0)                             Error(error, "vfragi < 0");
 
+    if (gammaft <= 0 || gammaft > 1)
+    {
+        if(gammaft > 1)                         Error(error, "gammaft > 1");
+        else                                    Error(error, "gammaft <= 0");
+    }
+
     if (limsize <= sizeini)                     Error(error, "limsize <= sizeini");
 
     if (constvfrag != 0 && constvfrag != 1)     Error(error, "constvfrag != 0 & != 1");
@@ -152,10 +158,10 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 
 
 void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, double& Mstar, double& Mdisk,// ->
-              double& Rin, double& Rout, double& R0, double& dustfrac0, double& H0R0, double& p, double& q,// ->
-              double& alpha, int& iporosity, double& sizeini, double& phiini, double& a0, double& rhos, double& youngmod0,// ->
-              double& esurf, double& Yd0, double& Ydpower, int& idrift, int& ibounce, int& idisrupt, int& ifrag, int& ibr,// ->
-              int& ibump, double& vfragi, int& constvfrag, double& philim, double& philimbounce, double& limsize,// ->
+              double& Rin, double& Rout, double& R0, double& dustfrac0, double& H0R0, double& p, double& q, double& alpha,// ->
+              int& iporosity, double& sizeini, double& phiini, double& a0, double& rhos, double& youngmod0, double& esurf,// ->
+              double& Yd0, double& Ydpower, int& idrift, int& ibounce, int& idisrupt, int& ifrag, int& ibr, int& ibump,// ->
+              double& gammaft, double& vfragi, int& constvfrag, double& philim, double& philimbounce, double& limsize,// ->
               double& Rbump, double& dustfracmax, double& bumpwidth, double& bumpheight, int& ngrains, vector <double>& Rini)
 {
     ifstream Reader("input.in");
@@ -194,7 +200,8 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader,5);     Reader >> idisrupt;
     ReadVoid(Reader,6);     Reader >> ifrag;
     ReadVoid(Reader,6);     Reader >> vfragi;
-    ReadVoid(Reader,5);     Reader >> limsize;
+    ReadVoid(Reader,5);     Reader >> gammaft;
+    ReadVoid(Reader,9);     Reader >> limsize;
 
     ReadVoid(Reader,15);    Reader >> phiini;
     ReadVoid(Reader,5);     Reader >> youngmod0;
@@ -222,8 +229,8 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     }
 
     CheckData(massorsize,tend,stepmethod,step,profile,Mstar,Mdisk,Rin,Rout,R0,dustfrac0,H0R0,p,q,alpha,iporosity,sizeini,
-              phiini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,vfragi,constvfrag,philim,
-              philimbounce,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini);
+              phiini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,gammaft,vfragi,constvfrag,
+              philim,philimbounce,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini);
 
     // Convert values to SI units
     Mstar = MsolToKg(Mstar);
@@ -250,7 +257,7 @@ void WriteInputFile()
 
     writerinput << "#-Time options" << endl;
     writerinput << "      tend = 1.0e6      >End time (yrs)" << endl;
-    writerinput << "stepmethod = 1          >(Fixe=0, Fraction of orbital period=1, Adaptative dt=2)" << endl;
+    writerinput << "stepmethod = 2          >(Fixe=0, Fraction of orbital period=1, Adaptative dt=2)" << endl;
     writerinput << "      step = 1          >(stepmethod=0 -> step in yrs, stepmethod=1 -> step in fraction of orbital time)" << endl << endl;
 
     writerinput << "#-Disk profiles" << endl;
@@ -284,6 +291,7 @@ void WriteInputFile()
     writerinput << "  idisrupt = 0          >Rotationnal disruption (0=no, 1=yes)" << endl;
     writerinput << "     ifrag = 0          >Fragmentation (0=no, 1=hardfrag, 2=smoothfrag)" << endl;
     writerinput << "     vfrag = 15         >Fragmentation threshold (m/s)" << endl;
+    writerinput << "   gammaft = 0.1        >Force-to-torque efficiency (Disruption) [Tatsuuma et al. 2021]" << endl;
     writerinput << "   maxsize = 1.0e3      >Maximum size to stop the simulation" << endl << endl;
 
     writerinput << "#-Porosity properties, Available if iporosity = 1" << endl << endl;
@@ -401,8 +409,8 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
                    const double& dustfrac0, const double& H0R0, const double& p, const double& q, const double& alpha,// ->
                    const int& iporosity, const double& sizeini, const double& phiini, const double& a0, const double& rhos,// ->
                    const int& idrift, const int& ibounce, const int& ifrag, const int& ibr, const int& ibump,// ->
-                   const int& idisrupt, const double& vfragi, const int& ngrains, const double& sigma0, const double& rhog0,// ->
-                   const double& cg0, const double& runningtime)
+                   const int& idisrupt, const double& vfragi, const int& ngrains, const double& sigma0, 
+                   const double& rhog0, const double& cg0, const double& runningtime)
 {
     ofstream writerdoc;
     string dash;

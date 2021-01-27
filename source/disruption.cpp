@@ -9,7 +9,8 @@ using namespace std;
 double FreqSpin(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st,
                 const double& phi, const double& size, const double& gammaft)
 {
-    double deltav = st*st/(1.+st*st)*DeltaV(R,Mstar,p,q,cg,st);
+    double deltav = DeltaV(R,Mstar,p,q,cg,st);
+    deltav *= st*st/(1.+st*st);
     return 5.*gammaft*deltav/3./size;
 }
 
@@ -36,7 +37,7 @@ bool Disrupt(const double& R, const double& Mstar, const double& p, const double
              << "freq: " << 2.*M_PI/freqspin/60. << endl
              << "tensilestress: "<< tensilestress << endl
              << "maxtensiletress: " << maxtensiletress << endl;
-             return true;}
+        return true;}
     else
         return false;
 }

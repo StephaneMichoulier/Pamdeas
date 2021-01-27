@@ -242,7 +242,7 @@ int main()
 
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
-                    {   drdt = DRDt(Rf,Mstar,p,q,hg,rhog,cg,sigma0,R0,h0,dustfrac,st,ibr,ibump,Rbump,bumpwidth,bumpheight); }
+                    {   drdt = DRDt(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,ibr,ibump,Rbump,bumpwidth,bumpheight); }
 
                     // Compute dm/dt
                     dmdt = DmDt(sizef,rhog,dustfrac,vrel,ifrag,ibounce,vfrag,vstick,probabounce);
@@ -319,7 +319,7 @@ int main()
 
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
-                    {   drdt = DRDt(Rf,Mstar,p,q,hg,rhog,cg,sigma0,R0,h0,dustfrac,st,ibr,ibump,Rbump,bumpwidth,bumpheight);  }
+                    {   drdt = DRDt(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,ibr,ibump,Rbump,bumpwidth,bumpheight);  }
 
                     // Compute ds/dt
                     dsdt = DsDt(phif,rhog,rhos,dustfrac,vrel,ifrag,vfrag,phipow);
