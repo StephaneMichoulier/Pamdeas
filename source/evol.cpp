@@ -60,7 +60,7 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
 }
 
 
-/* ------------------------ DRIFT ------------------------*/
+/* ------------------------ DRIFT VELOCITY------------------------*/
 
 double DRDt(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
             const double& sigma0, const double& Hg0, const double& dustfrac, const double& st, const int& ibr,// ->
@@ -68,7 +68,7 @@ double DRDt(const double& R, const double& Mstar, double p, double q, const doub
 {
     double deriver;
     double vdrift;
-    double dfbr = 0;
+    double dfbr = 0.;
 
     deriver = Pg(R+DeltaR,Mstar,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
     deriver -= Pg(R-DeltaR,Mstar,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
@@ -82,6 +82,34 @@ double DRDt(const double& R, const double& Mstar, double p, double q, const doub
     return MeterToAU(vdrift);
 }
 
+/* ------------------------ DELTA VELOCITY ------------------------*/
+
+double DeltaV(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+              const double& sigma0, const double& Hg0, const double& dustfrac, const double& st, const int& ibr,// ->
+              const int& ibump, const int& idrift, const double& Rbump, const double& bumpwidth, const double& bumpheight)
+{
+    double deriver;
+    double deltavdrift = 0.;
+    double deltavorbital;
+    double dfbr = 0.;
+
+    deriver = Pg(R+DeltaR,Mstar,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
+    deriver -= Pg(R-DeltaR,Mstar,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
+    deriver /= 2.*AUtoMeter(DeltaR);
+
+    if (ibr == 1)   dfbr = dustfrac;
+
+    if (idrift == 1)
+    {   
+        deltavdrift = deriver*cg*cg*AUtoMeter(R)/Pg(rhog,cg)/Vk(R,Mstar);
+        deltavdrift = (1.+dfbr)*st/((1.+dfbr)*(1.+dfbr)+st*st);
+    }
+
+    deltavorbital = -deriver*cg*cg*AUtoMeter(R)/Pg(rhog,cg)/Vk(R,Mstar);
+    deltavorbital *= 0.5*st*st/((1.+dfbr)*(1.+dfbr)+st*st);
+
+    return sqrt(deltavorbital*deltavorbital+deltavdrift*deltavdrift);
+}
 
 /* ------------------------  GROWTH-FRAG-BOUNCE dm/dt ------------------------ */
 

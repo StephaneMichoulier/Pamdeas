@@ -107,14 +107,14 @@ double TransRegEpSt(const double& rhog, const double& cg, const double& size);
 double St(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& size,// ->
           const double& phi, const double& rhos, int& iregime);
 
-// Velocity difference between gas and dust [m/s]
-double DeltaV(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st);
-
 // Compute dust to gas ratio (dustfrac(R)) if ibump=1
 double DustFrac(const double& dustfrac0, const double& dustfracmax, const double& R, const double& Rbump,//-> 
                 const double& bumpwidth, const int& ibump);
 
 /* ------------------------ ENERGIES & VELOCITIES ------------------------ */
+
+// Simple presciption for velocity difference between gas and dust [m/s]
+double DeltaV2(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st);
 
 // Compute the relative velocity between two grains [m/s]
 double Vrel(const double& cg, const double& st, const double& alpha);

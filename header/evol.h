@@ -16,13 +16,19 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
                     const double& vargrowth, const double& R, const double& dvargrowthdt, const double& dRdt);
 
 
-/* ------------------------ DRIFT ------------------------*/
+/* ------------------------ DRIFT VELOCITY ------------------------*/
 
-// Compute radial drift velocity v=dR/dt
+// Compute radial drift velocity v=dR/dt [AU/s]
 double DRDt(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
             const double& sigma0, const double& Hg0, const double& dustfrac, const double& st, const int& ibr,// ->
             const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight);
 
+/* ------------------------ DELTA VELOCITY ------------------------*/
+
+// Accurate velocity difference between gas and dust [m/s]
+double DeltaV(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+              const double& sigma0, const double& Hg0, const double& dustfrac, const double& st, const int& ibr,// ->
+              const int& ibump, const int& idrift, const double& Rbump, const double& bumpwidth, const double& bumpheight);
 
 /* ------------------------  GROWTH-FRAG-BOUNCE dm/dt ------------------------ */
 

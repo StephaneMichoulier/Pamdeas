@@ -141,6 +141,7 @@ int main()
     double dmdt = 0;        // Variation of mass per unit of time
     double dsdt = 0;        // Variation of size per unit of time
     double drdt = 0;        // Variation of radius per unit of time (drift velocity)
+    double deltav;          // Velocity difference between dust and gas
     int    ireg;            // Regime of the dust grain (growth, h&s, Ep-St<1, frag etc)
     double phipow;          // Power of the dominante filling factor to remove dsdt degeneracy
     bool disrupted = false; // Is grain disrupted by spinning motion
@@ -244,6 +245,9 @@ int main()
                     if (idrift == 1)
                     {   drdt = DRDt(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,ibr,ibump,Rbump,bumpwidth,bumpheight); }
 
+                    // Compute deltav
+                    deltav = DeltaV(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
+
                     // Compute dm/dt
                     dmdt = DmDt(sizef,rhog,dustfrac,vrel,ifrag,ibounce,vfrag,vstick,probabounce);
 
@@ -279,7 +283,7 @@ int main()
                         if (ibounce == 1)   ncoll = Ncoll(dt,Tcoll(sizef,rhog,phif,rhos,dustfrac,vrel));
 
                         // Compute the new filling factor after dt
-                        phif = PhiMFinal(Ri,Mstar,rhog,cg,DeltaV(Rf,Mstar,p,q,cg,st),st,massf,massi,phii,a0,rhos,eroll,alpha,ncoll,ifrag,
+                        phif = PhiMFinal(Ri,Mstar,rhog,cg,DeltaV2(Rf,Mstar,p,q,cg,st),st,massf,massi,phii,a0,rhos,eroll,alpha,ncoll,ifrag,
                                          ibounce,vfrag,vrel,vstick,probabounce,philim,Yd0,Ydpower,ireg);
                     }
 
@@ -303,7 +307,7 @@ int main()
 
                     // Disruption by spinning motion
                     if (idisrupt == true)
-                    {   disrupted = Disrupt(Rf,Mstar,p,q,cg,st,phif,sizef,rhos,gammaft,esurf,a0);   }
+                    {   disrupted = Disrupt(sizef,phif,rhos,deltav,gammaft,esurf,a0);   }
                     
                     // Waiting animation
                     Animation(t,tend,Rf/Rin,sizef/limsize,disrupted,outputfile);
@@ -320,6 +324,9 @@ int main()
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
                     {   drdt = DRDt(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,ibr,ibump,Rbump,bumpwidth,bumpheight);  }
+
+                    // Compute deltav
+                    deltav = DeltaV(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
 
                     // Compute ds/dt
                     dsdt = DsDt(phif,rhog,rhos,dustfrac,vrel,ifrag,vfrag,phipow);
@@ -353,7 +360,7 @@ int main()
                     if (iporosity == 1)
                     {
                         // Compute the new filling factor after dt
-                        phif = PhiSFinal(Ri,Mstar,rhog,cg,DeltaV(Rf,Mstar,p,q,cg,st),st,sizef,sizei,phii,a0,rhos,eroll,alpha,
+                        phif = PhiSFinal(Ri,Mstar,rhog,cg,DeltaV2(Rf,Mstar,p,q,cg,st),st,sizef,sizei,phii,a0,rhos,eroll,alpha,
                                          ifrag,vfrag,vrel,ireg,phipow);
                     }
 
@@ -376,7 +383,7 @@ int main()
 
                     // Disruption by spinning motion
                     if (idisrupt == true)
-                    {   disrupted = Disrupt(Rf,Mstar,p,q,cg,st,phif,sizef,rhos,gammaft,esurf,a0);   }
+                    {   disrupted = Disrupt(sizef,phif,rhos,deltav,gammaft,esurf,a0);   }
 
                     // Waiting animation
                     Animation(t,tend,Rf/Rin,sizef/limsize,disrupted,outputfile);

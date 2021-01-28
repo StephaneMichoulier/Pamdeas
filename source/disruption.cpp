@@ -6,27 +6,25 @@
 
 using namespace std;
 
-double FreqSpin(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st,
-                const double& phi, const double& size, const double& gammaft)
+
+/* ------------------------- DISRUPTION ------------------------- */
+
+double FreqSpin(const double& size, const double& deltav, const double& gammaft)
 {
-    double deltav = DeltaV(R,Mstar,p,q,cg,st);
-    deltav *= st*st/(1.+st*st);
     return 5.*gammaft*deltav/3./size;
 }
 
-double TensileStess(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st,
-                    const double& phi, const double& size, const double& rhos, const double& gammaft)
+double TensileStess(const double& size, const double& phi, const double& rhos, const double& deltav, const double& gammaft)
 {
-    double freqspin = FreqSpin(R,Mstar,p,q,cg,st,phi,size,gammaft);
+    double freqspin = FreqSpin(size,deltav,gammaft);
     return rhos*phi*size*size*freqspin*freqspin/4.;
 }
 
-bool Disrupt(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st,
-             const double& phi, const double& size, const double& rhos, const double& gammaft, const double& esurf,
-             const double& a0)
+bool Disrupt(const double& size, const double& phi, const double& rhos, const double& deltav, const double& gammaft,// -> 
+             const double& esurf, const double& a0)
 {
-    double freqspin = FreqSpin(R,Mstar,p,q,cg,st,phi,size,gammaft);
-    double tensilestress = TensileStess(R,Mstar,p,q,cg,st,phi,size,rhos,gammaft);
+    double freqspin = FreqSpin(size,deltav,gammaft);
+    double tensilestress = TensileStess(size,phi,rhos,deltav,gammaft);
     double maxtensiletress = 0.6*pow(phi,1.8)*esurf/a0;
 
     if (maxtensiletress <= tensilestress)

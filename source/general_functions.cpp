@@ -175,9 +175,6 @@ double St(const double& R, const double& Mstar, const double& rhog, const double
     return st;
 }
 
-double DeltaV(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st)
-{   return 0.5*(p+0.5*q+1.5)*cg*cg/Vk(R,Mstar);   }
-
 double DustFrac(const double& dustfrac0, const double& dustfracmax, const double& R, const double& Rbump,
                 const double& bumpwidth, const int& ibump)
 {
@@ -188,6 +185,9 @@ double DustFrac(const double& dustfrac0, const double& dustfracmax, const double
 }
 
 /* ------------------------ ENERGIES & VELOCITIES ------------------------ */
+
+double DeltaV2(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st)
+{   return 0.5*(p+0.5*q+1.5)*cg*cg/Vk(R,Mstar);   }
 
 double Vrel(const double& cg, const double& st, const double& alpha)
 {   return sqrt(2.*M_SQRT2*alpha*Rossby*st)*cg/(1.+st); }

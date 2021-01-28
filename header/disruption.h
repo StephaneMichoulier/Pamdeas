@@ -5,14 +5,17 @@
 
 using namespace std;
 
-double FreqSpin(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st, 
-                const double& phi, const double& size, const double& gammaft);
 
-double TensileStess(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st,
-                    const double& phi, const double& size, const double& rhos, const double& gammaft);
+/* ------------------------- DISRUPTION ------------------------- */
 
-bool Disrupt(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st,
-             const double& phi, const double& size, const double& rhos, const double& gammaft, const double& esurf,
-             const double& a0);
+// Compute the steady-state angular velocity [rad/s]
+double FreqSpin(const double& size, const double& deltav, const double& gammaft);
+
+// Compute the tensile stress due to the centrifugal force [Pa]
+double TensileStess(const double& size, const double& phi, const double& rhos, const double& deltav, const double& gammaft);
+
+// Compare tensile stress and tensile strength 
+bool Disrupt(const double& size, const double& phi, const double& rhos, const double& deltav, const double& gammaft,// -> 
+             const double& esurf, const double& a0);
 
 #endif // DISRUPTION_H_INCLUDED
