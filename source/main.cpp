@@ -260,7 +260,8 @@ int main()
                             break;
                         }
                         case (2):
-                        {   dt = AdaptativeDt(t,tend,massorsize,ibump,massf,Rf,dmdt,drdt);
+                        {   
+                            dt = AdaptativeDt(t,tend,massorsize,ibump,massf,Rf,dmdt,drdt);
                             break;
                         }
                     }
@@ -283,7 +284,7 @@ int main()
                         if (ibounce == 1)   ncoll = Ncoll(dt,Tcoll(sizef,rhog,phif,rhos,dustfrac,vrel));
 
                         // Compute the new filling factor after dt
-                        phif = PhiMFinal(Ri,Mstar,rhog,cg,DeltaV2(Rf,Mstar,p,q,cg,st),st,massf,massi,phii,a0,rhos,eroll,alpha,ncoll,ifrag,
+                        phif = PhiMFinal(Ri,Mstar,rhog,cg,deltav,st,massf,massi,phii,a0,rhos,eroll,alpha,ncoll,ifrag,
                                          ibounce,vfrag,vrel,vstick,probabounce,philim,Yd0,Ydpower,ireg);
                     }
 
@@ -307,7 +308,7 @@ int main()
 
                     // Disruption by spinning motion
                     if (idisrupt == true)
-                    {   disrupted = Disrupt(sizef,phif,rhos,deltav,gammaft,esurf,a0);   }
+                    {   disrupted = Disrupt(sizef,phif,rhos,deltav,gammaft,esurf,a0,st);   }
                     
                     // Waiting animation
                     Animation(t,tend,Rf/Rin,sizef/limsize,disrupted,outputfile);
@@ -360,7 +361,7 @@ int main()
                     if (iporosity == 1)
                     {
                         // Compute the new filling factor after dt
-                        phif = PhiSFinal(Ri,Mstar,rhog,cg,DeltaV2(Rf,Mstar,p,q,cg,st),st,sizef,sizei,phii,a0,rhos,eroll,alpha,
+                        phif = PhiSFinal(Ri,Mstar,rhog,cg,deltav,st,sizef,sizei,phii,a0,rhos,eroll,alpha,
                                          ifrag,vfrag,vrel,ireg,phipow);
                     }
 
@@ -383,7 +384,7 @@ int main()
 
                     // Disruption by spinning motion
                     if (idisrupt == true)
-                    {   disrupted = Disrupt(sizef,phif,rhos,deltav,gammaft,esurf,a0);   }
+                    {   disrupted = Disrupt(sizef,phif,rhos,deltav,gammaft,esurf,a0,st);   }
 
                     // Waiting animation
                     Animation(t,tend,Rf/Rin,sizef/limsize,disrupted,outputfile);

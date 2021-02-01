@@ -65,7 +65,7 @@ double PhiMColl(const double& R, const double& Mstar, const double& rhog, const 
 /* ------------------------ KATAOKA ------------------------*/
 
 // Filling factor due to gas compression
-double PhiMGas(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& deltav,// ->
+double PhiMGas(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& deltav, const double& st,// ->
                const double& massf, const double& rhos, const double& eroll, const double& a0, const int& iregime);
 
 // Filling factor due to self-gravity

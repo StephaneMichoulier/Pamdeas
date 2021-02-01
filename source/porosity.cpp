@@ -250,7 +250,7 @@ double PhiMColl(const double& R, const double& Mstar, const double& rhog, const 
     {   return pow(6.*a0*a0*DeltaV(R,Mstar,p,q,cg)*NuMolGas(rhog,cg)*rhog/(eroll),0.375)*pow(massf/m0,-0.125); }
 }*/
 
-double PhiMGas(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& deltav,// ->
+double PhiMGas(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& deltav, const double& st,// ->
                const double& massf, const double& rhos, const double& eroll, const double& a0, const int& iregime)
 {
 
@@ -289,7 +289,7 @@ double PhiMinMColGasGrav(const double& R, const double& Mstar, const double& rho
 {
     double phimin;
     double phicoll = PhiMColl(R,Mstar,rhog,cg,st,massf,eroll,a0,rhos,alpha);
-    double phigas  = PhiMGas(R,Mstar,rhog,cg,deltav,massf,rhos,eroll,a0,iregime);
+    double phigas  = PhiMGas(R,Mstar,rhog,cg,deltav,st,massf,rhos,eroll,a0,iregime);
     double phigrav = PhiMGrav(massf,rhos,a0,eroll);
 
     if (phigas < phicoll)
