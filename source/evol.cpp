@@ -75,12 +75,11 @@ double VVisc(const double& R, const double& Mstar, double p, double q, const dou
               const double& sigma0, const double& Hg0, const double& alpha, const int& ibump, const double& Rbump,// ->
               const double& bumpwidth, const double& bumpheight) 
 {
-    double vvisc = NuTurbGas(R+DeltaR,Mstar,q,R0,Hg0,alpha)*(R+DeltaR)*Rhog(R+DeltaR,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R+DeltaR,Mstar);
-    vvisc -= NuTurbGas(R-DeltaR,Mstar,q,R0,Hg0,alpha)*(R-DeltaR)*Rhog(R-DeltaR,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R-DeltaR,Mstar);
+    double vvisc = NuTurbGas(R+DeltaR,Mstar,q,R0,Hg0,alpha)*AUtoMeter(R+DeltaR)*Rhog(R+DeltaR,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R+DeltaR,Mstar);
+    vvisc -= NuTurbGas(R-DeltaR,Mstar,q,R0,Hg0,alpha)*AUtoMeter(R-DeltaR)*Rhog(R-DeltaR,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R-DeltaR,Mstar);
     vvisc /= 2.*AUtoMeter(DeltaR);
 
     return vvisc*3./(rhog*AUtoMeter(R)*Vk(R,Mstar));
-
 }
 
 
@@ -103,7 +102,7 @@ double DRDt(const double& R, const double& Mstar, double p, double q, const doub
     return MeterToAU(vdrift+vvisc);
 }
 
-/* ------------------------ DELTA VELOCITY ------------------------*/
+/* ------------------------ DELTAV DUST-GAS ------------------------*/
 
 double DeltaV(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
               const double& sigma0, const double& Hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->

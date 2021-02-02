@@ -219,7 +219,8 @@ int main()
         dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
         cg = Cg(Rf,Mstar,hg);
         rhog = Rhog(sigma,hg);
-        st = St(Ri,Mstar,rhog,cg,sizef,phiini,rhos,ireg);
+        deltav = DeltaV(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
+        st = St(Ri,Mstar,rhog,cg,sizef,phiini,rhos,deltav,ireg);
         vrel = Vrel(cg,st,alpha);
 
         // Write in output file quantities at t=0
@@ -285,7 +286,7 @@ int main()
                         if (ibounce == 1)   ncoll = Ncoll(dt,Tcoll(sizef,rhog,phif,rhos,dustfrac,vrel));
 
                         // Compute the new filling factor after dt
-                        phif = PhiMFinal(Ri,Mstar,rhog,cg,DeltaV2(Ri,Mstar,p,q,cg,st),st,massf,massi,phii,a0,rhos,eroll,alpha,ncoll,ifrag,
+                        phif = PhiMFinal(Ri,Mstar,rhog,cg,deltav,st,massf,massi,phii,a0,rhos,eroll,alpha,ncoll,ifrag,
                                          ibounce,vfrag,vrel,vstick,probabounce,philim,Yd0,Ydpower,ireg);
                     }
 
@@ -301,7 +302,7 @@ int main()
                     dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
                     cg = Cg(Rf,Mstar,hg);
                     rhog = Rhog(sigma,hg);
-                    st = St(Rf,Mstar,rhog,cg,sizef,phif,rhos,ireg);
+                    st = St(Rf,Mstar,rhog,cg,sizef,phif,rhos,deltav,ireg);
                     vrel = Vrel(cg,st,alpha);
 
                     // Write in output file quantities at time t
@@ -377,7 +378,7 @@ int main()
                     dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
                     cg = Cg(Rf,Mstar,hg);
                     rhog = Rhog(sigma,hg);
-                    st = St(Rf,Mstar,rhog,cg,sizef,phif,rhos,ireg);
+                    st = St(Rf,Mstar,rhog,cg,sizef,phif,rhos,deltav,ireg);
                     vrel = Vrel(cg,st,alpha);
 
                     // Write in output file quantities at time t

@@ -32,28 +32,36 @@ double GrainVolumeSize(const double& size, const double& phi, const double& rhos
 /* ------------------------- AERODYNAMICAL PARAMETERS ------------------------- */
 
 double St(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& size,// ->
-          const double& phi, const double& rhos, int& iregime)
+          const double& phi, const double& rhos, const double& deltav, int& iregime)
 {
     double st;
 
     if (TransRegEpSt(rhog,cg,size) < 1.)
-    {
+    {   
         iregime = 1;
-        st = rhos*phi*size*OmegaK(R,Mstar)/(cg*rhog);
-
-        if (st >= 1.)
-        {   iregime = 3;   }
+        st = rhos*phi*size/(cg*rhog);
     }
     else
-    {
-        iregime = 2;
-        st = rhos*phi*size*size*OmegaK(R,Mstar)/(4.5*NuMolGas(rhog,cg)*rhog);
-
-        if (st >= 1.)
-        {   iregime = 4;    }
+    {   
+        double Re = 2.*size*deltav/NuMolGas(rhog,cg);
+        if (Re < 1.)
+        {   
+            iregime = 2;
+            st = rhos*phi*size*size/(4.5*NuMolGas(rhog,cg)*rhog);   
+        }
+        else if (Re < 800.)
+        {
+            iregime = 3;
+            st = pow(Re,0.6)*rhos*phi*size/(9.*rhog*deltav);
+        }
+        else
+        {   
+            iregime = 4;
+            st = 6.061*rhos*phi*size/(rhog*deltav);    
+        }
     }
 
-    return st;
+    return st*OmegaK(R,Mstar);
 }
 
 
@@ -80,7 +88,10 @@ double YoungMod(const double& phi, const double& youngmod0)
 }
 
 double Eroll(const double& a0, const double& esurf, const double& youngmod0)
-{   return 302.455974078*pow(pow(esurf,5.)*pow(a0,4.)/(youngmod0*youngmod0),1./3.);   }
+{  
+    return 6.*M_PI*M_PI*esurf*a0*8.*1e-10;
+    //return 302.455974078*pow(pow(esurf,5.)*pow(a0,4.)/(youngmod0*youngmod0),1./3.);   
+}
 
 double Yd(const double& phi, const double& philim, const double& Yd0, const double& Ydpower)
 {

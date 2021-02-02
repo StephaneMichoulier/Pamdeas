@@ -32,7 +32,7 @@ double DRDt(const double& R, const double& Mstar, double p, double q, const doub
             const double& sigma0, const double& Hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
             const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight);
 
-/* ------------------------ DELTA VELOCITY ------------------------*/
+/* ------------------------ DELTAV DUST-GAS ------------------------*/
 
 // Accurate velocity difference between gas and dust [m/s]
 double DeltaV(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
