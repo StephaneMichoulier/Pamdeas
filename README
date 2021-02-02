@@ -55,24 +55,29 @@ The program contains multiple files in the source folder "source" and the header
 
 	main.cpp contains all variables declarations and time loop
 
-----b) general_functions.cpp & general_functions.h
+----b) disc.cpp & disc.h
 	
-	Contain general functions describing gas disks, properties of dust grains as kinetic energy, relative velocity or Stokes number.
+	Contain general functions describing gas disks such as gas density, pressure, etc.
     The full list is given in the .h file
 
-----c) porosity.cpp & porosity.h
+----c) dust.cpp & dust.h
+	
+	Contain general functions describing properties of dust grains as kinetic energy, relative velocity or Stokes number.
+    The full list is given in the .h file
+
+----d) porosity.cpp & porosity.h
 
     Contain all the algorithms driving the evolution of the filling factor depending on the mass/size and the different processes: growth, frag, compression by collision/gravity etc 
 
-----d) evol.cpp & evol.h
+----e) evol.cpp & evol.h
 
     Contain all the algorithms linked to time stepping: growth rate, drift velocity, adaptative time step etc.
 
-----e) readwrite.cpp & readwrite.h
+----f) readwrite.cpp & readwrite.h
    
 	Contain reading and writing functions
 
-----e) constant.h
+----g) constantandconversion.h
 
-	Contains the declaration of physical constants
+	Contains the declaration of physical constants and conversion functions between some useful  units
 
