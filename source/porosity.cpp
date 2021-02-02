@@ -1,8 +1,9 @@
 #include <iostream>
 #include <cmath>
 
-#include "../header/constant.h"
-#include "../header/general_functions.h"
+#include "../header/constantandconversion.h"
+#include "../header/disc.h"
+#include "../header/dust.h"
 #include "../header/porosity.h"
 
 using namespace std;

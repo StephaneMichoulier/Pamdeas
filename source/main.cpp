@@ -7,8 +7,9 @@
 #include <vector>
 #include <time.h>
 
-#include "../header/constant.h"
-#include "../header/general_functions.h"
+#include "../header/constantandconversion.h"
+#include "../header/disc.h"
+#include "../header/dust.h"
 #include "../header/porosity.h"
 #include "../header/evol.h"
 #include "../header/disruption.h"
@@ -243,10 +244,10 @@ int main()
 
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
-                    {   drdt = DRDt(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,ibr,ibump,Rbump,bumpwidth,bumpheight); }
+                    {   drdt = DRDt(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,Rbump,bumpwidth,bumpheight); }
 
                     // Compute deltav
-                    deltav = DeltaV(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
+                    deltav = DeltaV(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
 
                     // Compute dm/dt
                     dmdt = DmDt(sizef,rhog,dustfrac,vrel,ifrag,ibounce,vfrag,vstick,probabounce);
@@ -284,7 +285,7 @@ int main()
                         if (ibounce == 1)   ncoll = Ncoll(dt,Tcoll(sizef,rhog,phif,rhos,dustfrac,vrel));
 
                         // Compute the new filling factor after dt
-                        phif = PhiMFinal(Ri,Mstar,rhog,cg,deltav,st,massf,massi,phii,a0,rhos,eroll,alpha,ncoll,ifrag,
+                        phif = PhiMFinal(Ri,Mstar,rhog,cg,DeltaV2(Ri,Mstar,p,q,cg,st),st,massf,massi,phii,a0,rhos,eroll,alpha,ncoll,ifrag,
                                          ibounce,vfrag,vrel,vstick,probabounce,philim,Yd0,Ydpower,ireg);
                     }
 
@@ -324,10 +325,10 @@ int main()
 
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
-                    {   drdt = DRDt(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,ibr,ibump,Rbump,bumpwidth,bumpheight);  }
+                    {   drdt = DRDt(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,Rbump,bumpwidth,bumpheight);  }
 
                     // Compute deltav
-                    deltav = DeltaV(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
+                    deltav = DeltaV(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
 
                     // Compute ds/dt
                     dsdt = DsDt(phif,rhog,rhos,dustfrac,vrel,ifrag,vfrag,phipow);

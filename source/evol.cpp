@@ -1,8 +1,8 @@
 #include <iostream>
 #include <cmath>
 
-#include "../header/constant.h"
-#include "../header/general_functions.h"
+#include "../header/constantandconversion.h"
+#include "../header/disc.h"
 #include "../header/evol.h"
 
 using namespace std;
@@ -59,56 +59,71 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
     return dt;
 }
 
+/* ------------------------  VELOCITIES ------------------------*/
 
-/* ------------------------ DRIFT VELOCITY------------------------*/
+double VDrift(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+              const double& sigma0, const double& Hg0, const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight) 
+{
+    double vdrift = Pg(R+DeltaR,Mstar,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
+    vdrift -= Pg(R-DeltaR,Mstar,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
+    vdrift /= 2.*AUtoMeter(DeltaR);
+    
+    return vdrift*cg*cg*AUtoMeter(R)/Pg(rhog,cg)/Vk(R,Mstar);
+}
+
+double VVisc(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+              const double& sigma0, const double& Hg0, const double& alpha, const int& ibump, const double& Rbump,// ->
+              const double& bumpwidth, const double& bumpheight) 
+{
+    double vvisc = NuTurbGas(R+DeltaR,Mstar,q,R0,Hg0,alpha)*(R+DeltaR)*Rhog(R+DeltaR,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R+DeltaR,Mstar);
+    vvisc -= NuTurbGas(R-DeltaR,Mstar,q,R0,Hg0,alpha)*(R-DeltaR)*Rhog(R-DeltaR,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R-DeltaR,Mstar);
+    vvisc /= 2.*AUtoMeter(DeltaR);
+
+    return vvisc*3./(rhog*AUtoMeter(R)*Vk(R,Mstar));
+
+}
+
+
+/* ------------------------ RADIAL DRIFT ------------------------*/
 
 double DRDt(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
-            const double& sigma0, const double& Hg0, const double& dustfrac, const double& st, const int& ibr,// ->
+            const double& sigma0, const double& Hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
             const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
-    double deriver;
-    double vdrift;
-    double dfbr = 0.;
 
-    deriver = Pg(R+DeltaR,Mstar,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
-    deriver -= Pg(R-DeltaR,Mstar,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
-    deriver /= 2.*AUtoMeter(DeltaR);
+    double vdrift = VDrift(R,Mstar,p,q,rhog,cg,R0,sigma0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
+    double vvisc = VVisc(R,Mstar,p,q,rhog,cg,R0,sigma0,Hg0,alpha,ibump,Rbump,bumpwidth,bumpheight);
+    double dfbr = 1.;
 
-    if (ibr == 1)   dfbr = dustfrac;
+    if (ibr == 1)   dfbr = 1.+dustfrac;
 
-    vdrift = deriver*cg*cg*AUtoMeter(R)/Pg(rhog,cg)/Vk(R,Mstar);
-    vdrift *= st/((1.+dfbr)*(1.+dfbr)+st*st);
+    vdrift *= st/(dfbr*dfbr+st*st);
+    vvisc *= dfbr/(dfbr*dfbr+st*st);
 
-    return MeterToAU(vdrift);
+    return MeterToAU(vdrift+vvisc);
 }
 
 /* ------------------------ DELTA VELOCITY ------------------------*/
 
 double DeltaV(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
-              const double& sigma0, const double& Hg0, const double& dustfrac, const double& st, const int& ibr,// ->
+              const double& sigma0, const double& Hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
               const int& ibump, const int& idrift, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
-    double deriver;
-    double deltavdrift = 0.;
-    double deltavorbital;
-    double dfbr = 0.;
+    double dfbr = 1.;
+    double vdrift = VDrift(R,Mstar,p,q,rhog,cg,R0,sigma0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
+    double vvisc = VVisc(R,Mstar,p,q,rhog,cg,R0,sigma0,Hg0,alpha,ibump,Rbump,bumpwidth,bumpheight);
+    double deltavradial = 0;
+    double deltavorbital = st/(dfbr*dfbr+st*st)*vdrift + dfbr/(dfbr*dfbr+st*st)*vvisc;
+    deltavorbital *= -0.5*st;
 
-    deriver = Pg(R+DeltaR,Mstar,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
-    deriver -= Pg(R-DeltaR,Mstar,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
-    deriver /= 2.*AUtoMeter(DeltaR);
-
-    if (ibr == 1)   dfbr = dustfrac;
+    if (ibr == 1)   dfbr = 1.+dustfrac;
 
     if (idrift == 1)
     {   
-        deltavdrift = deriver*cg*cg*AUtoMeter(R)/Pg(rhog,cg)/Vk(R,Mstar);
-        deltavdrift = (1.+dfbr)*st/((1.+dfbr)*(1.+dfbr)+st*st);
+        deltavradial = st*dfbr/(dfbr*dfbr+st*st)*vdrift - st*st/(dfbr*dfbr+st*st)*vvisc;
     }
 
-    deltavorbital = -deriver*cg*cg*AUtoMeter(R)/Pg(rhog,cg)/Vk(R,Mstar);
-    deltavorbital *= 0.5*st*st/((1.+dfbr)*(1.+dfbr)+st*st);
-
-    return sqrt(deltavorbital*deltavorbital+deltavdrift*deltavdrift);
+    return sqrt(deltavorbital*deltavorbital+deltavradial*deltavradial);
 }
 
 /* ------------------------  GROWTH-FRAG-BOUNCE dm/dt ------------------------ */

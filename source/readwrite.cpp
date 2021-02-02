@@ -5,9 +5,9 @@
 #include <sstream>
 #include <vector>
 
-#include "../header/constant.h"
+#include "../header/constantandconversion.h"
 #include "../header/readwrite.h"
-#include "../header/general_functions.h"
+#include "../header/disc.h"
 
 using namespace std;
 

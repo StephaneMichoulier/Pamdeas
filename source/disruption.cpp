@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cmath>
 
-#include "../header/general_functions.h"
 #include "../header/disruption.h"
 
 using namespace std;
