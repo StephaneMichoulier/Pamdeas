@@ -45,7 +45,7 @@ double St(const double& R, const double& Mstar, const double& rhog, const double
     {   
         double Re = 2.*size*deltav/NuMolGas(rhog,cg);
         if (Re < 1.)
-        {   
+        { 
             iregime = 2;
             st = rhos*phi*size*size/(4.5*NuMolGas(rhog,cg)*rhog);   
         }
@@ -88,7 +88,7 @@ double YoungMod(const double& phi, const double& youngmod0)
 }
 
 double Eroll(const double& a0, const double& esurf, const double& youngmod0)
-{  return 302.455974078*pow(pow(esurf,5.)*pow(a0,4.)/(youngmod0*youngmod0),1./3.);   }
+{   return 302.455974078*pow(pow(esurf,5.)*pow(a0,4.)/(youngmod0*youngmod0),1./3.);   }
 
 double Yd(const double& phi, const double& philim, const double& Yd0, const double& Ydpower)
 {

@@ -33,7 +33,7 @@ double St(const double& R, const double& Mstar, const double& rhog, const double
 
 /* ------------------------ ENERGIES & VELOCITIES ------------------------ */
 
-// Simple presciption for velocity difference between gas and dust [m/s]
+// Simple presciption for velocity difference between gas and dust [m/s] Deltav = eta*Vk
 double DeltaV2(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st);
 
 // Compute the relative velocity between two grains [m/s]

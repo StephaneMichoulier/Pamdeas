@@ -22,21 +22,21 @@ bool Disrupt(const double& size, const double& phi, const double& rhos, const do
 {
     double freqspin = FreqSpin(size,deltav,gammaft);
     double tensilestress = TensileStess(size,phi,rhos,deltav,gammaft);
-    double maxtensiletress = 0.6*pow(phi,1.8)*esurf/a0;
+    double maxtensilestress = 0.6*pow(phi,1.8)*esurf/a0;
 
-    if (maxtensiletress <= tensilestress)
+    if (maxtensilestress <= tensilestress)
     {    
         //display values
         cout << endl
-             << "mass: " << 4.*M_PI/3.*rhos*phi*size*size*size*1000. << endl
-             << "phi*1e4: " << phi*10000. << endl
-             << "size: " << size << endl
+             << "mass (g): " << 4.*M_PI/3.*rhos*phi*size*size*size*1000. << endl
+             << "phi*1e4 (phi*1e4): " << phi*10000. << endl
+             << "size (m): " << size << endl
              << "St: " << st << endl
-             << "wc: " << freqspin << endl
-             << "2pi/wc: " << 2.*M_PI/freqspin/60. << endl
-             << "a*wc: " << size*freqspin << endl
-             << "tensilestress: "<< tensilestress << endl
-             << "maxtensiletress: " << maxtensiletress << endl;
+             << "wc (r/s): " << freqspin << endl
+             << "2pi/wc (min): " << 2.*M_PI/freqspin/60. << endl
+             << "a*wc (m/s): " << size*freqspin << endl
+             << "tensilestress (Pa): "<< tensilestress << endl
+             << "maxtensiletress (Pa): " << maxtensilestress << endl;
 
         return true;}
     else

@@ -270,8 +270,8 @@ double PhiMGas(const double& R, const double& Mstar, const double& rhog, const d
             break;
         }
     }
-    return phigas;*/
-    return pow((m0*a0*deltav*OmegaK(R,Mstar))/(eroll*M_PI*st),3./7.)*pow(massf/m0,1./7.);
+    return phigas;
+    */return pow((m0*a0*deltav*OmegaK(R,Mstar))/(eroll*M_PI*st),3./7.)*pow(massf/m0,1./7.);
 }
 
 double PhiMGrav(const double& massf, const double& rhos, const double& a0, const double& eroll)

@@ -59,6 +59,7 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
     return dt;
 }
 
+
 /* ------------------------  VELOCITIES ------------------------*/
 
 double VDrift(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
@@ -102,6 +103,7 @@ double DRDt(const double& R, const double& Mstar, double p, double q, const doub
     return MeterToAU(vdrift+vvisc);
 }
 
+
 /* ------------------------ DELTAV DUST-GAS ------------------------*/
 
 double DeltaV(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
@@ -124,6 +126,7 @@ double DeltaV(const double& R, const double& Mstar, double p, double q, const do
 
     return sqrt(deltavorbital*deltavorbital+deltavradial*deltavradial);
 }
+
 
 /* ------------------------  GROWTH-FRAG-BOUNCE dm/dt ------------------------ */
 

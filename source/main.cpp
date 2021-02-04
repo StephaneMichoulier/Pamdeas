@@ -219,8 +219,8 @@ int main()
         dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
         cg = Cg(Rf,Mstar,hg);
         rhog = Rhog(sigma,hg);
+        st = St(Ri,Mstar,rhog,cg,sizef,phiini,rhos,0.,ireg); //we assume deltav very small for small grain strongly coupled with gas
         deltav = DeltaV(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
-        st = St(Ri,Mstar,rhog,cg,sizef,phiini,rhos,deltav,ireg);
         vrel = Vrel(cg,st,alpha);
 
         // Write in output file quantities at t=0
@@ -246,9 +246,6 @@ int main()
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
                     {   drdt = DRDt(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,Rbump,bumpwidth,bumpheight); }
-
-                    // Compute deltav
-                    deltav = DeltaV(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
 
                     // Compute dm/dt
                     dmdt = DmDt(sizef,rhog,dustfrac,vrel,ifrag,ibounce,vfrag,vstick,probabounce);
@@ -303,6 +300,7 @@ int main()
                     cg = Cg(Rf,Mstar,hg);
                     rhog = Rhog(sigma,hg);
                     st = St(Rf,Mstar,rhog,cg,sizef,phif,rhos,deltav,ireg);
+                    deltav = DeltaV(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     vrel = Vrel(cg,st,alpha);
 
                     // Write in output file quantities at time t
@@ -327,9 +325,6 @@ int main()
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
                     {   drdt = DRDt(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,Rbump,bumpwidth,bumpheight);  }
-
-                    // Compute deltav
-                    deltav = DeltaV(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
 
                     // Compute ds/dt
                     dsdt = DsDt(phif,rhog,rhos,dustfrac,vrel,ifrag,vfrag,phipow);
@@ -378,6 +373,7 @@ int main()
                     dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
                     cg = Cg(Rf,Mstar,hg);
                     rhog = Rhog(sigma,hg);
+                    deltav = DeltaV(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     st = St(Rf,Mstar,rhog,cg,sizef,phif,rhos,deltav,ireg);
                     vrel = Vrel(cg,st,alpha);
 
