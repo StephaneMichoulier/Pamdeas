@@ -12,10 +12,10 @@ using namespace std;
 double FreqSpin(const double& size, const double& deltav, const double& gammaft);
 
 // Compute the tensile stress due to the centrifugal force [Pa]
-double TensileStess(const double& size, const double& phi, const double& rhos, const double& deltav, const double& gammaft);
+double TensileStess(const double& size, const double& filfac, const double& rhos, const double& deltav, const double& gammaft);
 
 // Compare tensile stress and tensile strength 
-bool Disrupt(const double& size, const double& phi, const double& rhos, const double& deltav, const double& gammaft,// -> 
+bool Disrupt(const double& size, const double& filfac, const double& rhos, const double& deltav, const double& gammaft,// -> 
              const double& esurf, const double& a0, const double& st);
 
 #endif // DISRUPTION_H_INCLUDED

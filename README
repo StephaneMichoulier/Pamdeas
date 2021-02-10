@@ -8,7 +8,7 @@ DESCRIPTION:
 
 Eden is a 1D code primarily wrote to study the evolution of grains porosity within protoplanetary disc considering different physical process such as growth, fragmentation, drift, pressure bump, etc.
 This code allow you to follow the evolution of a given number of particles from a set of initials conditions chosen by the user in a stationary non self-gravitating gas disk.
-This code is mainly developed to understand the behavior of porous grains constrain by numerous physical processes and to test the algorithms for a future implementation in 3D Hydrodynamics code.
+This code is mainly developed to understand the behaviour of porous grains constrain by numerous physical processes and to test the algorithms for a future implementation in 3D Hydrodynamics code.
 
 
 FEW WORDS ON INPUT FILE OPTION (Respect the blank space, or be ready for unforeseen consequences)
@@ -17,7 +17,7 @@ One is based on the increase of mass (dm/dt) and use A. Garcia's algorithms, the
 The dmdt model support the bounce process, but not the dsdt model.
 The degeneracy due to the filling factor in the dsdt model is taken into account.
 
-You are allowed to create artificially a pressure bump, by adding a gaussian profile to the gas surface density. To create the desired pressure bump, the easiest way is to set ngrains to 0, profile to 1 and plot Sigma vs R, Pg vs R and dustfrac vs R in order to visualize your bump. Then, proceed by iteration.
+You are allowed to create artificially a pressure bump, by adding a gaussian profile to the gas surface density. To create the desired pressure bump, the easiest way is to set ngrains to 0, profile to 1 and plot Sigma vs R, Pg vs R and dustfrac vs R in order to visualise your bump. Then, proceed by iteration.
 
 Be aware that using a pressure bump with radial drift and fragmentation is way slower than any other setup due to small time step.
 
@@ -39,11 +39,11 @@ LAUNCHING THE PROGRAM
     -Finally, run again Eden: ./eden
 
   Once the simulation is finished, multiple output files are written into the output folder.
-    -Initials_Conditions_<Rref>.txt summarizes your setup
+    -Initials_Conditions_<Rref>.txt summarises your setup
     -output<setup name>.out: one output file for each particle. The file name depends on the model used (dmdt/dsdt and porous/compact grains)
-	-outputcolumns.txt gives you the corresponding columns present in output files.
+	-output_header.txt gives you the corresponding columns present in output files.
 	-diskprofiles.out contains different profiles (surface density, pressure, etc).
-	-diskprofilescolumns.txt gives you the corresponding columns present in the diskprofiles.out files.
+	-disk_profiles_header.txt gives you the corresponding columns present in the diskprofiles.out files.
 
 HOW THE PROGRAM IS BUILT ?
 

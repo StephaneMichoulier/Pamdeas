@@ -1,3 +1,4 @@
+#Makefile to compile Eden
 
 CC = g++
 CXXFLAGS = -Wall -std=c++11

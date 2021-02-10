@@ -42,48 +42,48 @@ double Sigma(const double& R, const double& p, const double& R0, const double& s
     return sigma;
 }
 
-double Hg(const double& R, const double& q, const double& R0, const double& Hg0)
-{   return Hg0*pow(R/R0,(3.-q)*0.5); }
+double Hg(const double& R, const double& q, const double& R0, const double& hg0)
+{   return hg0*pow(R/R0,(3.-q)*0.5); }
 
-double OmegaK(const double& R, const double& Mstar)
+double Omegak(const double& R, const double& Mstar)
 {   return sqrt(G*Mstar/AUtoMeter(R))/AUtoMeter(R);    }
 
 double Vk(const double& R, const double& Mstar)
-{   return OmegaK(R,Mstar)*AUtoMeter(R);    }
+{   return Omegak(R,Mstar)*AUtoMeter(R);    }
 
 double Gravity(const double& R, double& Mstar)
 {   return G*Mstar/(AUtoMeter(R)*AUtoMeter(R));    }
 
-double Cg(const double& R, const double& Mstar, const double& Hg)
-{   return AUtoMeter(Hg)*OmegaK(R,Mstar);   }
+double Cg(const double& R, const double& Mstar, const double& hg)
+{   return AUtoMeter(hg)*Omegak(R,Mstar);   }
 
-double Cg(const double& R, const double& Mstar, const double& q, const double& R0, const double& Hg0)
-{   return AUtoMeter(Hg(R,q,R0,Hg0))*OmegaK(R,Mstar);   }
+double Cg(const double& R, const double& Mstar, const double& q, const double& R0, const double& hg0)
+{   return AUtoMeter(Hg(R,q,R0,hg0))*Omegak(R,Mstar);   }
 
 double T(const double& R, const double& q, const double& R0, const double& cg)
-{   return cg*cg*Mgasmean/Kboltzmann;  }
+{   return cg*cg*mgasmean/kboltzmann;  }
 
-double T(const double& R, const double& Mstar, const double& q, const double& R0, const double& Hg0)
-{   return Cg(R,Mstar,q,R0,Hg0)*Mgasmean/Kboltzmann;  }
+double T(const double& R, const double& Mstar, const double& q, const double& R0, const double& hg0)
+{   return Cg(R,Mstar,q,R0,hg0)*mgasmean/kboltzmann;  }
 
-double Rhog(const double& sigma, const double& Hg)
-{   return sigma/(AUtoMeter(Hg)*M_SQRT2*M_SQRT_PI);    }
+double Rhog(const double& sigma, const double& hg)
+{   return sigma/(AUtoMeter(hg)*M_SQRT2*M_SQRT_PI);    }
 
 double Rhog(const double& R, const double& p, const double& q, const double& sigma0, const double& R0,//->
-            const double& Hg0,const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
+            const double& hg0,const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
-    return Sigma(R,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight)/(AUtoMeter(Hg(R,q,R0,Hg0))*M_SQRT2*M_SQRT_PI);
+    return Sigma(R,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight)/(AUtoMeter(Hg(R,q,R0,hg0))*M_SQRT2*M_SQRT_PI);
 }
 
 double Pg(const double& rhog, const double& cg)
 {   return rhog*cg*cg;    }
 
 double Pg(const double& R, const double& Mstar, const double& p, const double& q,
-          const double& sigma0, const double& R0, const double& Hg0,const int& ibump, const double& Rbump,//->
+          const double& sigma0, const double& R0, const double& hg0,const int& ibump, const double& Rbump,//->
           const double& bumpwidth, const double& bumpheight)
 {
-    double cg = Cg(R,Mstar,q,R0,Hg0);
-    return Rhog(R,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight)*cg*cg;
+    double cg = Cg(R,Mstar,q,R0,hg0);
+    return Rhog(R,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight)*cg*cg;
 }
 
 double DustFrac(const double& dustfrac0, const double& dustfracmax, const double& R, const double& Rbump,
@@ -96,16 +96,16 @@ double DustFrac(const double& dustfrac0, const double& dustfracmax, const double
 }
 
 double NuMolGas(const double& rhog, const double& cg)
-{   return 5.*M_SQRT_PI*Mgasmean*cg/(64.*Sigmamol*rhog);   }
+{   return 5.*M_SQRT_PI*mgasmean*cg/(64.*sigmamol*rhog);   }
 
 double NuTurbGas(const double& R, const double& Mstar, const double& alpha, const double& cg)
-{   return alpha*cg*cg/OmegaK(R,Mstar);   }
+{   return alpha*cg*cg/Omegak(R,Mstar);   }
 
 double NuTurbGas(const double& R, const double& Mstar, const double& q, const double& R0,//->
-                 const double& Hg0, const double& alpha)
+                 const double& hg0, const double& alpha)
 {
-    double cg = Cg(R,Mstar,q,R0,Hg0);
-    return alpha*cg*cg/OmegaK(R,Mstar);
+    double cg = Cg(R,Mstar,q,R0,hg0);
+    return alpha*cg*cg/Omegak(R,Mstar);
 }
 
 double Lambda(const double& rhog, const double& cg)

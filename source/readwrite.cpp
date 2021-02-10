@@ -16,12 +16,12 @@ using namespace std;
 
 void CheckData(const int& massorsize, const double& tend, const int& stepmethod, const double& step, const int& profile,// ->
                const double& Mstar, const double& Mdisk, const double& Rin, const double& Rout, const double& R0,// ->
-               const double& dustfrac0, const double& H0R0, const double& p, const double& q, const double& alpha, // ->
-               const int& iporosity, const double& sizeini, const double& phiini, const double& a0, const double& rhos,// ->
+               const double& dustfrac0, const double& h0R0, const double& p, const double& q, const double& alpha, // ->
+               const int& iporosity, const double& sizeini, const double& filfacini, const double& a0, const double& rhos,// ->
                const double& youngmod0, const double& esurf, const double& Yd0, const double& Ydpower, const int& idrift,// ->
                const int& ibounce, const int& idisrupt, const int& ifrag, const int& ibr, const int& ibump,// ->
-               const double& gammaft, const double& vfragi, const int& constvfrag, const double& philim,// ->
-               const double& philimbounce, const double& limsize, const double& Rbump, const double& dustfracmax,// ->
+               const double& gammaft, const double& vfragi, const int& constvfrag, const double& filfaclim,// ->
+               const double& filfacbnc, const double& limsize, const double& Rbump, const double& dustfracmax,// ->
                const double& bumpwidth, const double& bumpheight, const int& ngrains, const vector <double>& Rini)
 {
     bool error = false;
@@ -58,7 +58,7 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
         else                                    Error(error, "dustfrac0 <= 0");
     }
 
-    if (H0R0 <= 0)                              Error(error, "H0R0 <= 0");
+    if (h0R0 <= 0)                              Error(error, "H0R0 <= 0");
 
     if (alpha <= 0)                             Error(error, "alpha <= 0");
 
@@ -70,10 +70,10 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 
     if (sizeini <= 0)                           Error(error, "sizeini <= 0");
 
-    if (phiini <= 0 || phiini > 1)
+    if (filfacini <= 0 || filfacini > 1)
     {
-        if(phiini > 1)                          Error(error, "phiini > 1");
-        else                                    Error(error, "phiini <= 0");
+        if(filfacini > 1)                       Error(error, "filfacini > 1");
+        else                                    Error(error, "filfacini <= 0");
     }
 
     if (a0 <= 0 || a0 > sizeini)
@@ -112,16 +112,16 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 
     if (constvfrag != 0 && constvfrag != 1)     Error(error, "constvfrag != 0 & != 1");
 
-    if (philim < 0 || philim > 1)
+    if (filfaclim < 0 || filfaclim > 1)
     {
-        if(philim > 1)                          Error(error, "philim > 1");
-        else                                    Error(error, "philim < 0");
+        if(filfaclim > 1)                       Error(error, "filfaclim > 1");
+        else                                    Error(error, "filfaclim < 0");
     }
 
-    if (philimbounce < 0 || philimbounce > 1)
+    if (filfacbnc < 0 || filfacbnc > 1)
     {
-        if(philimbounce > 1)                    Error(error, "philimbounce > 1");
-        else                                    Error(error, "philimbounce < 0");
+        if(filfacbnc > 1)                       Error(error, "filfacbnc > 1");
+        else                                    Error(error, "filfacbnc < 0");
     }
 
     if (Rbump < Rin || Rbump > Rout)
@@ -158,10 +158,10 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 
 
 void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, double& Mstar, double& Mdisk,// ->
-              double& Rin, double& Rout, double& R0, double& dustfrac0, double& H0R0, double& p, double& q, double& alpha,// ->
-              int& iporosity, double& sizeini, double& phiini, double& a0, double& rhos, double& youngmod0, double& esurf,// ->
+              double& Rin, double& Rout, double& R0, double& dustfrac0, double& h0R0, double& p, double& q, double& alpha,// ->
+              int& iporosity, double& sizeini, double& filfacini, double& a0, double& rhos, double& youngmod0, double& esurf,// ->
               double& Yd0, double& Ydpower, int& idrift, int& ibounce, int& idisrupt, int& ifrag, int& ibr, int& ibump,// ->
-              double& gammaft, double& vfragi, int& constvfrag, double& philim, double& philimbounce, double& limsize,// ->
+              double& gammaft, double& vfragi, int& constvfrag, double& filfaclim, double& filfacbnc, double& limsize,// ->
               double& Rbump, double& dustfracmax, double& bumpwidth, double& bumpheight, int& ngrains, vector <double>& Rini)
 {
     ifstream Reader("input.in");
@@ -183,7 +183,7 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader,5);     Reader >> Rout;
     ReadVoid(Reader,5);     Reader >> R0;
     ReadVoid(Reader,5);     Reader >> dustfrac0;
-    ReadVoid(Reader,8);     Reader >> H0R0;
+    ReadVoid(Reader,8);     Reader >> h0R0;
     ReadVoid(Reader,6);     Reader >> p;
     ReadVoid(Reader,3);     Reader >> q;
     ReadVoid(Reader,2);     Reader >> alpha;
@@ -203,14 +203,14 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader,5);     Reader >> gammaft;
     ReadVoid(Reader,9);     Reader >> limsize;
 
-    ReadVoid(Reader,15);    Reader >> phiini;
+    ReadVoid(Reader,15);    Reader >> filfacini;
     ReadVoid(Reader,5);     Reader >> youngmod0;
     ReadVoid(Reader,11);    Reader >> esurf;
     ReadVoid(Reader,13);    Reader >> Yd0;
     ReadVoid(Reader,9);     Reader >> Ydpower;
     ReadVoid(Reader,10);    Reader >> constvfrag;
-    ReadVoid(Reader,7);     Reader >> philim;
-    ReadVoid(Reader,8);     Reader >> philimbounce;
+    ReadVoid(Reader,7);     Reader >> filfaclim;
+    ReadVoid(Reader,8);     Reader >> filfacbnc;
 
     ReadVoid(Reader,14);    Reader >> Rbump;
     ReadVoid(Reader,6);     Reader >> dustfracmax;
@@ -228,9 +228,9 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
         ReadVoid(Reader,2); Reader >> Rini[i];
     }
 
-    CheckData(massorsize,tend,stepmethod,step,profile,Mstar,Mdisk,Rin,Rout,R0,dustfrac0,H0R0,p,q,alpha,iporosity,sizeini,
-              phiini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,gammaft,vfragi,constvfrag,
-              philim,philimbounce,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini);
+    CheckData(massorsize,tend,stepmethod,step,profile,Mstar,Mdisk,Rin,Rout,R0,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
+              filfacini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,gammaft,vfragi,constvfrag,
+              filfaclim,filfacbnc,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini);
 
     // Convert values to SI units
     Mstar = MsolToKg(Mstar);
@@ -266,7 +266,7 @@ void WriteInputFile()
     writerinput << "#-Gas disk properties" << endl << endl;
 
     writerinput << "     Mstar = 1.         >Star mass (Msol)" << endl;
-    writerinput << "     Mdisk = 0.01       >Disk mass (Mstar)" << endl;
+    writerinput << "     Mdisk = 0.02       >Disk mass (Mstar)" << endl;
     writerinput << "      Rin  = 3.         >Inner radius (AU)" << endl;
     writerinput << "      Rout = 300.       >Outer radius (AU)" << endl;
     writerinput << "      Rref = 100.       >Reference radius (AU)" << endl;
@@ -295,14 +295,14 @@ void WriteInputFile()
     writerinput << "   maxsize = 1.0e3      >Maximum size to stop the simulation" << endl << endl;
 
     writerinput << "#-Porosity properties, Available if iporosity = 1" << endl << endl;
-    writerinput << "    phiini = 1          >Initial filling factor" << endl;
+    writerinput << " filfacini = 1          >Initial filling factor" << endl;
     writerinput << " Youngmod0 = 9.4e9      >Young Modulus for ice [Yamamoto et al. 2014] (Pa)" << endl;
     writerinput << "     Esurf = 7.3e-2     >Surface energy for ice grains J/m² [Yamamoto et al. 2014] (J/m²)" << endl;
     writerinput << "       Yd0 = 9.8e6      >Dynamic compression resistance constant for ice (Pa)" << endl;
     writerinput << "   Ydpower = 4          >Dynamic compression resistance power for ice [Mellor, 1975]" << endl;
     writerinput << "constvfrag = 1          >Constant fragmentation threshold (0=no, 1=yes)" << endl;
-    writerinput << "    philim = 0.01       >Filling factor dynamic compression resistance limit" << endl;
-    writerinput << "   philimb = 0.3        >Filling factor bounce limit" << endl << endl;
+    writerinput << " filfaclim = 0.01       >Filling factor dynamic compression resistance limit" << endl;
+    writerinput << " filfacbnc = 0.3        >Filling factor bounce limit" << endl << endl;
 
     writerinput << "#-Pressure bump option, Available if ibump = 1" << endl << endl;
     writerinput << "      Rbump = 6.5       >Pressure bump radius (AU)" << endl;
@@ -332,20 +332,20 @@ writerinput.close();
 void WriteProfileFile(ofstream& outputprofile, const double& Rprofile, const double& hg, const double& cg, const double& sigma,
                       const double& rhog, const double& dustfrac, const double& Pg, const double& T)
 {
-    WriteValue(outputprofile,10,6,Rprofile);
+    WriteValue(outputprofile,6,6,Rprofile);
     WriteValue(outputprofile,10,6,hg);
     WriteValue(outputprofile,10,6,cg);
     WriteValue(outputprofile,10,6,sigma);
-    WriteValue(outputprofile,10,6,rhog);
+    WriteValue(outputprofile,12,6,rhog);
     WriteValue(outputprofile,10,6,dustfrac);
-    WriteValue(outputprofile,10,6,Pg);
+    WriteValue(outputprofile,12,6,Pg);
     WriteValue(outputprofile,10,6,T);
     outputprofile << endl;
 }
 
-void WriteProfileColumns()
+void WriteProfileHeader()
 {
-    ofstream writecol("diskprofilescolumns.txt");
+    ofstream writecol("disk_profiles_header.txt");
     writecol << "R" << endl
              << "Hg" << endl
              << "cg" << endl
@@ -356,36 +356,36 @@ void WriteProfileColumns()
              << "T" << endl;
 }
 
-void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, const double& massf, const double& phif,// ->
+void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, const double& massf, const double& filfacf,// ->
                      const double& sizef, const double& St, const double& cg, const double& sigma,// ->
                      const double& rhog, const double& dustfrac, const double& vrel, const double& omegak,// ->
                      const double& drdt, const double& dvardt, const int& iregime)
 {
-    WriteValue(outputfile,10,6,t);
+    WriteValue(outputfile,11,6,t);
     WriteValue(outputfile,10,6,Rf);
-    WriteValue(outputfile,10,6,massf);
-    WriteValue(outputfile,10,6,phif);
-    WriteValue(outputfile,10,6,sizef);
-    WriteValue(outputfile,10,6,St);
+    WriteValue(outputfile,12,6,massf);
+    WriteValue(outputfile,12,6,filfacf);
+    WriteValue(outputfile,12,6,sizef);
+    WriteValue(outputfile,12,6,St);
     WriteValue(outputfile,10,6,cg);
     WriteValue(outputfile,10,6,sigma);
-    WriteValue(outputfile,10,6,rhog);
+    WriteValue(outputfile,12,6,rhog);
     WriteValue(outputfile,10,6,dustfrac);
-    WriteValue(outputfile,10,6,vrel);
-    WriteValue(outputfile,10,6,omegak);
-    WriteValue(outputfile,10,6,drdt);
-    WriteValue(outputfile,10,6,dvardt);
-    WriteValue(outputfile,1,1,iregime);
+    WriteValue(outputfile,12,6,vrel);
+    WriteValue(outputfile,12,6,omegak);
+    WriteValue(outputfile,13,6,drdt);
+    WriteValue(outputfile,12,6,dvardt);
+    WriteValue(outputfile,2,1,iregime);
     outputfile << endl;
 }
 
-void WriteOutputColumns(const double& massorsize)
+void WriteOutputHeader(const double& massorsize)
 {
-    ofstream writecol("outputcolumns.txt");
+    ofstream writecol("output_header.txt");
     writecol << "t" << endl
              << "R" << endl
              << "mass" << endl
-             << "phi" << endl
+             << "filfac" << endl
              << "size" << endl
              << "St" << endl
              << "cg" << endl
@@ -401,13 +401,13 @@ void WriteOutputColumns(const double& massorsize)
     else
     {   writecol << "dsdt" << endl;  }
 
-    writecol << "regime" << endl;
+    writecol << "drag_regime" << endl;
 }
 
 void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const double& Mstar,// ->
                    const double& Mdisk, const double& Rin, const double& Rout, const double& R0, const double& Rbump,// ->
-                   const double& dustfrac0, const double& H0R0, const double& p, const double& q, const double& alpha,// ->
-                   const int& iporosity, const double& sizeini, const double& phiini, const double& a0, const double& rhos,// ->
+                   const double& dustfrac0, const double& h0R0, const double& p, const double& q, const double& alpha,// ->
+                   const int& iporosity, const double& sizeini, const double& filfacini, const double& a0, const double& rhos,// ->
                    const int& idrift, const int& ibounce, const int& ifrag, const int& ibr, const int& ibump,// ->
                    const int& idisrupt, const double& vfragi, const int& ngrains, const double& sigma0, 
                    const double& rhog0, const double& cg0, const double& runningtime)
@@ -415,7 +415,7 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     ofstream writerdoc;
     string dash;
 
-	writerdoc.open("Initials_Conditions_" + to_string_with_precision(R0,10) + "AU.txt");
+	writerdoc.open("Initials_Conditions_" + ToStringWithPrecision(R0,10) + "AU.txt");
 
 	writerdoc << endl<< "     Running Time : " << runningtime << " s" << endl << endl;
 
@@ -428,7 +428,7 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
 	writerdoc << "! ---------- Initials Conditions at " << R0 << " AU ---------- !" << endl;
     writerdoc << "------------------------------------------------------" << dash << endl << endl;
 	writerdoc << "    Gas surface density: " << sigma0 << " kg/m²" << endl;
-	writerdoc << "           Scale height: " << H0R0*R0 << " AU" << endl;
+	writerdoc << "           Scale height: " << h0R0*R0 << " AU" << endl;
 	writerdoc << "        Gas sound speed: " << cg0 << " m/s" << endl;
 	writerdoc << "            Gas density: " << rhog0 << " kg/m³" << endl;
 	writerdoc << "        Gas temperature: " << T(R0,q,R0,cg0) << " K" << endl;
@@ -475,7 +475,7 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     writerdoc << "           Inner radius: " << Rin << " AU" << endl;
     writerdoc << "           Outer radius: " << Rout << " AU" << endl;
     writerdoc << "       Reference radius: " << R0 << " AU" << endl;
-    writerdoc << "H/R at reference radius: " << H0R0 << endl;
+    writerdoc << "H/R at reference radius: " << h0R0 << endl;
     writerdoc << "  Dust/gas ratio (Rref): " << dustfrac0 << endl;
     writerdoc << "                p index: " << p << endl;
     writerdoc << "                q index: " << q << endl;
@@ -504,7 +504,7 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     else                 writerdoc << "porous" << endl;
 
     writerdoc << "     Initial grain size: " << sizeini << " m" << endl;
-    if (iporosity == 0) writerdoc << " Initial filling factor: " << phiini << endl;
+    if (iporosity == 0) writerdoc << " Initial filling factor: " << filfacini << endl;
     writerdoc << "           Monomer size: " << a0 << " m" << endl;
     writerdoc << " Dust intrinsic density: " << rhos << " kg/m³" << endl;
     if (ifrag !=0)      writerdoc << "Fragmentation threshold: " << vfragi << " m/s" << endl;
@@ -559,7 +559,7 @@ void Error(bool& error, const string& variable)
     error = true;
 }
 
-string to_string_with_precision(const double& value, const int& precision)
+string ToStringWithPrecision(const double& value, const int& precision)
 {
     ostringstream out;
     out << setprecision(precision) << value;
@@ -577,7 +577,7 @@ string FileName(const int& massorsize, const double& Rini, const int& iporosity)
     if (massorsize == 0) ms = "M_";
     else                 ms = "S_";
 
-    return "output" + porosity + ms + to_string_with_precision(Rini,10).c_str() + ".out";
+    return "output" + porosity + ms + ToStringWithPrecision(Rini,10).c_str() + ".out";
 }
 
 void WriteValue(ostream& writer, const int& width, const double& precision, const double& value)

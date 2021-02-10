@@ -9,7 +9,7 @@ using namespace std;
 
 /* ------------------------  TIME STEP ------------------------ */
 
-double KepletDt(double& omegakfraction, const double omegak)
+double KeplerDt(double& omegakfraction, const double omegak)
 {
     return SecToYear(omegakfraction*2.*M_PI/omegak);
 }
@@ -20,17 +20,17 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
     double dt = 1.;
     double limup = 0.15;
     double limdown = 0.075;
-    double Ccdt;
+    double CFLcdt;
     double C1 = abs(vargrowth/dvargrowthdt);
     double C2 = abs(R/dRdt);
 
     if (C1 != 0 && C2 != 0)
     {
-        if (C1 < C2)        Ccdt = C1;
-        else                Ccdt = C2;
+        if (C1 < C2)        CFLcdt = C1;
+        else                CFLcdt = C2;
     }
-    else if (C1 != 0 && C2 == 0)       Ccdt = C1;
-    else if (C1 == 0 && C2 != 0)       Ccdt = C2;
+    else if (C1 != 0 && C2 == 0)       CFLcdt = C1;
+    else if (C1 == 0 && C2 != 0)       CFLcdt = C2;
     else
     {
         cout << "Error, time step iteration impossible" << endl;
@@ -43,9 +43,9 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
     if (massorsize == 1)
     {   limup /= 3.;   limdown /= 3.;   }
 
-    Ccdt = SecToYear(Ccdt);
-    limup *= Ccdt;
-    limdown *= Ccdt;
+    CFLcdt = SecToYear(CFLcdt);
+    limup *= CFLcdt;
+    limdown *= CFLcdt;
     do
     {
         if (dt > limup)     dt /= 2.;
@@ -63,22 +63,22 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
 /* ------------------------  VELOCITIES ------------------------*/
 
 double VDrift(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
-              const double& sigma0, const double& Hg0, const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight) 
+              const double& sigma0, const double& hg0, const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight) 
 {
-    double vdrift = Pg(R+DeltaR,Mstar,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
-    vdrift -= Pg(R-DeltaR,Mstar,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
-    vdrift /= 2.*AUtoMeter(DeltaR);
+    double vdrift = Pg(R+deltaR,Mstar,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight);
+    vdrift -= Pg(R-deltaR,Mstar,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight);
+    vdrift /= 2.*AUtoMeter(deltaR);
     
     return vdrift*cg*cg*AUtoMeter(R)/Pg(rhog,cg)/Vk(R,Mstar);
 }
 
 double VVisc(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
-              const double& sigma0, const double& Hg0, const double& alpha, const int& ibump, const double& Rbump,// ->
+              const double& sigma0, const double& hg0, const double& alpha, const int& ibump, const double& Rbump,// ->
               const double& bumpwidth, const double& bumpheight) 
 {
-    double vvisc = NuTurbGas(R+DeltaR,Mstar,q,R0,Hg0,alpha)*AUtoMeter(R+DeltaR)*Rhog(R+DeltaR,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R+DeltaR,Mstar);
-    vvisc -= NuTurbGas(R-DeltaR,Mstar,q,R0,Hg0,alpha)*AUtoMeter(R-DeltaR)*Rhog(R-DeltaR,p,q,sigma0,R0,Hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R-DeltaR,Mstar);
-    vvisc /= 2.*AUtoMeter(DeltaR);
+    double vvisc = NuTurbGas(R+deltaR,Mstar,q,R0,hg0,alpha)*AUtoMeter(R+deltaR)*Rhog(R+deltaR,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R+deltaR,Mstar);
+    vvisc -= NuTurbGas(R-deltaR,Mstar,q,R0,hg0,alpha)*AUtoMeter(R-deltaR)*Rhog(R-deltaR,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R-deltaR,Mstar);
+    vvisc /= 2.*AUtoMeter(deltaR);
 
     return vvisc*3./(rhog*AUtoMeter(R)*Vk(R,Mstar));
 }
@@ -87,13 +87,12 @@ double VVisc(const double& R, const double& Mstar, double p, double q, const dou
 /* ------------------------ RADIAL DRIFT ------------------------*/
 
 double DRDt(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
-            const double& sigma0, const double& Hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
+            const double& sigma0, const double& hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
             const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
-
-    double vdrift = VDrift(R,Mstar,p,q,rhog,cg,R0,sigma0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
-    double vvisc = VVisc(R,Mstar,p,q,rhog,cg,R0,sigma0,Hg0,alpha,ibump,Rbump,bumpwidth,bumpheight);
     double dfbr = 1.;
+    double vdrift = VDrift(R,Mstar,p,q,rhog,cg,R0,sigma0,hg0,ibump,Rbump,bumpwidth,bumpheight);
+    double vvisc = VVisc(R,Mstar,p,q,rhog,cg,R0,sigma0,hg0,alpha,ibump,Rbump,bumpwidth,bumpheight);
 
     if (ibr == 1)   dfbr = 1.+dustfrac;
 
@@ -107,14 +106,16 @@ double DRDt(const double& R, const double& Mstar, double p, double q, const doub
 /* ------------------------ DELTAV DUST-GAS ------------------------*/
 
 double DeltaV(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
-              const double& sigma0, const double& Hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
+              const double& sigma0, const double& hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
               const int& ibump, const int& idrift, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
     double dfbr = 1.;
-    double vdrift = VDrift(R,Mstar,p,q,rhog,cg,R0,sigma0,Hg0,ibump,Rbump,bumpwidth,bumpheight);
-    double vvisc = VVisc(R,Mstar,p,q,rhog,cg,R0,sigma0,Hg0,alpha,ibump,Rbump,bumpwidth,bumpheight);
-    double deltavradial = 0;
+    double vdrift = VDrift(R,Mstar,p,q,rhog,cg,R0,sigma0,hg0,ibump,Rbump,bumpwidth,bumpheight);
+    double vvisc = VVisc(R,Mstar,p,q,rhog,cg,R0,sigma0,hg0,alpha,ibump,Rbump,bumpwidth,bumpheight);
+
+    double deltavradial = 0.;
     double deltavorbital = st/(dfbr*dfbr+st*st)*vdrift + dfbr/(dfbr*dfbr+st*st)*vvisc;
+
     deltavorbital *= -0.5*st;
 
     if (ibr == 1)   dfbr = 1.+dustfrac;
@@ -193,10 +194,10 @@ double DmDt(const double& size, const double& rhog, const double& dustfrac, cons
 
 /* ------------------------  GROWTH-FRAG-BOUNCE ds/dt ------------------------ */
 
-double DsDt(const double& phi, const double& rhog, const double& rhos, const double& dustfrac,// ->
-            const double& vrel, const int& ifrag, const double& vfrag, const double& phipow)
+double DsDt(const double& filfac, const double& rhog, const double& rhos, const double& dustfrac,// ->
+            const double& vrel, const int& ifrag, const double& vfrag, const double& filfacpow)
 {
-    double dsdt = dustfrac*rhog*vrel/(phi*rhos*(1.+phipow/3.));
+    double dsdt = dustfrac*rhog*vrel/(filfac*rhos*(1.+filfacpow/3.));
 
     if (vrel >= vfrag && ifrag > 0) switch (ifrag)
     {
@@ -223,10 +224,10 @@ double Tdrift(const double& R, const double& drdt)
 double Tgrowth(const double& var, const double& dvardt)
 {   return abs(var/dvardt);  }
 
-double Tcoll(const double& size, const double& rhog, const double& phi, const double& rhos,// ->
+double Tcoll(const double& size, const double& rhog, const double& filfac, const double& rhos,// ->
              const double& dustfrac, const double& vrel)
 {
-    return rhos*phi*size/(3.*dustfrac*rhog*vrel);
+    return rhos*filfac*size/(3.*dustfrac*rhog*vrel);
 }
 
 double Ncoll(const double& dt, const double& tcoll)
