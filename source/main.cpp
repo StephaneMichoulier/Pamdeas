@@ -69,8 +69,8 @@ int main()
     int    stepmethod;      // Choose a time-stepping method
     double step;            // time step related to stepmethod
     int    profile;         // Compute disk profiles
-    double Mstar;           // Star mass
-    double Mdisk;           // Disk mass
+    double mstar;           // Star mass
+    double mdisk;           // Disk mass
     double Rin;             // Inner radius
     double Rout;            // Outer radius
     double R0;              // Reference radius
@@ -158,7 +158,7 @@ int main()
 
     /*------------------------ READ INPUT FILE ------------------------*/
 
-    ReadFile(massorsize,tend,stepmethod,step,profile,Mstar,Mdisk,Rin,Rout,R0,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
+    ReadFile(massorsize,tend,stepmethod,step,profile,mstar,mdisk,Rin,Rout,R0,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
              filfacini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,gammaft,vfragi,constvfrag,
              filfaclim,filfacbnc,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini);
 
@@ -168,8 +168,8 @@ int main()
 
 
     h0 = h0R0*R0;
-    sigma0 = Sigma0(Rin,Rout,R0,Mdisk,p,ibump,Rbump,bumpwidth,bumpheight);
-    cg0 = Cg(R0,Mstar,h0);
+    sigma0 = Sigma0(Rin,Rout,R0,mdisk,p,ibump,Rbump,bumpwidth,bumpheight);
+    cg0 = Cg(R0,mstar,h0);
     rhog0 = Rhog(sigma0,h0);
     eroll = Eroll(a0,esurf,youngmod0);
 
@@ -182,7 +182,7 @@ int main()
         Rprofile = Rin;
         for (Rprofile = Rin; Rprofile <= Rout; Rprofile += 0.01)
         {   hg = Hg(Rprofile,q,R0,h0);
-            cg = Cg(Rprofile,Mstar,hg);
+            cg = Cg(Rprofile,mstar,hg);
             sigma = Sigma(Rprofile,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
             dustfrac = DustFrac(dustfrac0,dustfracmax,Rprofile,Rbump,bumpwidth,ibump);
             rhog = Rhog(sigma,hg);
@@ -217,14 +217,14 @@ int main()
         hg = Hg(Rf,q,R0,h0);
         sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
         dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
-        cg = Cg(Rf,Mstar,hg);
+        cg = Cg(Rf,mstar,hg);
         rhog = Rhog(sigma,hg);
-        st = St(Ri,Mstar,rhog,cg,sizef,filfacini,rhos,0.,ireg); //we assume deltav very small for small grain strongly coupled with gas
-        deltav = DeltaV(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
+        st = St(Ri,mstar,rhog,cg,sizef,filfacini,rhos,0.,ireg); //we assume deltav very small for small grain strongly coupled with gas
+        deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
         vrel = Vrel(cg,st,alpha);
 
         // Write in output file quantities at t=0
-        WriteOutputFile(writer,t,Ri,massi,filfaci,sizei,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Ri,Mstar),0.,0.,ireg);
+        WriteOutputFile(writer,t,Ri,massi,filfaci,sizei,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Ri,mstar),0.,0.,ireg);
 
         // This is where the loop begin
         switch (massorsize)
@@ -245,7 +245,7 @@ int main()
 
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
-                    {   drdt = DRDt(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,Rbump,bumpwidth,bumpheight); }
+                    {   drdt = DRDt(Rf,mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,Rbump,bumpwidth,bumpheight); }
 
                     // Compute dm/dt
                     dmdt = DmDt(sizef,rhog,dustfrac,vrel,ifrag,ibounce,vfrag,vstick,probabounce);
@@ -255,7 +255,7 @@ int main()
                     {   case (0):   break;
                         case (1):
                         {
-                            dt = KeplerDt(step,Omegak(Rf,Mstar));
+                            dt = KeplerDt(step,Omegak(Rf,mstar));
                             break;
                         }
                         case (2):
@@ -283,7 +283,7 @@ int main()
                         if (ibounce == 1)   ncoll = Ncoll(dt,Tcoll(sizef,rhog,filfacf,rhos,dustfrac,vrel));
 
                         // Compute the new filling factor after dt
-                        filfacf = FilFacMFinal(Ri,Mstar,rhog,cg,deltav,st,massf,massi,filfaci,a0,rhos,eroll,alpha,ncoll,ifrag,
+                        filfacf = FilFacMFinal(Ri,mstar,rhog,cg,deltav,st,massf,massi,filfaci,a0,rhos,eroll,alpha,ncoll,ifrag,
                                          ibounce,vfrag,vrel,vstick,probabounce,filfaclim,Yd0,Ydpower,ireg);
                     }
 
@@ -297,14 +297,14 @@ int main()
                     hg = Hg(Rf,q,R0,h0);
                     sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
                     dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
-                    cg = Cg(Rf,Mstar,hg);
+                    cg = Cg(Rf,mstar,hg);
                     rhog = Rhog(sigma,hg);
-                    st = St(Rf,Mstar,rhog,cg,sizef,filfacf,rhos,deltav,ireg);
-                    deltav = DeltaV(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
+                    st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,ireg);
+                    deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     vrel = Vrel(cg,st,alpha);
 
                     // Write in output file quantities at time t
-                    WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,Mstar),drdt,dmdt,ireg);
+                    WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dmdt,ireg);
 
                     // Disruption by spinning motion
                     if (idisrupt == true)
@@ -324,7 +324,7 @@ int main()
 
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
-                    {   drdt = DRDt(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,Rbump,bumpwidth,bumpheight);  }
+                    {   drdt = DRDt(Rf,mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,Rbump,bumpwidth,bumpheight);  }
 
                     // Compute ds/dt
                     dsdt = DsDt(filfacf,rhog,rhos,dustfrac,vrel,ifrag,vfrag,filfacpow);
@@ -334,7 +334,7 @@ int main()
                     {   case (0):   break;
                         case (1):
                         {
-                            dt = KeplerDt(step,Omegak(Rf,Mstar));
+                            dt = KeplerDt(step,Omegak(Rf,mstar));
                             break;
                         }
                         case (2):
@@ -358,7 +358,7 @@ int main()
                     if (iporosity == 1)
                     {
                         // Compute the new filling factor after dt
-                        filfacf = FilFacSFinal(Ri,Mstar,rhog,cg,deltav,st,sizef,sizei,filfaci,a0,rhos,eroll,alpha,
+                        filfacf = FilFacSFinal(Ri,mstar,rhog,cg,deltav,st,sizef,sizei,filfaci,a0,rhos,eroll,alpha,
                                          ifrag,vfrag,vrel,ireg,filfacpow);
                     }
 
@@ -371,14 +371,14 @@ int main()
                     hg = Hg(Rf,q,R0,h0);
                     sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
                     dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
-                    cg = Cg(Rf,Mstar,hg);
+                    cg = Cg(Rf,mstar,hg);
                     rhog = Rhog(sigma,hg);
-                    st = St(Rf,Mstar,rhog,cg,sizef,filfacf,rhos,deltav,ireg);
-                    deltav = DeltaV(Rf,Mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
+                    st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,ireg);
+                    deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     vrel = Vrel(cg,st,alpha);
 
                     // Write in output file quantities at time t
-                    WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,Mstar),drdt,dsdt,ireg);
+                    WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dsdt,ireg);
 
                     // Disruption by spinning motion
                     if (idisrupt == true)
@@ -402,7 +402,7 @@ int main()
     Runningtime((t2-t1)/(1.*CLOCKS_PER_SEC));
 
     // Write initials conditions
-    WriteInitFile(massorsize,tend,stepmethod,step,Mstar,Mdisk,Rin,Rout,R0,Rbump,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
+    WriteInitFile(massorsize,tend,stepmethod,step,mstar,mdisk,Rin,Rout,R0,Rbump,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
                   filfacini,a0,rhos,idrift,ibounce,idisrupt,ifrag,ibr,ibump,vfragi,ngrains,sigma0,rhog0,cg0,
                   (t2-t1)/(1.*CLOCKS_PER_SEC));
     WriteOutputHeader(massorsize);

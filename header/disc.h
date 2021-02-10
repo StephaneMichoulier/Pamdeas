@@ -9,7 +9,7 @@ using namespace std;
 /* ------------------------- DISK QUANTITIES ------------------------- */
 
 // Gas surface density at reference radius R0, Mdisk in Msol, Sigma [kg/m²]
-double Sigma0(const double& Rin, const double& Rout, const double& R0, const double& Mdisk, const double& p,
+double Sigma0(const double& Rin, const double& Rout, const double& R0, const double& mdisk, const double& p,
               const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight);
 
 // Gas surface density [kg/m³]

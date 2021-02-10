@@ -27,7 +27,7 @@ double GrainVolumeSize(const double& size, const double& filfac, const double& r
 /* ------------------------- AERODYNAMICAL PARAMETERS ------------------------- */
 
 // Compute the stokes number, return also in which regime you are: Ep-St<1 = 1, St-St<1 = 2, Ep-St>1 = 3, St-St>1 = 4
-double St(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& size,// ->
+double St(const double& R, const double& mstar, const double& rhog, const double& cg, const double& size,// ->
           const double& filfac, const double& rhos, const double& deltav, int& iregime);
 
 

@@ -15,7 +15,7 @@ using namespace std;
 /* ------------------------ READING ------------------------*/
 
 void CheckData(const int& massorsize, const double& tend, const int& stepmethod, const double& step, const int& profile,// ->
-               const double& Mstar, const double& Mdisk, const double& Rin, const double& Rout, const double& R0,// ->
+               const double& mstar, const double& mdisk, const double& Rin, const double& Rout, const double& R0,// ->
                const double& dustfrac0, const double& h0R0, const double& p, const double& q, const double& alpha, // ->
                const int& iporosity, const double& sizeini, const double& filfacini, const double& a0, const double& rhos,// ->
                const double& youngmod0, const double& esurf, const double& Yd0, const double& Ydpower, const int& idrift,// ->
@@ -40,9 +40,9 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 
     if (profile != 0 && profile != 1)           Error(error, "profile != 0 & != 1");
 
-    if (Mstar <= 0)                             Error(error, "Mstar <= 0");
+    if (mstar <= 0)                             Error(error, "mstar <= 0");
 
-    if (Mdisk <= 0)                             Error(error, "Mdisk <= 0");
+    if (mdisk <= 0)                             Error(error, "mdisk <= 0");
 
     if (Rin <= 0)                               Error(error, "Rin <= 0");
 
@@ -157,7 +157,7 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 }
 
 
-void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, double& Mstar, double& Mdisk,// ->
+void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, double& mstar, double& mdisk,// ->
               double& Rin, double& Rout, double& R0, double& dustfrac0, double& h0R0, double& p, double& q, double& alpha,// ->
               int& iporosity, double& sizeini, double& filfacini, double& a0, double& rhos, double& youngmod0, double& esurf,// ->
               double& Yd0, double& Ydpower, int& idrift, int& ibounce, int& idisrupt, int& ifrag, int& ibr, int& ibump,// ->
@@ -177,8 +177,8 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader,5);     Reader >> stepmethod;
     ReadVoid(Reader,9);     Reader >> step;
     ReadVoid(Reader,17);    Reader >> profile;
-    ReadVoid(Reader,7);     Reader >> Mstar;
-    ReadVoid(Reader,5);     Reader >> Mdisk;
+    ReadVoid(Reader,7);     Reader >> mstar;
+    ReadVoid(Reader,5);     Reader >> mdisk;
     ReadVoid(Reader,5);     Reader >> Rin;
     ReadVoid(Reader,5);     Reader >> Rout;
     ReadVoid(Reader,5);     Reader >> R0;
@@ -228,13 +228,13 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
         ReadVoid(Reader,2); Reader >> Rini[i];
     }
 
-    CheckData(massorsize,tend,stepmethod,step,profile,Mstar,Mdisk,Rin,Rout,R0,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
+    CheckData(massorsize,tend,stepmethod,step,profile,mstar,mdisk,Rin,Rout,R0,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
               filfacini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,gammaft,vfragi,constvfrag,
               filfaclim,filfacbnc,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini);
 
     // Convert values to SI units
-    Mstar = MsolToKg(Mstar);
-    Mdisk *= Mstar;
+    mstar = MsolToKg(mstar);
+    mdisk *= mstar;
 
     if (stepmethod == 2)    step = 1.;
 
@@ -265,8 +265,8 @@ void WriteInputFile()
 
     writerinput << "#-Gas disk properties" << endl << endl;
 
-    writerinput << "     Mstar = 1.         >Star mass (Msol)" << endl;
-    writerinput << "     Mdisk = 0.02       >Disk mass (Mstar)" << endl;
+    writerinput << "     mstar = 1.         >Star mass (Msol)" << endl;
+    writerinput << "     mdisk = 0.02       >Disk mass (mstar)" << endl;
     writerinput << "      Rin  = 3.         >Inner radius (AU)" << endl;
     writerinput << "      Rout = 300.       >Outer radius (AU)" << endl;
     writerinput << "      Rref = 100.       >Reference radius (AU)" << endl;
@@ -404,8 +404,8 @@ void WriteOutputHeader(const double& massorsize)
     writecol << "drag_regime" << endl;
 }
 
-void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const double& Mstar,// ->
-                   const double& Mdisk, const double& Rin, const double& Rout, const double& R0, const double& Rbump,// ->
+void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const double& mstar,// ->
+                   const double& mdisk, const double& Rin, const double& Rout, const double& R0, const double& Rbump,// ->
                    const double& dustfrac0, const double& h0R0, const double& p, const double& q, const double& alpha,// ->
                    const int& iporosity, const double& sizeini, const double& filfacini, const double& a0, const double& rhos,// ->
                    const int& idrift, const int& ibounce, const int& ifrag, const int& ibr, const int& ibump,// ->
@@ -470,8 +470,8 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     }
 
     writerdoc << "   -------- Gas disk properties --------" << endl<< endl;
-    writerdoc << "              Star mass: " << KgToMsol(Mstar) << " Msol" << endl;
-    writerdoc << "              Disk mass: " << KgToMsol(Mdisk) << " Msol" << endl;
+    writerdoc << "              Star mass: " << KgToMsol(mstar) << " Msol" << endl;
+    writerdoc << "              Disk mass: " << KgToMsol(mdisk) << " Msol" << endl;
     writerdoc << "           Inner radius: " << Rin << " AU" << endl;
     writerdoc << "           Outer radius: " << Rout << " AU" << endl;
     writerdoc << "       Reference radius: " << R0 << " AU" << endl;

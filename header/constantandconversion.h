@@ -5,6 +5,7 @@
 
 using namespace std;
 
+
 #define         au 149597870700.   // Astronomical unit [m]
 #define       msol 1.98847e30      // Solar mass [kg]
 #define          G 6.67430e-11     // Gravitational constant [m³/kg/s²]

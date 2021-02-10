@@ -9,7 +9,7 @@ using namespace std;
 
 /* ------------------------- DISK QUANTITIES ------------------------- */
 
-double Sigma0(const double& Rin, const double& Rout, const double& R0, const double& Mdisk, const double& p,
+double Sigma0(const double& Rin, const double& Rout, const double& R0, const double& mdisk, const double& p,
               const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
     double sigma0;
@@ -28,7 +28,7 @@ double Sigma0(const double& Rin, const double& Rout, const double& R0, const dou
         +AUtoMeter(bumpwidth)*(exp(-bumpin*bumpin)-exp(-bumpout*bumpout)));
     }
 
-    return (Mdisk/2./M_PI)/sigma0;
+    return (mdisk/2./M_PI)/sigma0;
 }
 
 double Sigma(const double& R, const double& p, const double& R0, const double& sigma0,
@@ -45,26 +45,26 @@ double Sigma(const double& R, const double& p, const double& R0, const double& s
 double Hg(const double& R, const double& q, const double& R0, const double& hg0)
 {   return hg0*pow(R/R0,(3.-q)*0.5); }
 
-double Omegak(const double& R, const double& Mstar)
-{   return sqrt(G*Mstar/AUtoMeter(R))/AUtoMeter(R);    }
+double Omegak(const double& R, const double& mstar)
+{   return sqrt(G*mstar/AUtoMeter(R))/AUtoMeter(R);    }
 
-double Vk(const double& R, const double& Mstar)
-{   return Omegak(R,Mstar)*AUtoMeter(R);    }
+double Vk(const double& R, const double& mstar)
+{   return Omegak(R,mstar)*AUtoMeter(R);    }
 
-double Gravity(const double& R, double& Mstar)
-{   return G*Mstar/(AUtoMeter(R)*AUtoMeter(R));    }
+double Gravity(const double& R, double& mstar)
+{   return G*mstar/(AUtoMeter(R)*AUtoMeter(R));    }
 
-double Cg(const double& R, const double& Mstar, const double& hg)
-{   return AUtoMeter(hg)*Omegak(R,Mstar);   }
+double Cg(const double& R, const double& mstar, const double& hg)
+{   return AUtoMeter(hg)*Omegak(R,mstar);   }
 
-double Cg(const double& R, const double& Mstar, const double& q, const double& R0, const double& hg0)
-{   return AUtoMeter(Hg(R,q,R0,hg0))*Omegak(R,Mstar);   }
+double Cg(const double& R, const double& mstar, const double& q, const double& R0, const double& hg0)
+{   return AUtoMeter(Hg(R,q,R0,hg0))*Omegak(R,mstar);   }
 
 double T(const double& R, const double& q, const double& R0, const double& cg)
 {   return cg*cg*mgasmean/kboltzmann;  }
 
-double T(const double& R, const double& Mstar, const double& q, const double& R0, const double& hg0)
-{   return Cg(R,Mstar,q,R0,hg0)*mgasmean/kboltzmann;  }
+double T(const double& R, const double& mstar, const double& q, const double& R0, const double& hg0)
+{   return Cg(R,mstar,q,R0,hg0)*mgasmean/kboltzmann;  }
 
 double Rhog(const double& sigma, const double& hg)
 {   return sigma/(AUtoMeter(hg)*M_SQRT2*M_SQRT_PI);    }
@@ -78,11 +78,11 @@ double Rhog(const double& R, const double& p, const double& q, const double& sig
 double Pg(const double& rhog, const double& cg)
 {   return rhog*cg*cg;    }
 
-double Pg(const double& R, const double& Mstar, const double& p, const double& q,
+double Pg(const double& R, const double& mstar, const double& p, const double& q,
           const double& sigma0, const double& R0, const double& hg0,const int& ibump, const double& Rbump,//->
           const double& bumpwidth, const double& bumpheight)
 {
-    double cg = Cg(R,Mstar,q,R0,hg0);
+    double cg = Cg(R,mstar,q,R0,hg0);
     return Rhog(R,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight)*cg*cg;
 }
 
@@ -98,14 +98,14 @@ double DustFrac(const double& dustfrac0, const double& dustfracmax, const double
 double NuMolGas(const double& rhog, const double& cg)
 {   return 5.*M_SQRT_PI*mgasmean*cg/(64.*sigmamol*rhog);   }
 
-double NuTurbGas(const double& R, const double& Mstar, const double& alpha, const double& cg)
-{   return alpha*cg*cg/Omegak(R,Mstar);   }
+double NuTurbGas(const double& R, const double& mstar, const double& alpha, const double& cg)
+{   return alpha*cg*cg/Omegak(R,mstar);   }
 
-double NuTurbGas(const double& R, const double& Mstar, const double& q, const double& R0,//->
+double NuTurbGas(const double& R, const double& mstar, const double& q, const double& R0,//->
                  const double& hg0, const double& alpha)
 {
-    double cg = Cg(R,Mstar,q,R0,hg0);
-    return alpha*cg*cg/Omegak(R,Mstar);
+    double cg = Cg(R,mstar,q,R0,hg0);
+    return alpha*cg*cg/Omegak(R,mstar);
 }
 
 double Lambda(const double& rhog, const double& cg)

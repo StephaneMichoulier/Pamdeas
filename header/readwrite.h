@@ -13,7 +13,7 @@ using namespace std;
 
 // Check data from the input file
 void CheckData(const int& massorsize, const double& tend, const int& stepmethod, const double& step, const int& profile,// ->
-               const double& Mstar, const double& Mdisk, const double& Rin, const double& Rout, const double& R0,// ->
+               const double& mstar, const double& mdisk, const double& Rin, const double& Rout, const double& R0,// ->
                const double& dustfrac0, const double& H0R0, const double& p, const double& q, const double& alpha, // ->
                const int& iporosity, const double& sizeini, const double& filfacini, const double& a0, const double& rhos,// ->
                const double& youngmod0, const double& esurf, const double& Yd0, const double& Ydpower, const int& idrift,// ->
@@ -23,7 +23,7 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
                const double& bumpwidth, const double& bumpheight, const int& ngrains, const vector <double>& Rini);
 
 // Read the input file
-void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, double& Mstar, double& Mdisk,// ->
+void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, double& mstar, double& mdisk,// ->
               double& Rin, double& Rout, double& R0, double& dustfrac0, double& H0R0, double& p, double& q, double& alpha,// ->
               int& iporosity, double& sizeini, double& filfacini, double& a0, double& rhos, double& youngmod0, double& esurf,// ->
               double& Yd0, double& Ydpower, int& idrift, int& ibounce, int& idisrupt, int& ifrag, int& ibr, int& ibump,// ->
@@ -53,8 +53,8 @@ void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, co
 void WriteOutputHeader(const double& massorsize);
 
 // Write the initials conditions
-void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const double& Mstar,// ->
-                   const double& Mdisk, const double& Rin, const double& Rout, const double& R0, const double& Rbump,// ->
+void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const double& mstar,// ->
+                   const double& mdisk, const double& Rin, const double& Rout, const double& R0, const double& Rbump,// ->
                    const double& dustfrac0, const double& H0R0, const double& p, const double& q, const double& alpha,// ->
                    const int& iporosity, const double& sizeini, const double& filfacini, const double& a0, const double& rhos,// ->
                    const int& idrift, const int& ibounce, const int& ifrag, const int& ibr, const int& ibump,// ->

@@ -31,7 +31,7 @@ double GrainVolumeSize(const double& size, const double& filfac, const double& r
 
 /* ------------------------- AERODYNAMICAL PARAMETERS ------------------------- */
 
-double St(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& size,// ->
+double St(const double& R, const double& mstar, const double& rhog, const double& cg, const double& size,// ->
           const double& filfac, const double& rhos, const double& deltav, int& iregime)
 {
     double st;
@@ -60,14 +60,14 @@ double St(const double& R, const double& Mstar, const double& rhog, const double
             st = rhos*filfac*size/(0.165*rhog*deltav);    //0.165 = 1.32/8
         }
     }
-    return st*Omegak(R,Mstar);
+    return st*Omegak(R,mstar);
 }
 
 
 /* ------------------------ ENERGIES & VELOCITIES ------------------------ */
 
-//double DeltaV2(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st)
-//{   return 0.5*(p+0.5*q+1.5)*cg*cg/Vk(R,Mstar);   }
+//double DeltaV2(const double& R, const double& mstar, const double& p, const double& q, const double& cg, const double& st)
+//{   return 0.5*(p+0.5*q+1.5)*cg*cg/Vk(R,mstar);   }
 
 double Vrel(const double& cg, const double& st, const double& alpha)
 {   return sqrt(2.*M_SQRT2*alpha*rossby*st)*cg/(1.+st); }

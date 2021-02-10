@@ -4,7 +4,7 @@
 
 Author: Stéphane Michoulier
 
-Eden: version 1.11
+Eden: version 1.1
 
 DESCRIPTION:
 

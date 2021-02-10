@@ -62,37 +62,37 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
 
 /* ------------------------  VELOCITIES ------------------------*/
 
-double VDrift(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+double VDrift(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
               const double& sigma0, const double& hg0, const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight) 
 {
-    double vdrift = Pg(R+deltaR,Mstar,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight);
-    vdrift -= Pg(R-deltaR,Mstar,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight);
+    double vdrift = Pg(R+deltaR,mstar,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight);
+    vdrift -= Pg(R-deltaR,mstar,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight);
     vdrift /= 2.*AUtoMeter(deltaR);
     
-    return vdrift*cg*cg*AUtoMeter(R)/Pg(rhog,cg)/Vk(R,Mstar);
+    return vdrift*cg*cg*AUtoMeter(R)/Pg(rhog,cg)/Vk(R,mstar);
 }
 
-double VVisc(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+double VVisc(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
               const double& sigma0, const double& hg0, const double& alpha, const int& ibump, const double& Rbump,// ->
               const double& bumpwidth, const double& bumpheight) 
 {
-    double vvisc = NuTurbGas(R+deltaR,Mstar,q,R0,hg0,alpha)*AUtoMeter(R+deltaR)*Rhog(R+deltaR,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R+deltaR,Mstar);
-    vvisc -= NuTurbGas(R-deltaR,Mstar,q,R0,hg0,alpha)*AUtoMeter(R-deltaR)*Rhog(R-deltaR,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R-deltaR,Mstar);
+    double vvisc = NuTurbGas(R+deltaR,mstar,q,R0,hg0,alpha)*AUtoMeter(R+deltaR)*Rhog(R+deltaR,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R+deltaR,mstar);
+    vvisc -= NuTurbGas(R-deltaR,mstar,q,R0,hg0,alpha)*AUtoMeter(R-deltaR)*Rhog(R-deltaR,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R-deltaR,mstar);
     vvisc /= 2.*AUtoMeter(deltaR);
 
-    return vvisc*3./(rhog*AUtoMeter(R)*Vk(R,Mstar));
+    return vvisc*3./(rhog*AUtoMeter(R)*Vk(R,mstar));
 }
 
 
 /* ------------------------ RADIAL DRIFT ------------------------*/
 
-double DRDt(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+double DRDt(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
             const double& sigma0, const double& hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
             const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
     double dfbr = 1.;
-    double vdrift = VDrift(R,Mstar,p,q,rhog,cg,R0,sigma0,hg0,ibump,Rbump,bumpwidth,bumpheight);
-    double vvisc = VVisc(R,Mstar,p,q,rhog,cg,R0,sigma0,hg0,alpha,ibump,Rbump,bumpwidth,bumpheight);
+    double vdrift = VDrift(R,mstar,p,q,rhog,cg,R0,sigma0,hg0,ibump,Rbump,bumpwidth,bumpheight);
+    double vvisc = VVisc(R,mstar,p,q,rhog,cg,R0,sigma0,hg0,alpha,ibump,Rbump,bumpwidth,bumpheight);
 
     if (ibr == 1)   dfbr = 1.+dustfrac;
 
@@ -105,13 +105,13 @@ double DRDt(const double& R, const double& Mstar, double p, double q, const doub
 
 /* ------------------------ DELTAV DUST-GAS ------------------------*/
 
-double DeltaV(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+double DeltaV(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
               const double& sigma0, const double& hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
               const int& ibump, const int& idrift, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
     double dfbr = 1.;
-    double vdrift = VDrift(R,Mstar,p,q,rhog,cg,R0,sigma0,hg0,ibump,Rbump,bumpwidth,bumpheight);
-    double vvisc = VVisc(R,Mstar,p,q,rhog,cg,R0,sigma0,hg0,alpha,ibump,Rbump,bumpwidth,bumpheight);
+    double vdrift = VDrift(R,mstar,p,q,rhog,cg,R0,sigma0,hg0,ibump,Rbump,bumpwidth,bumpheight);
+    double vvisc = VVisc(R,mstar,p,q,rhog,cg,R0,sigma0,hg0,alpha,ibump,Rbump,bumpwidth,bumpheight);
 
     double deltavradial = 0.;
     double deltavorbital = st/(dfbr*dfbr+st*st)*vdrift + dfbr/(dfbr*dfbr+st*st)*vvisc;

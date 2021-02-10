@@ -18,24 +18,24 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
 
 /* ------------------------  VELOCITIES ------------------------*/
 
-double VDrift(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+double VDrift(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
               const double& sigma0, const double& hg0, const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight);
 
-double VVisc(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+double VVisc(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
               const double& sigma0, const double& hg0, const double& alpha, const int& ibump, const double& Rbump,// ->
               const double& bumpwidth, const double& bumpheight);
 
 
 /* ------------------------ RADIAL DRIFT ------------------------*/
 
-double DRDt(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+double DRDt(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
             const double& sigma0, const double& hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
             const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight);
 
 /* ------------------------ DELTAV DUST-GAS ------------------------*/
 
 // Accurate velocity difference between gas and dust [m/s]
-double DeltaV(const double& R, const double& Mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+double DeltaV(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
               const double& sigma0, const double& hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
               const int& ibump, const int& idrift, const double& Rbump, const double& bumpwidth, const double& bumpheight);
 

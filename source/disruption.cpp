@@ -37,8 +37,8 @@ bool Disrupt(const double& size, const double& filfac, const double& rhos, const
              << "a*wc (m/s): " << size*freqspin << endl
              << "tensilestress (Pa): "<< tensilestress << endl
              << "maxtensiletress (Pa): " << maxtensilestress << endl;
-
-        return true;}
-    else
-        return false;
+        
+        return true;
+    }
+    else return false;
 }

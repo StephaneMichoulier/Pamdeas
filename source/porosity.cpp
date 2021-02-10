@@ -11,10 +11,10 @@ using namespace std;
 
 /* ------------------------ SHARED FUNCTIONS ------------------------ */
 
-double CParam(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& eroll,// ->
+double CParam(const double& R, const double& mstar, const double& rhog, const double& cg, const double& eroll,// ->
               const double& a0, const double& rhos, const double& alpha)
 {
-    return (243.*M_SQRT2*M_PI/15625.)*(rossby*alpha*pow(a0,4.)*rhos*rhos*cg*Omegak(R,Mstar)/(rhog*b_oku*eroll));
+    return (243.*M_SQRT2*M_PI/15625.)*(rossby*alpha*pow(a0,4.)*rhos*rhos*cg*Omegak(R,mstar)/(rhog*b_oku*eroll));
 }
 
 double Porosity(const double& filfacfinal)
@@ -92,17 +92,17 @@ double M3(const double& cparam, const double& rhog, const double& cg, const doub
     return pow(cparam/(2.*(pow(2.,0.075)-1.)),3.)*pow(cparam*cg*a0/(9.*NuMolGas(rhog,cg)*(pow(2.,0.2)-1.)),-8./3.);
 }
 
-double M4(const double& R, const double cparam, const double& Mstar, const double& rhog,// ->
+double M4(const double& R, const double cparam, const double& mstar, const double& rhog,// ->
           const double& cg, const double& a0, const double& rhos)
 {
-    return pow(rhog*cg/(rhos*a0*Omegak(R,Mstar)),4.)*2.*(pow(2.,0.075)-1.)/cparam;
+    return pow(rhog*cg/(rhos*a0*Omegak(R,mstar)),4.)*2.*(pow(2.,0.075)-1.)/cparam;
 }
 
-double M5(const double& R, const double cparam, const double& Mstar, const double& rhog,// ->
+double M5(const double& R, const double cparam, const double& mstar, const double& rhog,// ->
           const double& cg, const double& a0, const double& rhos)
 {
     double nu = NuMolGas(rhog,cg);
-    return pow(9.*nu*rhog/(2.*rhos*a0*a0*Omegak(R,Mstar)),1.5)*pow(9.*nu*(pow(2.,0.2)-1.)/(cg*a0*cparam),1./6.);
+    return pow(9.*nu*rhog/(2.*rhos*a0*a0*Omegak(R,mstar)),1.5)*pow(9.*nu*(pow(2.,0.2)-1.)/(cg*a0*cparam),1./6.);
 }
 
 double FilFacMGr(const double& massf, const double& massi, const double& filfaci, const double& rhos, const double& eroll, const double& vrel)
@@ -116,17 +116,17 @@ double FilFacMGr(const double& massf, const double& massi, const double& filfaci
     return filfaci*pow(massf/massi,power);
 }
 
-/*double FilFacMColl(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& massf,// ->
+/*double FilFacMColl(const double& R, const double& mstar, const double& rhog, const double& cg, const double& massf,// ->
                 const double eroll, const double& a0, const double& rhos, const double& alpha)
 {
     // here, m1 to m5 and the associated functions M1 to M5 are normalized by m0 !
-    double cparam = CParam(R,Mstar,rhog,cg,eroll,a0,rhos,alpha);
+    double cparam = CParam(R,mstar,rhog,cg,eroll,a0,rhos,alpha);
     double m = massf/GrainMass(a0,1.,rhos);
     double m1 = M1(cparam);
     double m2 = M2(cparam,rhog,cg,a0);
     double m3 = M3(m1,m2);
-    double m4 = M4(R,cparam,Mstar,rhog,cg,a0,rhos);
-    double m5 = M5(R,cparam,Mstar,rhog,cg,a0,rhos);
+    double m4 = M4(R,cparam,mstar,rhog,cg,a0,rhos);
+    double m5 = M5(R,cparam,mstar,rhog,cg,a0,rhos);
     double filfaccoll;
 
     if (m1 <= m2)
@@ -188,11 +188,11 @@ double FilFacMGr(const double& massf, const double& massi, const double& filfaci
     return filfaccoll;
 }*/
 
-double FilFacMColl(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& st,// ->
+double FilFacMColl(const double& R, const double& mstar, const double& rhog, const double& cg, const double& st,// ->
                    const double& massf, const double eroll, const double& a0, const double& rhos, const double& alpha)
 {
     // here, m1 to m5 and the associated functions M1 to M5 are normalized by m0 !
-    double cparam = CParam(R,Mstar,rhog,cg,eroll,a0,rhos,alpha);
+    double cparam = CParam(R,mstar,rhog,cg,eroll,a0,rhos,alpha);
     double m = massf/GrainMass(a0,1.,rhos);
     double m1 = M1(cparam);
     double m2 = M2(cparam,rhog,cg,a0);
@@ -227,8 +227,8 @@ double FilFacMColl(const double& R, const double& Mstar, const double& rhog, con
     }
     else
     {
-        m4 = M4(R,cparam,Mstar,rhog,cg,a0,rhos);
-        m5 = M5(R,cparam,Mstar,rhog,cg,a0,rhos);
+        m4 = M4(R,cparam,mstar,rhog,cg,a0,rhos);
+        m5 = M5(R,cparam,mstar,rhog,cg,a0,rhos);
 
         if (m4 <= m5)    filfaccoll = pow(m1,cratio+0.125)*pow(m4,-0.125)*pow(m4/m,0.2);   // FilFac Ep-St>1
         else             filfaccoll = pow(m2,cratio)*pow(m5/m,0.2);  // FilFac St-St>1
@@ -239,19 +239,19 @@ double FilFacMColl(const double& R, const double& Mstar, const double& rhog, con
 
 /* ------------------------ KATAOKA ------------------------*/
 
-/*double FilFacMGas(const double& R, const double& Mstar, const double& p, const double& q, const double& rhog,// ->
+/*double FilFacMGas(const double& R, const double& mstar, const double& p, const double& q, const double& rhog,// ->
                const double& cg, const double& massf, const double& rhos, const double& eroll, const double& a0)
 {
     double m0 = GrainMass(a0,1.,rhos);
-    double filfaclimSt = pow(m0*rhog*DeltaV(R,Mstar,p,q,cg)*cg/(M_PI*eroll*rhos),1./3.);
+    double filfaclimSt = pow(m0*rhog*DeltaV(R,mstar,p,q,cg)*cg/(M_PI*eroll*rhos),1./3.);
 
     if  (TransRegEpSt(rhog,cg,GrainMassToSize(massf,filfaclimSt,rhos)) < 1.)
     {   return filfaclimSt;    }
     else
-    {   return pow(6.*a0*a0*DeltaV(R,Mstar,p,q,cg)*NuMolGas(rhog,cg)*rhog/(eroll),0.375)*pow(massf/m0,-0.125); }
+    {   return pow(6.*a0*a0*DeltaV(R,mstar,p,q,cg)*NuMolGas(rhog,cg)*rhog/(eroll),0.375)*pow(massf/m0,-0.125); }
 }*/
 
-double FilFacMGas(const double& R, const double& Mstar, const double& deltav, const double& st, const double& massf, const double& rhos,// -> 
+double FilFacMGas(const double& R, const double& mstar, const double& deltav, const double& st, const double& massf, const double& rhos,// -> 
                   const double& eroll, const double& a0)//, const int& iregime, const double& rhog, const double& cg)
 {
 
@@ -281,7 +281,7 @@ double FilFacMGas(const double& R, const double& Mstar, const double& deltav, co
         }
     }
     return filfacgas;*/
-    return pow((m0*a0*deltav*Omegak(R,Mstar))/(eroll*M_PI*st),3./7.)*pow(massf/m0,1./7.);
+    return pow((m0*a0*deltav*Omegak(R,mstar))/(eroll*M_PI*st),3./7.)*pow(massf/m0,1./7.);
 }
 
 double FilFacMGrav(const double& massf, const double& rhos, const double& a0, const double& eroll)
@@ -293,13 +293,13 @@ double FilFacMGrav(const double& massf, const double& rhos, const double& a0, co
 
 /* ------------------------ FINAL FILLING FACTOR ------------------------*/
 
-double FilFacMinMColGasGrav(const double& R, const double& Mstar, const double& rhog, const double cg, const double& deltav,// ->
+double FilFacMinMColGasGrav(const double& R, const double& mstar, const double& rhog, const double cg, const double& deltav,// ->
                             const double st, const double& massf, const double& rhos, const double& eroll, const double& a0,// ->
                             const double& alpha, const int& iregime)
 {
     double filfacmin;    
-    double filfaccoll = FilFacMColl(R,Mstar,rhog,cg,st,massf,eroll,a0,rhos,alpha);
-    double filfacgas  = FilFacMGas(R,Mstar,deltav,st,massf,rhos,eroll,a0);
+    double filfaccoll = FilFacMColl(R,mstar,rhog,cg,st,massf,eroll,a0,rhos,alpha);
+    double filfacgas  = FilFacMGas(R,mstar,deltav,st,massf,rhos,eroll,a0);
     double filfacgrav = FilFacMGrav(massf,rhos,a0,eroll);
 
     if (filfacgas < filfaccoll)
@@ -323,7 +323,7 @@ double FilFacMinMColGasGrav(const double& R, const double& Mstar, const double& 
     return filfacmin;
 }
 
-double FilFacMFinal(const double& R, const double& Mstar, const double& rhog, const double& cg, const double deltav, const double st,// ->
+double FilFacMFinal(const double& R, const double& mstar, const double& rhog, const double& cg, const double deltav, const double st,// ->
                     const double& massf, const double& massi, const double& filfaci, const double& a0, const double& rhos, const double& eroll,// ->
                     const double& alpha, const double& ncoll, const int& ifrag, const int& ibounce, const double& vfrag, const double& vrel,// ->
                     const double& vstick, const double& probabounce, const double& filfaclim, const double& Yd0, const double& Ydpower,// ->
@@ -331,7 +331,7 @@ double FilFacMFinal(const double& R, const double& Mstar, const double& rhog, co
 {
     double filfacf = 1.;
     double sizei = GrainMassToSize(massi,filfaci,rhos);
-    double filfacmincollgasgrav = FilFacMinMColGasGrav(R,Mstar,rhog,cg,deltav,st,massf,rhos,eroll,a0,alpha,iregime);
+    double filfacmincollgasgrav = FilFacMinMColGasGrav(R,mstar,rhog,cg,deltav,st,massf,rhos,eroll,a0,alpha,iregime);
     double filfacgr = FilFacMGr(massf,massi,filfaci,rhos,eroll,vrel);
 
     if (sizei > a0)
@@ -410,17 +410,17 @@ double S2(const double& cparam, const double& rhog, const double& cg, const doub
 double S3(const double& rhog, const double& cg, const double& a0)
 {   return (9.*NuMolGas(rhog,cg)/(2.*cg*a0)*((pow(2.,0.2)-1.)/(pow(2.,0.075)-1.)));    }
 
-double S4(const double& R, const double cparam, const double& Mstar, const double& rhog,// ->
+double S4(const double& R, const double cparam, const double& mstar, const double& rhog,// ->
           const double& cg, const double& a0, const double& rhos)
 {
-    return pow(rhog*cg/(rhos*a0*Omegak(R,Mstar)),1.5)*sqrt(2.*(pow(2.,0.075)-1.)/cparam);
+    return pow(rhog*cg/(rhos*a0*Omegak(R,mstar)),1.5)*sqrt(2.*(pow(2.,0.075)-1.)/cparam);
 }
 
-double S5(const double& R, const double cparam, const double& Mstar, const double& rhog,// ->
+double S5(const double& R, const double cparam, const double& mstar, const double& rhog,// ->
           const double& cg, const double& a0, const double& rhos)
 {
     double nu = NuMolGas(rhog,cg);
-    return sqrt(9.*nu*rhog/(2.*rhos*a0*a0*Omegak(R,Mstar)))*pow(9.*nu*(pow(2.,0.2)-1.)/(cg*a0*cparam),1./6.);
+    return sqrt(9.*nu*rhog/(2.*rhos*a0*a0*Omegak(R,mstar)))*pow(9.*nu*(pow(2.,0.2)-1.)/(cg*a0*cparam),1./6.);
 }
 
 double FilFacSGr(const double& sizef, const double& sizei, const double& filfaci,// ->
@@ -435,16 +435,16 @@ double FilFacSGr(const double& sizef, const double& sizei, const double& filfaci
     return filfaci*pow(sizef/sizei,power);
 }
 
-double FilFacSColl(const double& R, const double& Mstar, const double& rhog, const double& cg, const double st, const double& sizef,// ->
+double FilFacSColl(const double& R, const double& mstar, const double& rhog, const double& cg, const double st, const double& sizef,// ->
                    const double& eroll, const double& a0, const double& rhos, const double& alpha, const int& iregime, double& filfacpow)
 {
     // here, s1 to s5 and the associated functions S1 to S5 are normalized by a0 !
-    double cparam = CParam(R,Mstar,rhog,cg,eroll,a0,rhos,alpha);
+    double cparam = CParam(R,mstar,rhog,cg,eroll,a0,rhos,alpha);
     double s = sizef/a0;
     double s1 = S1(cparam);
     double s2 = S2(cparam,rhog,cg,a0);
-    double s4 = S4(R,cparam,Mstar,rhog,cg,a0,rhos);
-    double s5 = S5(R,cparam,Mstar,rhog,cg,a0,rhos);
+    double s4 = S4(R,cparam,mstar,rhog,cg,a0,rhos);
+    double s5 = S5(R,cparam,mstar,rhog,cg,a0,rhos);
     double filfaccoll;
 
     if (st < 1.)
@@ -484,7 +484,7 @@ double FilFacSColl(const double& R, const double& Mstar, const double& rhog, con
     }
     else
     {
-        filfaccoll = pow((cparam*rhog*cg)/(2.*rhos*a0*Omegak(R,Mstar)),0.25)/sqrt(s);
+        filfaccoll = pow((cparam*rhog*cg)/(2.*rhos*a0*Omegak(R,mstar)),0.25)/sqrt(s);
         if (s4 <= s5)    filfaccoll *= pow(pow(2.,0.075)-1.,-0.25);
         else             filfaccoll *= pow(pow(2.,0.2)-1.,-0.25);
         filfacpow = -0.5;
@@ -494,7 +494,7 @@ double FilFacSColl(const double& R, const double& Mstar, const double& rhog, con
 
 /* ------------------------ KATAOKA ------------------------*/
 
-double FilFacSGas(const double& R, const double& Mstar, const double& deltav, const double& st,const double& sizef, const double& eroll,// ->
+double FilFacSGas(const double& R, const double& mstar, const double& deltav, const double& st,const double& sizef, const double& eroll,// ->
                   const double& a0, const double& rhos, const int& iregime, double& filfacpow)//, const double& rhog, const double& cg)
 {
     //double filfacgas;
@@ -526,7 +526,7 @@ double FilFacSGas(const double& R, const double& Mstar, const double& deltav, co
         }
     }
     //return filfacgas;
-    return pow(4.*a0*a0*a0*rhos*deltav*sizef*Omegak(R,Mstar)/(3.*eroll*st),0.5);
+    return pow(4.*a0*a0*a0*rhos*deltav*sizef*Omegak(R,mstar)/(3.*eroll*st),0.5);
 }
 
 double FilFacSGrav(const double& sizef, const double& rhos, const double& a0, const double& eroll)
@@ -535,14 +535,14 @@ double FilFacSGrav(const double& sizef, const double& rhos, const double& a0, co
 
 /* ------------------------ FINAL FILLING FACTOR ------------------------*/
 
-double FilFacMinSColGasGrav(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& deltav,// ->
+double FilFacMinSColGasGrav(const double& R, const double& mstar, const double& rhog, const double& cg, const double& deltav,// ->
                             const double st, const double& sizef, const double& rhos, const double& eroll, const double& a0,// ->
                             const double& alpha, const int& iregime, double& filfacpow)
 {
     double filfacmin;
     double powgas;
-    double filfaccoll = FilFacSColl(R,Mstar,rhog,cg,st,sizef,eroll,a0,rhos,alpha,iregime,filfacpow);
-    double filfacgas  = FilFacSGas(R,Mstar,deltav,st,sizef,eroll,a0,rhos,iregime,powgas);
+    double filfaccoll = FilFacSColl(R,mstar,rhog,cg,st,sizef,eroll,a0,rhos,alpha,iregime,filfacpow);
+    double filfacgas  = FilFacSGas(R,mstar,deltav,st,sizef,eroll,a0,rhos,iregime,powgas);
     double filfacgrav = FilFacSGrav(sizef,rhos,a0,eroll);
 
     if (filfacgas < filfaccoll)
@@ -576,12 +576,12 @@ double FilFacMinSColGasGrav(const double& R, const double& Mstar, const double& 
     return filfacmin;
 }
 
-double FilFacSFinal(const double& R, const double& Mstar, const double& rhog, const double& cg, const double& deltav, const double st,// ->
+double FilFacSFinal(const double& R, const double& mstar, const double& rhog, const double& cg, const double& deltav, const double st,// ->
                     const double& sizef, const double& sizei, const double& filfaci, const double& a0, const double& rhos, const double& eroll,// -> 
                     const double& alpha, const int& ifrag, const double& vfrag, const double& vrel, const int& iregime, double& filfacpow)
 {
     double filfacf = 1.;
-    double filfacmincollgasgrav = FilFacMinSColGasGrav(R,Mstar,rhog,cg,deltav,st,sizef,rhos,eroll,a0,alpha,iregime,filfacpow);
+    double filfacmincollgasgrav = FilFacMinSColGasGrav(R,mstar,rhog,cg,deltav,st,sizef,rhos,eroll,a0,alpha,iregime,filfacpow);
     double filfacgr = FilFacSGr(sizef,sizei,filfaci,rhos,eroll,vrel);
 
     if ((vrel < vfrag && ifrag > 0) || (ifrag == 0))
