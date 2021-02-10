@@ -195,7 +195,7 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader,5);     Reader >> a0;
     ReadVoid(Reader,5);     Reader >> rhos;
 
-    ReadVoid(Reader,7);     Reader >> idrift;
+    ReadVoid(Reader,8);     Reader >> idrift;
     ReadVoid(Reader,5);     Reader >> ibounce;
     ReadVoid(Reader,5);     Reader >> idisrupt;
     ReadVoid(Reader,6);     Reader >> ifrag;
@@ -283,7 +283,7 @@ void WriteInputFile()
     writerinput << " iporosity = 1          >(compact=0, porous=1)" << endl;
     writerinput << "   sizeini = 1.0e-7     >Initial size (m)" << endl;
     writerinput << "        a0 = 1.0e-7     >Monomer size (m)" << endl;
-    writerinput << "      rhod = 917        >Dust density (kg/m³)" << endl << endl;
+    writerinput << "      rhos = 917        >Dust intrinsic density (kg/m³)" << endl << endl;
 
     writerinput << "#-Grain options" << endl << endl;
     writerinput << "    idrift = 0          >Drift (0=no, 1=yes)" << endl;
