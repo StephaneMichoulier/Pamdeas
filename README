@@ -4,6 +4,8 @@
 
 Author: Stéphane Michoulier
 
+Eden: version 1.11
+
 DESCRIPTION:
 
 Eden is a 1D code primarily wrote to study the evolution of grains porosity within protoplanetary disc considering different physical process such as growth, fragmentation, drift, pressure bump, etc.
