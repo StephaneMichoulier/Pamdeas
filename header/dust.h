@@ -69,4 +69,10 @@ double Vfrag(const double& filfac, const double& filfaclim, const double& vfragi
 // Restitution coefficient e
 double CoeffRest(const double& vrel, const double& vstick, const double& vyield);
 
+
+/* ------------------------ GRAIN STATE ------------------------ */
+
+// Determine if a grain is alive, reaches maxsize, accreted or disrupted
+void State(int& istate, const double& RfRin, const double& sizelimsize, const bool& disrupted);
+
 #endif // DUST_H_INCLUDED

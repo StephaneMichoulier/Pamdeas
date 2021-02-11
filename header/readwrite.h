@@ -28,7 +28,8 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
               int& iporosity, double& sizeini, double& filfacini, double& a0, double& rhos, double& youngmod0, double& esurf,// ->
               double& Yd0, double& Ydpower, int& idrift, int& ibounce, int& idisrupt, int& ifrag, int& ibr, int& ibump,// ->
               double& gammaft, double& vfragi, int& constvfrag, double& filfaclim, double& filfacbnc, double& limsize,// ->
-              double& Rbump, double& dustfracmax, double& bumpwidth, double& bumpheight, int& ngrains, vector <double>& Rini);
+              double& Rbump, double& dustfracmax, double& bumpwidth, double& bumpheight, int& ngrains, vector <double>& Rini,// ->
+              vector <int>& istate);
 
 
 /* ------------------------ WRITING ------------------------*/
@@ -59,7 +60,7 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
                    const int& iporosity, const double& sizeini, const double& filfacini, const double& a0, const double& rhos,// ->
                    const int& idrift, const int& ibounce, const int& ifrag, const int& ibr, const int& ibump,// ->
                    const int& idisrupt, const double& vfragi, const int& ngrains, const double& sigma0, const double& rhog0,// ->
-                   const double& cg0, const double& runningtime);               
+                   const double& cg0, const vector <int>& istate, const double& runningtime);               
 
 
 /* ------------------------ TOOLS ------------------------*/
@@ -77,6 +78,6 @@ string FileName(const int& massorsize, const double& Rini, const int& iporosity)
 void WriteValue(ostream& writer, const int& width, const double& precision, const double& value);
 
 // Read blank space in the input file
-void ReadVoid (ifstream& reader,int nbvoid);
+void ReadVoid(ifstream& reader, int nbvoid);
 
 #endif // READWRITE_H_INCLUDED

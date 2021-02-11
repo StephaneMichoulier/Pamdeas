@@ -162,7 +162,8 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
               int& iporosity, double& sizeini, double& filfacini, double& a0, double& rhos, double& youngmod0, double& esurf,// ->
               double& Yd0, double& Ydpower, int& idrift, int& ibounce, int& idisrupt, int& ifrag, int& ibr, int& ibump,// ->
               double& gammaft, double& vfragi, int& constvfrag, double& filfaclim, double& filfacbnc, double& limsize,// ->
-              double& Rbump, double& dustfracmax, double& bumpwidth, double& bumpheight, int& ngrains, vector <double>& Rini)
+              double& Rbump, double& dustfracmax, double& bumpwidth, double& bumpheight, int& ngrains, vector <double>& Rini,// ->
+              vector <int>& istate)
 {
     ifstream Reader("input.in");
     if (!Reader)
@@ -231,6 +232,9 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     CheckData(massorsize,tend,stepmethod,step,profile,mstar,mdisk,Rin,Rout,R0,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
               filfacini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,gammaft,vfragi,constvfrag,
               filfaclim,filfacbnc,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini);
+    
+    istate.resize(ngrains);
+    for (int i = 0; i < ngrains; i++)   istate[i] = 0;
 
     // Convert values to SI units
     mstar = MsolToKg(mstar);
@@ -326,7 +330,7 @@ void WriteInputFile()
     writerinput << "       R09 = 250" << endl;
     writerinput << "       R10 = 300" << endl << endl;
 
-writerinput.close();
+    writerinput.close();
 }
 
 void WriteProfileFile(ofstream& outputprofile, const double& Rprofile, const double& hg, const double& cg, const double& sigma,
@@ -354,6 +358,7 @@ void WriteProfileHeader()
              << "dustfrac" << endl
              << "Pg" << endl
              << "T" << endl;
+    writecol.close();
 }
 
 void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, const double& massf, const double& filfacf,// ->
@@ -402,6 +407,7 @@ void WriteOutputHeader(const double& massorsize)
     {   writecol << "dsdt" << endl;  }
 
     writecol << "drag_regime" << endl;
+    writecol.close();
 }
 
 void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const double& mstar,// ->
@@ -410,12 +416,12 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
                    const int& iporosity, const double& sizeini, const double& filfacini, const double& a0, const double& rhos,// ->
                    const int& idrift, const int& ibounce, const int& ifrag, const int& ibr, const int& ibump,// ->
                    const int& idisrupt, const double& vfragi, const int& ngrains, const double& sigma0, 
-                   const double& rhog0, const double& cg0, const double& runningtime)
+                   const double& rhog0, const double& cg0, const vector <int>& istate, const double& runningtime)
 {
     ofstream writerdoc;
     string dash;
 
-	writerdoc.open("Initials_Conditions_" + ToStringWithPrecision(R0,10) + "AU.txt");
+	writerdoc.open("results_setup.txt");
 
 	writerdoc << endl<< "     Running Time : " << runningtime << " s" << endl << endl;
 
@@ -548,6 +554,38 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     }
     writerdoc << endl;
 
+    writerdoc << "   -------- Grain final state --------" << endl<< endl;
+
+    for (int i=0; i < ngrains; i++)
+    {
+        if (i+1 < 10) writerdoc << "            R0" << i+1; 
+        else          writerdoc << "            R" << i+1;
+
+        switch (istate[i])
+        {   
+            case(0):    
+            {   
+                writerdoc << " still alive" << endl;
+                break;
+            }
+            case(1):    
+            {
+                writerdoc << " reached maximum size" << endl;
+                break;
+            }
+            case(2):    
+            {   
+                writerdoc << " was accreted" << endl;
+                break;
+            }
+            case(3):    
+            {   
+                writerdoc << " was disrupted" << endl;
+                break;
+            }
+        }
+    }
+
     writerdoc.close();
 }
 
@@ -585,7 +623,7 @@ void WriteValue(ostream& writer, const int& width, const double& precision, cons
     writer << setw(width)<< setprecision(precision) << value << " ";
 }
 
-void ReadVoid (ifstream& reader,int nbvoid)
+void ReadVoid(ifstream& reader, int nbvoid)
 {
     string blank;
     for (int i = 0; i < nbvoid; i++)

@@ -38,7 +38,7 @@ double St(const double& R, const double& mstar, const double& rhog, const double
 
     if (TransRegEpSt(rhog,cg,size) < 1.)
     {   
-        iregime = 1;
+        iregime = 1;                    // Epstein regime
         st = rhos*filfac*size/(cg*rhog);
     }
     else
@@ -46,17 +46,17 @@ double St(const double& R, const double& mstar, const double& rhog, const double
         double Re = 2.*size*deltav/NuMolGas(rhog,cg);
         if (Re < 1.)
         {
-            iregime = 2;
+            iregime = 2;                // Linear Stokes regime
             st = rhos*filfac*size*size/(4.5*NuMolGas(rhog,cg)*rhog);   
         }
         else if (Re < 800.)
         {
-            iregime = 3;
+            iregime = 3;                // Non-linear Stokes regime
             st = pow(Re,0.6)*rhos*filfac*size/(9.*rhog*deltav);
         }
         else
         {   
-            iregime = 4;
+            iregime = 4;                // Quadratic Stokes regime
             st = rhos*filfac*size/(0.165*rhog*deltav);    //0.165 = 1.32/8
         }
     }
@@ -87,8 +87,7 @@ double YoungMod(const double& filfac, const double& youngmod0)
 }
 
 double Eroll(const double& a0, const double& esurf, const double& youngmod0)
-{   
-    //return 6.*M_PI*M_PI*esurf*a0*8.*1e-10;
+{   //return 6.*M_PI*M_PI*esurf*a0*8.*1e-10;
     return 302.455974078*pow(pow(esurf,5.)*pow(a0,4.)/(youngmod0*youngmod0),1./3.);   
 }
 
@@ -158,4 +157,17 @@ double CoeffRest(const double& vrel, const double& vstick, const double& vyield)
                    sqrt(1./(1.+2.*sqrt((1.2/(vyieldonvrel*vyieldonvrel))-0.2)))-(vstickonvrel*vstickonvrel));
         }
     }
+}
+
+
+/* ------------------------ GRAIN STATE ------------------------ */
+
+void State(int& istate, const double& RfRin, const double& sizelimsize, const bool& disrupted)
+{
+    if (sizelimsize > 1.)
+    {   istate = 1; } //maxsize is reached   
+    if (RfRin < 1.)
+    {   istate = 2; } //is accreted
+    if (disrupted == true)
+    {   istate = 3; } //is disrupted
 }

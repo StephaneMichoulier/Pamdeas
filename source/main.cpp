@@ -17,6 +17,9 @@
 
 using namespace std;
 
+
+/* ------------------------ TERMINAL DISPLAY ------------------------*/
+
 // Presentation
 void Presentation()
 {
@@ -28,22 +31,34 @@ void Presentation()
 }
 
 // Terminal waiting animation
-void Animation(const double& time, const double timeend, const double& RfRin, const double& sizelimsize, const bool& disrupted, const string& outputfile)
+void Animation(const double& iteratedvalue, const double endvalue, const int& istate, const string& outputfile)
 {
-    cout << "\rProgression: " << setprecision(4) << time*100./(timeend) <<" %     "<< flush;
+    cout << "\rProgression: " << setprecision(4) << iteratedvalue*100./(endvalue) << " %     " << flush;
 
-    if (time>=timeend || RfRin < 1. || sizelimsize > 1. || disrupted == true)
+    if (iteratedvalue >= endvalue || istate != 0)
     {
-        cout << "\rProgression: " << time*100./(timeend) <<" %             ";
+        cout << "\rProgression: " << iteratedvalue*100./(endvalue) << " %             ";
 
-        if (RfRin < 1.)
-        {   cout << endl << "R < Rin: particle accreted               "<<flush; }
-        if (sizelimsize > 1.)
-        {   cout << endl << "Particle size bigger than max size       "<<flush;}
-        if (disrupted == true)
-        {   cout << endl << "Particle disrupted by spinning motion    "<<flush;}
+        switch (istate)
+        {   
+            case(1):    
+            {   
+                cout << endl << "Particle size bigger than max size       " << flush;
+                break;
+            }     
+            case(2):    
+            {
+                cout << endl << "R < Rin: particle accreted               " << flush;
+                break;
+            }
+            case(3):    
+            {   
+                cout << endl << "Particle disrupted by spinning motion    " << flush;
+                break;
+            }
+        }
 
-        cout <<endl <<outputfile << " written" <<endl << endl;
+        cout << endl << outputfile << " written" << endl << endl;
     }
 }
 
@@ -58,7 +73,10 @@ void End()
     cout << "\e[0m" << endl;
 }
 
+
+/* ------------------------------------------------------*/
 /* ------------------------ MAIN ------------------------*/
+/* ------------------------------------------------------*/
 
 int main()
 {
@@ -84,7 +102,7 @@ int main()
     double bumpwidth;       // half width at half maximum in AU (when ibump enabled)
     double bumpheight;      // fraction of surface density
     double sizeini;         // Initial size
-    double filfacini;          // Initial filling factor
+    double filfacini;       // Initial filling factor
     double a0;              // Monomer size
     double rhos;            // Dust monomer density
     double youngmod0;       // Young Modulus of grains
@@ -101,8 +119,8 @@ int main()
     double gammaft;         // Force-to-torque efficiency
     double vfragi;          // Initial fragmentation threshold (when fragmentation enabled)
     int    constvfrag;      // Constant vfrag option (when fragmentation enabled)
-    double filfaclim;          // Filling factor dynamic compression resistance limit (when fragmentation enabled)
-    double filfacbnc;    // Filling factor bounce limit (when bounce enabled)
+    double filfaclim;       // Filling factor dynamic compression resistance limit (when fragmentation enabled)
+    double filfacbnc;       // Filling factor bounce limit (when bounce enabled)
     double limsize;         // Limit to the max size
     int    ngrains;         // Number of grains
     vector <double> Rini;   // Initials radii
@@ -120,10 +138,10 @@ int main()
     double st;              // Stoke number
     double dustfrac;        // dust to gas ratio at R
     double vrel;            // Relative velocity between grains
-    double vfrag = 0.;      // Fragmentation threshold
-    double vstick = 0.;     // Sticking velocity
-    double probabounce = 0.;// Probability for a grain to bounce
-    double ncoll = 0.;      // number of collision per dt
+    double vfrag;           // Fragmentation threshold
+    double vstick;          // Sticking velocity
+    double probabounce;     // Probability for a grain to bounce
+    double ncoll;           // number of collision per dt
     double eroll;           // Rolling energy
 
 
@@ -131,21 +149,22 @@ int main()
 
     double massi;           // Mass before one loop
     double sizei;           // Size before one loop
-    double filfaci;            // Filling factor before one loop
+    double filfaci;         // Filling factor before one loop
     double Ri;              // Radius before one loop
     double massf;           // Mass after one loop
     double sizef;           // Size after one loop
-    double filfacf;            // Filling factor after one loop
+    double filfacf;         // Filling factor after one loop
     double Rf;              // Radius after one loop
     double dt;              // time step for loop
-    double t = 0.;          // time for loop
-    double dmdt = 0.;       // Variation of mass per unit of time
-    double dsdt = 0.;       // Variation of size per unit of time
-    double drdt = 0.;       // Variation of radius per unit of time (drift velocity)
+    double t;               // time for loop
+    double dmdt;            // Variation of mass per unit of time
+    double dsdt;            // Variation of size per unit of time
+    double drdt;            // Variation of radius per unit of time (drift velocity)
     double deltav;          // Velocity difference between dust and gas
     int    ireg;            // Regime of the dust grain (growth, h&s, Ep-St<1, frag etc)
-    double filfacpow;          // Power of the dominante filling factor to remove dsdt degeneracy
-    bool   disrupted = false; // Is grain disrupted by spinning motion
+    double filfacpow;       // Power of the dominante filling factor to remove dsdt degeneracy
+    bool   disrupted;       // Is grain disrupted by spinning motion
+    vector <int> istate;    // State of the grain: 0=alive, 1=maxsize, 2=accreted,3=disrupted 
 
     double Rprofile;        // Radius to compute disk profiles
 
@@ -160,7 +179,7 @@ int main()
 
     ReadFile(massorsize,tend,stepmethod,step,profile,mstar,mdisk,Rin,Rout,R0,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
              filfacini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,gammaft,vfragi,constvfrag,
-             filfaclim,filfacbnc,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini);
+             filfaclim,filfacbnc,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini,istate);
 
     Presentation();
 
@@ -187,9 +206,10 @@ int main()
             dustfrac = DustFrac(dustfrac0,dustfracmax,Rprofile,Rbump,bumpwidth,ibump);
             rhog = Rhog(sigma,hg);
             WriteProfileFile(writebump,Rprofile,hg,cg ,sigma,rhog,dustfrac,Pg(rhog,cg),T(Rprofile,q,R0,cg));
-            Animation(Rprofile,Rout-0.01,2.,0.,false,"diskprofiles.out");
+            Animation(Rprofile,Rout-0.01,0,"diskprofiles.out");
         }
         WriteProfileHeader();
+        writebump.close();
     }
 
     /*------------------------ TIME LOOP FOR SIMULATION------------------------*/
@@ -202,7 +222,8 @@ int main()
         writer.open(outputfile.c_str());
 
         // Initialize loop parameters
-        dt = step;
+        if (stepmethod == 0) dt = step; else dt = 1.;
+        t = 0;
         sizei = sizeini;
         sizef = sizeini;
         filfaci = filfacini;
@@ -212,6 +233,7 @@ int main()
         Ri = Rini[j];
         Rf = Rini[j];
         filfacpow = 3.*cratio/(1.-cratio);
+        disrupted = false;
 
         // Compute gas and dust quantities at t=0
         hg = Hg(Rf,q,R0,h0);
@@ -231,7 +253,7 @@ int main()
         {
             case(0):
             {
-                while(Rf > Rin && t < tend && sizef < limsize && disrupted != true)
+                while(t < tend && istate[j] == 0)
                 {
                     // Compute additionnal quantities for ifrag = 1 or 2, ibounce = 1 and idrift = 1
                     if (ifrag > 0)  vfrag = Vfrag(filfacf,filfaclim,vfragi,constvfrag);
@@ -303,21 +325,24 @@ int main()
                     deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     vrel = Vrel(cg,st,alpha);
 
-                    // Write in output file quantities at time t
-                    WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dmdt,ireg);
-
                     // Disruption by spinning motion
                     if (idisrupt == true)
                     {   disrupted = Disrupt(sizef,filfacf,rhos,deltav,gammaft,esurf,a0,st);   }
                     
+                    //State of the grain
+                    State(istate[j],Rf/Rin,sizef/limsize,disrupted);
+
+                    // Write in output file quantities at time t
+                    WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dmdt,ireg);
+
                     // Waiting animation
-                    Animation(t,tend,Rf/Rin,sizef/limsize,disrupted,outputfile);
+                    Animation(t,tend,istate[j],outputfile);
                 }
                 break;
             }
             case (1):
             {
-                while(Rf > Rin && t < tend && sizef < limsize)
+                while(t < tend && istate[j] == 0)
                 {
                     // Compute additionnal quantities for ifrag = 1 or 2, ibounce = 1 and idrift = 1
                     if (ifrag > 0)  vfrag = Vfrag(filfacf,filfaclim,vfragi,constvfrag);
@@ -377,23 +402,22 @@ int main()
                     deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     vrel = Vrel(cg,st,alpha);
 
-                    // Write in output file quantities at time t
-                    WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dsdt,ireg);
-
                     // Disruption by spinning motion
                     if (idisrupt == true)
                     {   disrupted = Disrupt(sizef,filfacf,rhos,deltav,gammaft,esurf,a0,st);   }
 
+                   //State of the grain
+                    State(istate[j],Rf/Rin,sizef/limsize,disrupted);
+
+                    // Write in output file quantities at time t
+                    WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dsdt,ireg);
+
                     // Waiting animation
-                    Animation(t,tend,Rf/Rin,sizef/limsize,disrupted,outputfile);
+                    Animation(t,tend,istate[j],outputfile);
                 }
             break;
             }
         }
-        // Reinitialize time for a new particle
-        t = 0.;
-        dt = 1.;
-        if (idisrupt == true) disrupted = false;
         writer.close();
     }
 
@@ -403,7 +427,7 @@ int main()
 
     // Write initials conditions
     WriteInitFile(massorsize,tend,stepmethod,step,mstar,mdisk,Rin,Rout,R0,Rbump,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
-                  filfacini,a0,rhos,idrift,ibounce,idisrupt,ifrag,ibr,ibump,vfragi,ngrains,sigma0,rhog0,cg0,
+                  filfacini,a0,rhos,idrift,ibounce,idisrupt,ifrag,ibr,ibump,vfragi,ngrains,sigma0,rhog0,cg0,istate,
                   (t2-t1)/(1.*CLOCKS_PER_SEC));
     WriteOutputHeader(massorsize);
     End();
