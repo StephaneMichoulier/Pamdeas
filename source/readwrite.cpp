@@ -218,7 +218,7 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader,5);     Reader >> bumpwidth;
     ReadVoid(Reader,9);     Reader >> bumpheight;
 
-    ReadVoid(Reader,15);    Reader >>ngrains;
+    ReadVoid(Reader,15);    Reader >> ngrains;
 
     ReadVoid(Reader,7);
 
@@ -350,14 +350,14 @@ void WriteProfileFile(ofstream& outputprofile, const double& Rprofile, const dou
 void WriteProfileHeader()
 {
     ofstream writecol("disk_profiles_header.txt");
-    writecol << "R" << endl
-             << "Hg" << endl
-             << "cg" << endl
-             << "sigma" << endl
-             << "rhog" << endl
-             << "dustfrac" << endl
-             << "Pg" << endl
-             << "T" << endl;
+    writecol << "R"         << endl
+             << "Hg"        << endl
+             << "cg"        << endl
+             << "sigma"     << endl
+             << "rhog"      << endl
+             << "dustfrac"  << endl
+             << "Pg"        << endl
+             << "T"         << endl;
     writecol.close();
 }
 
@@ -387,24 +387,24 @@ void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, co
 void WriteOutputHeader(const double& massorsize)
 {
     ofstream writecol("output_header.txt");
-    writecol << "t" << endl
-             << "R" << endl
-             << "mass" << endl
-             << "filfac" << endl
-             << "size" << endl
-             << "St" << endl
-             << "cg" << endl
-             << "sigma" << endl
-             << "rhog" << endl
-             << "dustfrac" << endl
-             << "vrel" << endl
-             << "omegaK"<< endl
-             << "drdt" << endl;
+    writecol << "t"         << endl
+             << "R"         << endl
+             << "mass"      << endl
+             << "filfac"    << endl
+             << "size"      << endl
+             << "St"        << endl
+             << "cg"        << endl
+             << "sigma"     << endl
+             << "rhog"      << endl
+             << "dustfrac"  << endl
+             << "vrel"      << endl
+             << "omegak"    << endl
+             << "drdt"      << endl;
 
     if (massorsize == 0)
-    {   writecol << "dmdt" << endl;  }
+    {   writecol << "dmdt"  << endl;  }
     else
-    {   writecol << "dsdt" << endl;  }
+    {   writecol << "dsdt"  << endl;  }
 
     writecol << "drag_regime" << endl;
     writecol.close();

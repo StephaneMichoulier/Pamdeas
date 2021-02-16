@@ -123,19 +123,19 @@ double Vfrag(const double& filfac, const double& filfaclim, const double& vfragi
     {   return vfragi;  }
     else
     {                     // Need to look at the model for variable vfrag
-        if (filfac>=0.6)
+        if (filfac >= 0.6)
         {
-            return vfragi*sqrt(pow(100.,1.5*(1-sqrt(filfac)))*pow(filfac,3.75*sqrt(filfac)-1.0));
+            return vfragi*sqrt(pow(100.,1.5*(1-sqrt(filfac)))*pow(filfac,3.75*sqrt(filfac)-1.));
         }
         else
         {
-            if (filfac>=filfaclim)
+            if (filfac >= filfaclim)
             {
-                return vfragi*sqrt(pow(100.,3*(0.5-(1/2.58)))*pow(filfac,4.92/2.58));
+                return vfragi*sqrt(pow(100.,3.*(0.5-(1./2.58)))*pow(filfac,4.92/2.58));
             }
             else
             {
-                return vfragi*sqrt(pow(100.,3*(0.5-(1/2.58)))*pow(filfaclim,4.92/2.58));
+                return vfragi*sqrt(pow(100.,3.*(0.5-(1./2.58)))*pow(filfaclim,4.92/2.58));
             }
         }
     }

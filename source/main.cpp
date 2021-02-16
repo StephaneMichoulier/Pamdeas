@@ -174,14 +174,13 @@ int main()
 
     t1 = clock();
 
+    Presentation();
 
     /*------------------------ READ INPUT FILE ------------------------*/
 
     ReadFile(massorsize,tend,stepmethod,step,profile,mstar,mdisk,Rin,Rout,R0,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
              filfacini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,gammaft,vfragi,constvfrag,
              filfaclim,filfacbnc,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini,istate);
-
-    Presentation();
 
     /*------------------------ INITIALIZATION OF PARAMETERS AT R0 ------------------------*/
 
