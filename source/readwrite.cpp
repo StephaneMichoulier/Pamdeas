@@ -167,9 +167,9 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
 {
     ifstream Reader("input.in");
     if (!Reader)
-   	{   cout << "Fatal error, input.in is missing " << endl;
+   	{   cout << "Fatal error, input.in is missing\n";
         WriteInputFile();
-        cout << "Input file has been written: input.in" << endl;
+        cout << "Input file has been written: input.in\n";
         exit(1);
     }
 
@@ -257,18 +257,18 @@ void WriteInputFile()
 
     writerinput << endl;
     writerinput << "#-Use dm/dt or ds/dt" << endl;
-    writerinput << "massorsize = 0          >(dm/dt = 0, ds/dt = 1)" << endl << endl;;
-
+    writerinput << "massorsize = 0          >(dm/dt = 0, ds/dt = 1)" << endl;
+    writerinput << endl;
     writerinput << "#-Time options" << endl;
     writerinput << "      tend = 1.0e6      >End time (yrs)" << endl;
     writerinput << "stepmethod = 2          >(Fixe=0, Fraction of orbital period=1, Adaptative dt=2)" << endl;
-    writerinput << "      step = 1          >(stepmethod=0 -> step in yrs, stepmethod=1 -> step in fraction of orbital time)" << endl << endl;
-
+    writerinput << "      step = 1          >(stepmethod=0 -> step in yrs, stepmethod=1 -> step in fraction of orbital time)" << endl;
+    writerinput << endl;
     writerinput << "#-Disk profiles" << endl;
-    writerinput << "     profile  = 0       >(0=no, 1=yes)" << endl << endl;
-
-    writerinput << "#-Gas disk properties" << endl << endl;
-
+    writerinput << "     profile  = 0       >(0=no, 1=yes)" << endl;
+    writerinput << endl;
+    writerinput << "#-Gas disk properties" << endl;
+    writerinput << endl;
     writerinput << "     mstar = 1.         >Star mass (Msol)" << endl;
     writerinput << "     mdisk = 0.02       >Disk mass (mstar)" << endl;
     writerinput << "      Rin  = 3.         >Inner radius (AU)" << endl;
@@ -280,25 +280,27 @@ void WriteInputFile()
     writerinput << "   q index = 0.75       " << endl;
     writerinput << "     alpha = 0.01       >Turbulence Shakura & Sunyaev" << endl;
     writerinput << "       ibr = 0          >Back-reaction (0=no, 1=yes)" << endl;
-    writerinput << "     ibump = 0          >Pressure bump (0=no, 1=yes)" << endl << endl;
-
-    writerinput << "#-Dust properties" << endl << endl;
-
+    writerinput << "     ibump = 0          >Pressure bump (0=no, 1=yes)" << endl;
+    writerinput << endl;
+    writerinput << "#-Dust properties" << endl;
+    writerinput << endl;
     writerinput << " iporosity = 1          >(compact=0, porous=1)" << endl;
     writerinput << "   sizeini = 1.0e-7     >Initial size (m)" << endl;
     writerinput << "        a0 = 1.0e-7     >Monomer size (m)" << endl;
-    writerinput << "      rhos = 917        >Dust intrinsic density (kg/m³)" << endl << endl;
-
-    writerinput << "#-Grain options" << endl << endl;
+    writerinput << "      rhos = 917        >Dust intrinsic density (kg/m³)" << endl;
+    writerinput << endl;
+    writerinput << "#-Grain options" << endl;
+    writerinput << endl;
     writerinput << "    idrift = 0          >Drift (0=no, 1=yes)" << endl;
     writerinput << "   ibounce = 0          >Bounce (0=no, 1=yes)" << endl;
     writerinput << "  idisrupt = 0          >Rotationnal disruption (0=no, 1=yes)" << endl;
     writerinput << "     ifrag = 0          >Fragmentation (0=no, 1=hardfrag, 2=smoothfrag)" << endl;
     writerinput << "     vfrag = 15         >Fragmentation threshold (m/s)" << endl;
     writerinput << "   gammaft = 0.1        >Force-to-torque efficiency (Disruption) [Tatsuuma et al. 2021]" << endl;
-    writerinput << "   maxsize = 1.0e3      >Maximum size to stop the simulation" << endl << endl;
-
-    writerinput << "#-Porosity properties, Available if iporosity = 1" << endl << endl;
+    writerinput << "   maxsize = 1.0e3      >Maximum size to stop the simulation" << endl;
+    writerinput << endl;
+    writerinput << "#-Porosity properties, Available if iporosity = 1" << endl;
+    writerinput << endl;
     writerinput << " filfacini = 1          >Initial filling factor" << endl;
     writerinput << " Youngmod0 = 9.4e9      >Young Modulus for ice [Yamamoto et al. 2014] (Pa)" << endl;
     writerinput << "     Esurf = 7.3e-2     >Surface energy for ice grains J/m² [Yamamoto et al. 2014] (J/m²)" << endl;
@@ -306,18 +308,19 @@ void WriteInputFile()
     writerinput << "   Ydpower = 4          >Dynamic compression resistance power for ice [Mellor, 1975]" << endl;
     writerinput << "constvfrag = 1          >Constant fragmentation threshold (0=no, 1=yes)" << endl;
     writerinput << " filfaclim = 0.01       >Filling factor dynamic compression resistance limit" << endl;
-    writerinput << " filfacbnc = 0.3        >Filling factor bounce limit" << endl << endl;
-
-    writerinput << "#-Pressure bump option, Available if ibump = 1" << endl << endl;
+    writerinput << " filfacbnc = 0.3        >Filling factor bounce limit" << endl;
+    writerinput << endl;
+    writerinput << "#-Pressure bump option, Available if ibump = 1" << endl;
+    writerinput << endl;
     writerinput << "      Rbump = 6.5       >Pressure bump radius (AU)" << endl;
     writerinput << "dustfracmax = 0.1       >Max dustfrac possible" << endl;
     writerinput << "  bumpwidth = 1.1       >Bump half width at half maximum (AU)" << endl;
-    writerinput << " bumpheight = 300       >Bump height (Surface density at Rref)" << endl << endl;
-
-    writerinput << "#-Number of dust grains and initial radii" << endl << endl;
-
-    writerinput << "   ngrains = 10         >Number of dust grains" << endl << endl;
-
+    writerinput << " bumpheight = 300       >Bump height (Surface density at Rref)" << endl;
+    writerinput << endl;
+    writerinput << "#-Number of dust grains and initial radii" << endl;
+    writerinput << endl;
+    writerinput << "   ngrains = 10         >Number of dust grains" << endl;
+    writerinput << endl;
     writerinput << "   Initial radii (AU)" << endl;
     writerinput << "       R01 = 5" << endl;
     writerinput << "       R02 = 10" << endl;
@@ -328,7 +331,8 @@ void WriteInputFile()
     writerinput << "       R07 = 150" << endl;
     writerinput << "       R08 = 200" << endl;
     writerinput << "       R09 = 250" << endl;
-    writerinput << "       R10 = 300" << endl << endl;
+    writerinput << "       R10 = 300" << endl;
+    writerinput << endl;
 
     writerinput.close();
 }
@@ -344,20 +348,13 @@ void WriteProfileFile(ofstream& outputprofile, const double& Rprofile, const dou
     WriteValue(outputprofile,10,6,dustfrac);
     WriteValue(outputprofile,12,6,Pg);
     WriteValue(outputprofile,10,6,T);
-    outputprofile << endl;
+    outputprofile << "\n";
 }
 
 void WriteProfileHeader()
 {
     ofstream writecol("disk_profiles_header.txt");
-    writecol << "R"         << endl
-             << "Hg"        << endl
-             << "cg"        << endl
-             << "sigma"     << endl
-             << "rhog"      << endl
-             << "dustfrac"  << endl
-             << "Pg"        << endl
-             << "T"         << endl;
+    writecol << "R\n" << "Hg\n" << "cg\n" << "sigma\n" << "rhog\n" << "dustfrac\n" << "Pg\n" << "T\n";
     writecol.close();
 }
 
@@ -381,32 +378,21 @@ void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, co
     WriteValue(outputfile,13,6,drdt);
     WriteValue(outputfile,12,6,dvardt);
     WriteValue(outputfile,2,1,iregime);
-    outputfile << endl;
+    outputfile << "\n";
 }
 
 void WriteOutputHeader(const double& massorsize)
 {
     ofstream writecol("output_header.txt");
-    writecol << "t"         << endl
-             << "R"         << endl
-             << "mass"      << endl
-             << "filfac"    << endl
-             << "size"      << endl
-             << "St"        << endl
-             << "cg"        << endl
-             << "sigma"     << endl
-             << "rhog"      << endl
-             << "dustfrac"  << endl
-             << "vrel"      << endl
-             << "omegak"    << endl
-             << "drdt"      << endl;
+    writecol << "t\n" << "R\n" << "mass\n" << "filfac\n" << "size\n" << "St\n" << "cg\n" << "sigma\n"
+             << "rhog\n" << "dustfrac\n" << "vrel\n" << "omegak\n" << "drdt\n";
 
     if (massorsize == 0)
-    {   writecol << "dmdt"  << endl;  }
+    {   writecol << "dmdt\n";  }
     else
-    {   writecol << "dsdt"  << endl;  }
+    {   writecol << "dsdt\n";  }
 
-    writecol << "drag_regime" << endl;
+    writecol << "drag_regime\n";
     writecol.close();
 }
 
@@ -423,7 +409,8 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
 
 	writerdoc.open("results_setup.txt");
 
-	writerdoc << endl<< "     Running Time : " << runningtime << " s" << endl << endl;
+	writerdoc << endl<< "     Running Time : " << runningtime << " s" << endl;
+    writerdoc << endl;
 
     if (R0 < 10)        dash = "";
     else if (R0 >= 10)  dash = "-";
@@ -432,25 +419,28 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
 
     writerdoc << "------------------------------------------------------" << dash << endl;
 	writerdoc << "! ---------- Initials Conditions at " << R0 << " AU ---------- !" << endl;
-    writerdoc << "------------------------------------------------------" << dash << endl << endl;
+    writerdoc << "------------------------------------------------------" << dash << endl;
+    writerdoc << endl;
 	writerdoc << "    Gas surface density: " << sigma0 << " kg/m²" << endl;
 	writerdoc << "           Scale height: " << h0R0*R0 << " AU" << endl;
 	writerdoc << "        Gas sound speed: " << cg0 << " m/s" << endl;
 	writerdoc << "            Gas density: " << rhog0 << " kg/m³" << endl;
 	writerdoc << "        Gas temperature: " << T(R0,q,R0,cg0) << " K" << endl;
 	writerdoc << "           Gas pressure: " << Pg(rhog0,cg0) << " Pa" << endl;
-	writerdoc << "     Gas mean free path: " << Lambda(rhog0,cg0) << " m" << endl << endl << endl;
-
+	writerdoc << "     Gas mean free path: " << Lambda(rhog0,cg0) << " m" << endl;
+    writerdoc << endl;
+    writerdoc << endl;
     writerdoc << "------------------------------------------" << endl;
     writerdoc << "! ---------- Input Parameters ---------- !" << endl;
-    writerdoc << "------------------------------------------" << endl << endl;
+    writerdoc << "------------------------------------------" << endl;
+    writerdoc << endl;
     writerdoc << "             Model used: ";
 
     if (massorsize == 0)     writerdoc << "dm/dt" << endl;
     else                     writerdoc << "ds/dt" << endl;
 
-    writerdoc << "         Dust particles: " << ngrains << endl<< endl;
-
+    writerdoc << "         Dust particles: " << ngrains << endl;
+    writerdoc << endl;
     writerdoc << "         Simulated time: " << tend << " yrs" << endl;
 
     writerdoc << "   Time-stepping method: ";
@@ -459,23 +449,24 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
         case (0):
         {
             writerdoc << "Fixe" << endl;
-            writerdoc << "                     dt: " << dt << " yrs" << endl << endl;
+            writerdoc << "                     dt: " << dt << " yrs" << endl;
             break;
         }
         case (1):
         {
             writerdoc << "Fraction of orbital period" << endl;
-            writerdoc << "                     dt: " << dt << endl << endl;
+            writerdoc << "                     dt: " << dt << endl;
             break;
         }
         case (2):
         {
-            writerdoc << "Adaptative" << endl << endl;
+            writerdoc << "Adaptative" << endl;
             break;
         }
     }
-
-    writerdoc << "   -------- Gas disk properties --------" << endl<< endl;
+    writerdoc << endl;
+    writerdoc << "   -------- Gas disk properties --------" << endl;
+    writerdoc << endl;
     writerdoc << "              Star mass: " << KgToMsol(mstar) << " Msol" << endl;
     writerdoc << "              Disk mass: " << KgToMsol(mdisk) << " Msol" << endl;
     writerdoc << "           Inner radius: " << Rin << " AU" << endl;
@@ -485,7 +476,8 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     writerdoc << "  Dust/gas ratio (Rref): " << dustfrac0 << endl;
     writerdoc << "                p index: " << p << endl;
     writerdoc << "                q index: " << q << endl;
-    writerdoc << "       Alpha turbulence: " << alpha << endl << endl;
+    writerdoc << "       Alpha turbulence: " << alpha << endl;
+    writerdoc << endl;
 
     writerdoc << "          Back-reaction: ";
 
@@ -498,12 +490,12 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     else
     {
         writerdoc << "yes" << endl;
-        writerdoc << "   Pressure bump radius: " << Rbump << " AU" << endl << endl;
+        writerdoc << "   Pressure bump radius: " << Rbump << " AU" << endl;
     }
 
     writerdoc << endl;
-    writerdoc << "   -------- Dust properties --------" << endl << endl;
-
+    writerdoc << "   -------- Dust properties --------" << endl;
+    writerdoc << endl;
     writerdoc << "                  Grain: ";
 
     if (iporosity == 0)  writerdoc << "compact" << endl;
@@ -511,6 +503,7 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
 
     writerdoc << "     Initial grain size: " << sizeini << " m" << endl;
     if (iporosity == 0) writerdoc << " Initial filling factor: " << filfacini << endl;
+
     writerdoc << "           Monomer size: " << a0 << " m" << endl;
     writerdoc << " Dust intrinsic density: " << rhos << " kg/m³" << endl;
     if (ifrag !=0)      writerdoc << "Fragmentation threshold: " << vfragi << " m/s" << endl;
@@ -554,7 +547,8 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     }
     writerdoc << endl;
 
-    writerdoc << "   -------- Grain final state --------" << endl<< endl;
+    writerdoc << "   -------- Grain final state --------" << endl;
+    writerdoc << endl;
 
     for (int i=0; i < ngrains; i++)
     {

@@ -20,18 +20,18 @@ using namespace std;
 
 /* ------------------------ TERMINAL DISPLAY ------------------------*/
 
-// Presentation
-void Presentation()
+// Presentation animation
+void PresentationAnim()
 {
-    cout << "\e[1m" << endl;
-    cout << "!+-----                 -----+!" << endl << endl;
-    cout << "      Welcome in EDEN !" << endl << endl;
-    cout << "!+-----                 -----+!" << endl;
-    cout << "\e[0m" << endl << endl;
+    cout << "\e[1m\n" ;
+    cout << "!+-----                 -----+!\n\n";
+    cout << "      Welcome in EDEN !\n\n";
+    cout << "!+-----                 -----+!\n\n";
+    cout << "\e[0m\n";
 }
 
-// Terminal waiting animation
-void Animation(const double& iteratedvalue, const double endvalue, const int& istate, const string& outputfile)
+// Terminal progression / waiting animation
+void ProgressionAnim(const double& iteratedvalue, const double endvalue, const int& istate, const string& outputfile)
 {
     cout << "\rProgression: " << setprecision(4) << iteratedvalue*100./(endvalue) << " %     " << flush;
 
@@ -43,34 +43,34 @@ void Animation(const double& iteratedvalue, const double endvalue, const int& is
         {   
             case(1):    
             {   
-                cout << endl << "Particle size bigger than max size       " << flush;
+                cout << "\nParticle size bigger than max size       " << flush;
                 break;
             }     
             case(2):    
             {
-                cout << endl << "R < Rin: particle accreted               " << flush;
+                cout << "\nR < Rin: particle accreted               " << flush;
                 break;
             }
             case(3):    
             {   
-                cout << endl << "Particle disrupted by spinning motion    " << flush;
+                cout << "\nParticle disrupted by spinning motion    " << flush;
                 break;
             }
         }
 
-        cout << endl << outputfile << " written" << endl << endl;
+        cout << "\n" << outputfile << " written\n\n";
     }
 }
 
 // Running time
 void Runningtime(const double& runningtime)
-{   cout << endl << "Running time: " << runningtime << " s" << endl;  }
+{   cout << "\nRunning time: " << runningtime << " s\n";  }
 
-// End
-void End()
-{   cout << "\e[1m" << endl;
-    cout << "Job done ! " << endl;
-    cout << "\e[0m" << endl;
+// End animation
+void EndAnim()
+{   cout << "\e[1m\n";
+    cout << "Job done !\n";
+    cout << "\e[0m\n";
 }
 
 
@@ -174,7 +174,7 @@ int main()
 
     t1 = clock();
 
-    Presentation();
+    PresentationAnim();
 
     /*------------------------ READ INPUT FILE ------------------------*/
 
@@ -335,7 +335,7 @@ int main()
                     WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dmdt,ireg);
 
                     // Waiting animation
-                    Animation(t,tend,istate[j],outputfile);
+                    ProgressionAnim(t,tend,istate[j],outputfile);
                 }
                 break;
             }
@@ -412,7 +412,7 @@ int main()
                     WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dsdt,ireg);
 
                     // Waiting animation
-                    Animation(t,tend,istate[j],outputfile);
+                    ProgressionAnim(t,tend,istate[j],outputfile);
                 }
             break;
             }
@@ -429,7 +429,7 @@ int main()
                   filfacini,a0,rhos,idrift,ibounce,idisrupt,ifrag,ibr,ibump,vfragi,ngrains,sigma0,rhog0,cg0,istate,
                   (t2-t1)/(1.*CLOCKS_PER_SEC));
     WriteOutputHeader(massorsize);
-    End();
+    EndAnim();
 
     return 0;
 }
