@@ -205,7 +205,7 @@ int main()
             dustfrac = DustFrac(dustfrac0,dustfracmax,Rprofile,Rbump,bumpwidth,ibump);
             rhog = Rhog(sigma,hg);
             WriteProfileFile(writebump,Rprofile,hg,cg ,sigma,rhog,dustfrac,Pg(rhog,cg),T(Rprofile,q,R0,cg));
-            Animation(Rprofile,Rout-0.01,0,"diskprofiles.out");
+            ProgressionAnim(Rprofile,Rout-0.01,0,"diskprofiles.out");
         }
         WriteProfileHeader();
         writebump.close();
