@@ -281,7 +281,7 @@ int main()
                         }
                         case (2):
                         {   
-                            dt = AdaptativeDt(t,tend,massorsize,ibump,massf,Rf,dmdt,drdt);
+                            dt = AdaptativeDt(t,tend,massorsize,massf,Rf,dmdt,drdt);
                             break;
                         }
                     }
@@ -363,7 +363,7 @@ int main()
                         }
                         case (2):
                         {
-                            dt = AdaptativeDt(t,tend,massorsize,ibump,sizef,Rf,dsdt,drdt);
+                            dt = AdaptativeDt(t,tend,massorsize,sizef,Rf,dsdt,drdt);
                             break;
                         }
                     }
