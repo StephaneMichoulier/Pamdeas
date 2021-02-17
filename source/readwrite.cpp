@@ -406,8 +406,12 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
 {
     ofstream writerdoc;
     string dash;
+    string mod;
 
-	writerdoc.open("results_setup.txt");
+    if (massorsize == 0)    mod = "M";
+    else                    mod = "S";
+    
+    writerdoc.open("results_setup_"+mod+".txt");
 
 	writerdoc << endl<< "     Running Time : " << runningtime << " s" << endl;
     writerdoc << endl;
