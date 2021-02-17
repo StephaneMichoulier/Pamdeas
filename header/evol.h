@@ -12,8 +12,8 @@ using namespace std;
 double KeplerDt(double& omegakfraction, const double omegak);
 
 // Compute an adaptative dt to ensure stability
-double AdaptativeDt(const double& time, const double& timeend, const int& massorsize, const int& ibump,// ->  
-                    const double& vargrowth, const double& R, const double& dvargrowthdt, const double& dRdt);
+double AdaptativeDt(const double& time, const double& timeend, const int& massorsize, const double& vargrowth,// ->
+                    const double& R, const double& dvargrowthdt, const double& dRdt);
 
 
 /* ------------------------  VELOCITIES ------------------------*/

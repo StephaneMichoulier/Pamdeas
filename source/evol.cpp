@@ -14,8 +14,8 @@ double KeplerDt(double& omegakfraction, const double omegak)
     return SecToYear(omegakfraction*2.*M_PI/omegak);
 }
 
-double AdaptativeDt(const double& time, const double& timeend, const int& massorsize, const int& ibump,// ->
-                    const double& vargrowth, const double& R, const double& dvargrowthdt, const double& dRdt)
+double AdaptativeDt(const double& time, const double& timeend, const int& massorsize, const double& vargrowth,// -> 
+                    const double& R, const double& dvargrowthdt, const double& dRdt)
 {
     double dt = 1.;
     double limup = 0.15;
@@ -36,9 +36,6 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
         cout << "Error, time step iteration impossible" << endl;
         exit(1);
     }
-
-    if (ibump == 1)
-    {   limup *= 2.;   limdown *= 2.;   }
 
     if (massorsize == 1)
     {   limup /= 3.;   limdown /= 3.;   }
