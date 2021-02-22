@@ -18,7 +18,7 @@ double TensileStess(const double& size, const double& filfac, const double& rhos
 }
 
 bool Disrupt(const double& size, const double& filfac, const double& rhos, const double& deltav, const double& gammaft,// -> 
-             const double& esurf, const double& a0, const double& st)
+             const double& esurf, const double& a0)
 {
     double freqspin = FreqSpin(size,deltav,gammaft);
     double tensilestress = TensileStess(size,filfac,rhos,deltav,gammaft);
@@ -26,12 +26,12 @@ bool Disrupt(const double& size, const double& filfac, const double& rhos, const
 
     if (maxtensilestress <= tensilestress)
     {    
+        // To delete after
         //display values
         cout << endl
              << "mass (g): " << 4.*M_PI/3.*rhos*filfac*size*size*size*1000. << endl
              << "filfac*1e4 (filfac*1e4): " << filfac*10000. << endl
              << "size (m): " << size << endl
-             << "St: " << st << endl
              << "wc (r/s): " << freqspin << endl
              << "2pi/wc (min): " << 2.*M_PI/freqspin/60. << endl
              << "a*wc (m/s): " << size*freqspin << endl

@@ -16,6 +16,6 @@ double TensileStess(const double& size, const double& filfac, const double& rhos
 
 // Compare tensile stress and tensile strength 
 bool Disrupt(const double& size, const double& filfac, const double& rhos, const double& deltav, const double& gammaft,// -> 
-             const double& esurf, const double& a0, const double& st);
+             const double& esurf, const double& a0);
              
 #endif // DISRUPTION_H_INCLUDED

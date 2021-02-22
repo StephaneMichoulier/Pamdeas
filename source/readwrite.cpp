@@ -14,6 +14,92 @@ using namespace std;
 
 /* ------------------------ READING ------------------------*/
 
+void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, double& mstar, double& mdisk,// ->
+              double& Rin, double& Rout, double& R0, double& dustfrac0, double& h0R0, double& p, double& q, double& alpha,// ->
+              int& iporosity, double& sizeini, double& filfacini, double& a0, double& rhos, double& youngmod0, double& esurf,// ->
+              double& Yd0, double& Ydpower, int& idrift, int& ibounce, int& idisrupt, int& ifrag, int& ibr, int& ibump,// ->
+              double& gammaft, double& vfragi, int& constvfrag, double& filfaclim, double& filfacbnc, double& limsize,// ->
+              double& Rbump, double& dustfracmax, double& bumpwidth, double& bumpheight, int& ngrains, vector <double>& Rini,// ->
+              vector <int>& istate)
+{
+    ifstream Reader("input.in");
+    if (!Reader)
+   	{   
+        cerr << "Error: input.in is missing\n";
+        exit(1);
+    }
+
+    ReadVoid(Reader, 6);     CheckType(Reader, massorsize, "massorsize");
+    ReadVoid(Reader, 10);    CheckType(Reader, tend, "tend");
+    ReadVoid(Reader, 5);     CheckType(Reader, stepmethod, "stepmethod");
+    ReadVoid(Reader, 9);     CheckType(Reader, step, "step");
+    ReadVoid(Reader, 17);    CheckType(Reader, profile, "profile");
+    ReadVoid(Reader, 7);     CheckType(Reader, mstar, "mstar");
+    ReadVoid(Reader, 5);     CheckType(Reader, mdisk, "mdisk");
+    ReadVoid(Reader, 5);     CheckType(Reader, Rin, "Rin");
+    ReadVoid(Reader, 5);     CheckType(Reader, Rout, "Rout");
+    ReadVoid(Reader, 5);     CheckType(Reader, R0, "R0");
+    ReadVoid(Reader, 5);     CheckType(Reader, dustfrac0, "dustfrac0");
+    ReadVoid(Reader, 8);     CheckType(Reader, h0R0, "h0R0");
+    ReadVoid(Reader, 6);     CheckType(Reader, p, "p");
+    ReadVoid(Reader, 3);     CheckType(Reader, q, "q");
+    ReadVoid(Reader, 2);     CheckType(Reader, alpha, "alpha");
+    ReadVoid(Reader, 6);     CheckType(Reader, ibr, "ibr");
+    ReadVoid(Reader, 5);     CheckType(Reader, ibump, "ibump");
+
+    ReadVoid(Reader, 8);     CheckType(Reader, iporosity, "iporosity");
+    ReadVoid(Reader, 4);     CheckType(Reader, sizeini, "sizeini");
+    ReadVoid(Reader, 5);     CheckType(Reader, a0, "a0");
+    ReadVoid(Reader, 5);     CheckType(Reader, rhos, "rhos");
+
+    ReadVoid(Reader, 8);     CheckType(Reader, idrift, "idrift");
+    ReadVoid(Reader, 5);     CheckType(Reader, ibounce, "ibounce");
+    ReadVoid(Reader, 5);     CheckType(Reader, idisrupt, "idisrupt");
+    ReadVoid(Reader, 6);     CheckType(Reader, ifrag, "ifrag");
+    ReadVoid(Reader, 6);     CheckType(Reader, vfragi, "vfragi");
+    ReadVoid(Reader, 5);     CheckType(Reader, gammaft, "gammaft");
+    ReadVoid(Reader, 9);     CheckType(Reader, limsize, "limsize");
+
+    ReadVoid(Reader, 15);    CheckType(Reader, filfacini, "filfacini");
+    ReadVoid(Reader, 5);     CheckType(Reader, youngmod0, "youngmod0");
+    ReadVoid(Reader, 11);    CheckType(Reader, esurf, "esurf");
+    ReadVoid(Reader, 13);    CheckType(Reader, Yd0, "Yd0");
+    ReadVoid(Reader, 9);     CheckType(Reader, Ydpower, "Ydpower");
+    ReadVoid(Reader, 10);    CheckType(Reader, constvfrag, "constvfrag");
+    ReadVoid(Reader, 7);     CheckType(Reader, filfaclim, "filfaclim");
+    ReadVoid(Reader, 8);     CheckType(Reader, filfacbnc, "filfacbnc");
+
+    ReadVoid(Reader, 14);    CheckType(Reader, Rbump, "Rbump");
+    ReadVoid(Reader, 6);     CheckType(Reader, dustfracmax, "dustfracmax");
+    ReadVoid(Reader, 5);     CheckType(Reader, bumpwidth, "bumpwidth");
+    ReadVoid(Reader, 9);     CheckType(Reader, bumpheight, "bumpheight");
+
+    ReadVoid(Reader, 15);    CheckType(Reader, ngrains, "ngrain");
+
+    ReadVoid(Reader, 7);
+
+    Rini.resize(ngrains);
+
+    for (int i = 0; i < ngrains; i++)
+    {
+        ReadVoid(Reader, 2); CheckType(Reader, Rini[i],"Rini for grain "+to_string(i+1));
+    }
+    CheckData(massorsize,tend,stepmethod,step,profile,mstar,mdisk,Rin,Rout,R0,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
+              filfacini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,gammaft,vfragi,constvfrag,
+              filfaclim,filfacbnc,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini);
+    
+    istate.resize(ngrains);
+    for (int i = 0; i < ngrains; i++)   istate[i] = 0;
+
+    // Convert values to SI units
+    mstar = MsolToKg(mstar);
+    mdisk *= mstar;
+     
+    if (stepmethod == 2)    step = 1.;
+
+	Reader.close();
+}
+
 void CheckData(const int& massorsize, const double& tend, const int& stepmethod, const double& step, const int& profile,// ->
                const double& mstar, const double& mdisk, const double& Rin, const double& Rout, const double& R0,// ->
                const double& dustfrac0, const double& h0R0, const double& p, const double& q, const double& alpha, // ->
@@ -26,223 +112,134 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 {
     bool error = false;
 
-    if (massorsize != 0 && massorsize != 1)     Error(error, "massorsize != 0 & != 1");
+    if (massorsize != 0 && massorsize != 1)     ErrorValue(error, "massorsize != 0 & != 1");
 
-    if (tend <= 0)                              Error(error, "tend <= 0");
+    if (tend <= 0)                              ErrorValue(error, "tend <= 0");
 
     if (stepmethod != 0 && stepmethod != 1 && stepmethod != 2)
-                                                Error(error, "stepmethod != 0 & != 1 & != 2");
+                                                ErrorValue(error, "stepmethod != 0 & != 1 & != 2");
 
     if (stepmethod != 2)
     {
-        if (step <= 0)                          Error(error, "step <= 0");
+        if (step <= 0)                          ErrorValue(error, "step <= 0");
     }
 
-    if (profile != 0 && profile != 1)           Error(error, "profile != 0 & != 1");
+    if (profile != 0 && profile != 1)           ErrorValue(error, "profile != 0 & != 1");
 
-    if (mstar <= 0)                             Error(error, "mstar <= 0");
+    if (mstar <= 0)                             ErrorValue(error, "mstar <= 0");
 
-    if (mdisk <= 0)                             Error(error, "mdisk <= 0");
+    if (mdisk <= 0)                             ErrorValue(error, "mdisk <= 0");
 
-    if (Rin <= 0)                               Error(error, "Rin <= 0");
+    if (Rin <= 0)                               ErrorValue(error, "Rin <= 0");
 
-    if (Rout <= 0)                              Error(error, "Rout <= 0");
+    if (Rout <= 0)                              ErrorValue(error, "Rout <= 0");
 
-    if (Rin >= Rout)                            Error(error, "Rin >= Rout");
+    if (Rin >= Rout)                            ErrorValue(error, "Rin >= Rout");
 
-    if (R0 <= 0)                                Error(error, "R0 <= 0");
+    if (R0 <= 0)                                ErrorValue(error, "R0 <= 0");
 
     if (dustfrac0 <= 0 || dustfrac0 >= 1)
     {
-        if (dustfrac0 >= 1 )                    Error(error, "dustfrac0 >= 1");
-        else                                    Error(error, "dustfrac0 <= 0");
+        if (dustfrac0 >= 1 )                    ErrorValue(error, "dustfrac0 >= 1");
+        else                                    ErrorValue(error, "dustfrac0 <= 0");
     }
 
-    if (h0R0 <= 0)                              Error(error, "H0R0 <= 0");
+    if (h0R0 <= 0)                              ErrorValue(error, "H0R0 <= 0");
 
-    if (alpha <= 0)                             Error(error, "alpha <= 0");
+    if (alpha <= 0)                             ErrorValue(error, "alpha <= 0");
 
-    if (ibr != 0 && ibr != 1)                   Error(error, "ibr != 0 & != 1");
+    if (ibr != 0 && ibr != 1)                   ErrorValue(error, "ibr != 0 & != 1");
 
-    if (ibump != 0 && ibump != 1)               Error(error, "ibump != 0 & != 1");
+    if (ibump != 0 && ibump != 1)               ErrorValue(error, "ibump != 0 & != 1");
 
-    if (iporosity != 0 && iporosity != 1)       Error(error, "iporosity != 0 & != 1");
+    if (iporosity != 0 && iporosity != 1)       ErrorValue(error, "iporosity != 0 & != 1");
 
-    if (sizeini <= 0)                           Error(error, "sizeini <= 0");
+    if (sizeini <= 0)                           ErrorValue(error, "sizeini <= 0");
 
     if (filfacini <= 0 || filfacini > 1)
     {
-        if(filfacini > 1)                       Error(error, "filfacini > 1");
-        else                                    Error(error, "filfacini <= 0");
+        if(filfacini > 1)                       ErrorValue(error, "filfacini > 1");
+        else                                    ErrorValue(error, "filfacini <= 0");
     }
 
     if (a0 <= 0 || a0 > sizeini)
     {
-        if(a0 <= 0)                             Error(error, "a0 <= 0");
-        else                                    Error(error, "a0 > sizeini");
+        if(a0 <= 0)                             ErrorValue(error, "a0 <= 0");
+        else                                    ErrorValue(error, "a0 > sizeini");
     }
 
-    if (rhos <= 0)                              Error(error, "rhos <= 0");
+    if (rhos <= 0)                              ErrorValue(error, "rhos <= 0");
 
-    if (youngmod0 <= 0)                         Error(error, "Youngmod0 <= 0");
+    if (youngmod0 <= 0)                         ErrorValue(error, "Youngmod0 <= 0");
 
-    if (esurf <= 0)                             Error(error, "Esurf <= 0");
+    if (esurf <= 0)                             ErrorValue(error, "Esurf <= 0");
 
-    if (Yd0 <= 0)                               Error(error, "Yd0 <= 0");
+    if (Yd0 <= 0)                               ErrorValue(error, "Yd0 <= 0");
 
-    if (idrift != 0 && idrift != 1)             Error(error, "idrift != 0 & != 1");
+    if (idrift != 0 && idrift != 1)             ErrorValue(error, "idrift != 0 & != 1");
 
-    if (ibounce != 0 && ibounce != 1)           Error(error, "ibounce != 0 & != 1");
+    if (ibounce != 0 && ibounce != 1)           ErrorValue(error, "ibounce != 0 & != 1");
 
-    if (ibounce == 1 && massorsize == 1)        Error(error, "bounce is not included with ds/dt model");
+    if (ibounce == 1 && massorsize == 1)        ErrorValue(error, "bounce is not included with ds/dt model");
 
-    if (idisrupt != 0 && idisrupt != 1)         Error(error, "idisrupt != 0 & != 1");
+    if (idisrupt != 0 && idisrupt != 1)         ErrorValue(error, "idisrupt != 0 & != 1");
 
-    if (ifrag != 0 && ifrag != 1 && ifrag != 2) Error(error, "ifrag != 0 & != 1 & != 2");
+    if (ifrag != 0 && ifrag != 1 && ifrag != 2) ErrorValue(error, "ifrag != 0 & != 1 & != 2");
 
-    if (vfragi < 0)                             Error(error, "vfragi < 0");
+    if (vfragi < 0)                             ErrorValue(error, "vfragi < 0");
 
     if (gammaft <= 0 || gammaft > 1)
     {
-        if(gammaft > 1)                         Error(error, "gammaft > 1");
-        else                                    Error(error, "gammaft <= 0");
+        if(gammaft > 1)                         ErrorValue(error, "gammaft > 1");
+        else                                    ErrorValue(error, "gammaft <= 0");
     }
 
-    if (limsize <= sizeini)                     Error(error, "limsize <= sizeini");
+    if (limsize <= sizeini)                     ErrorValue(error, "limsize <= sizeini");
 
-    if (constvfrag != 0 && constvfrag != 1)     Error(error, "constvfrag != 0 & != 1");
+    if (constvfrag != 0 && constvfrag != 1)     ErrorValue(error, "constvfrag != 0 & != 1");
 
     if (filfaclim < 0 || filfaclim > 1)
     {
-        if(filfaclim > 1)                       Error(error, "filfaclim > 1");
-        else                                    Error(error, "filfaclim < 0");
+        if(filfaclim > 1)                       ErrorValue(error, "filfaclim > 1");
+        else                                    ErrorValue(error, "filfaclim < 0");
     }
 
     if (filfacbnc < 0 || filfacbnc > 1)
     {
-        if(filfacbnc > 1)                       Error(error, "filfacbnc > 1");
-        else                                    Error(error, "filfacbnc < 0");
+        if(filfacbnc > 1)                       ErrorValue(error, "filfacbnc > 1");
+        else                                    ErrorValue(error, "filfacbnc < 0");
     }
 
     if (Rbump < Rin || Rbump > Rout)
     {
-        if (Rbump < Rin )                       Error(error, "Rbump < Rin");
-        else                                    Error(error, "Rbump > Rout");
+        if (Rbump < Rin )                       ErrorValue(error, "Rbump < Rin");
+        else                                    ErrorValue(error, "Rbump > Rout");
     }
 
     if (dustfracmax < dustfrac0 || dustfracmax >= 1)
     {
-        if (dustfracmax >= 1 )                  Error(error, "dustfracmax >= 1");
-        else                                    Error(error, "dustfracmax < dustfrac0");
+        if (dustfracmax >= 1 )                  ErrorValue(error, "dustfracmax >= 1");
+        else                                    ErrorValue(error, "dustfracmax < dustfrac0");
     }
 
-    if (bumpwidth <= 0)                         Error(error, "bumpwidth <= 0");
+    if (bumpwidth <= 0)                         ErrorValue(error, "bumpwidth <= 0");
 
-    if (bumpheight <= 0)                        Error(error, "bumpheight <= 0");
+    if (bumpheight <= 0)                        ErrorValue(error, "bumpheight <= 0");
 
-    if (ngrains < 0)                            Error(error, "ngrain < 0");
+    if (ngrains < 0)                            ErrorValue(error, "ngrain < 0");
     else
     {
         if (error == false)
         {   for (int i=0; i<ngrains; i++)
-            {
-                if (Rini[i] < Rin)              Error(error, "Rini < Rin for particle " + to_string(i+1));
-                if (Rini[i] > Rout)             Error(error, "Rini > Rout for particle " + to_string(i+1));
+            {   
+                if (Rini[i] < Rin)              ErrorValue(error, "Rini < Rin for grain " + to_string(i+1));
+                if (Rini[i] > Rout)             ErrorValue(error, "Rini > Rout for grain " + to_string(i+1));
             }
         }
     }
 
     if (error == true)                          exit(1);
 
-}
-
-
-void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, double& mstar, double& mdisk,// ->
-              double& Rin, double& Rout, double& R0, double& dustfrac0, double& h0R0, double& p, double& q, double& alpha,// ->
-              int& iporosity, double& sizeini, double& filfacini, double& a0, double& rhos, double& youngmod0, double& esurf,// ->
-              double& Yd0, double& Ydpower, int& idrift, int& ibounce, int& idisrupt, int& ifrag, int& ibr, int& ibump,// ->
-              double& gammaft, double& vfragi, int& constvfrag, double& filfaclim, double& filfacbnc, double& limsize,// ->
-              double& Rbump, double& dustfracmax, double& bumpwidth, double& bumpheight, int& ngrains, vector <double>& Rini,// ->
-              vector <int>& istate)
-{
-    ifstream Reader("input.in");
-    if (!Reader)
-   	{   cout << "Fatal error, input.in is missing\n";
-        WriteInputFile();
-        cout << "Input file has been written: input.in\n";
-        exit(1);
-    }
-
-    ReadVoid(Reader,6);     Reader >> massorsize;
-    ReadVoid(Reader,10);    Reader >> tend;
-    ReadVoid(Reader,5);     Reader >> stepmethod;
-    ReadVoid(Reader,9);     Reader >> step;
-    ReadVoid(Reader,17);    Reader >> profile;
-    ReadVoid(Reader,7);     Reader >> mstar;
-    ReadVoid(Reader,5);     Reader >> mdisk;
-    ReadVoid(Reader,5);     Reader >> Rin;
-    ReadVoid(Reader,5);     Reader >> Rout;
-    ReadVoid(Reader,5);     Reader >> R0;
-    ReadVoid(Reader,5);     Reader >> dustfrac0;
-    ReadVoid(Reader,8);     Reader >> h0R0;
-    ReadVoid(Reader,6);     Reader >> p;
-    ReadVoid(Reader,3);     Reader >> q;
-    ReadVoid(Reader,2);     Reader >> alpha;
-    ReadVoid(Reader,6);     Reader >> ibr;
-    ReadVoid(Reader,5);     Reader >> ibump;
-
-    ReadVoid(Reader,8);     Reader >> iporosity;
-    ReadVoid(Reader,4);     Reader >> sizeini;
-    ReadVoid(Reader,5);     Reader >> a0;
-    ReadVoid(Reader,5);     Reader >> rhos;
-
-    ReadVoid(Reader,8);     Reader >> idrift;
-    ReadVoid(Reader,5);     Reader >> ibounce;
-    ReadVoid(Reader,5);     Reader >> idisrupt;
-    ReadVoid(Reader,6);     Reader >> ifrag;
-    ReadVoid(Reader,6);     Reader >> vfragi;
-    ReadVoid(Reader,5);     Reader >> gammaft;
-    ReadVoid(Reader,9);     Reader >> limsize;
-
-    ReadVoid(Reader,15);    Reader >> filfacini;
-    ReadVoid(Reader,5);     Reader >> youngmod0;
-    ReadVoid(Reader,11);    Reader >> esurf;
-    ReadVoid(Reader,13);    Reader >> Yd0;
-    ReadVoid(Reader,9);     Reader >> Ydpower;
-    ReadVoid(Reader,10);    Reader >> constvfrag;
-    ReadVoid(Reader,7);     Reader >> filfaclim;
-    ReadVoid(Reader,8);     Reader >> filfacbnc;
-
-    ReadVoid(Reader,14);    Reader >> Rbump;
-    ReadVoid(Reader,6);     Reader >> dustfracmax;
-    ReadVoid(Reader,5);     Reader >> bumpwidth;
-    ReadVoid(Reader,9);     Reader >> bumpheight;
-
-    ReadVoid(Reader,15);    Reader >> ngrains;
-
-    ReadVoid(Reader,7);
-
-    Rini.resize(ngrains);
-
-    for (int i = 0; i < ngrains; i++)
-    {
-        ReadVoid(Reader,2); Reader >> Rini[i];
-    }
-
-    CheckData(massorsize,tend,stepmethod,step,profile,mstar,mdisk,Rin,Rout,R0,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
-              filfacini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,gammaft,vfragi,constvfrag,
-              filfaclim,filfacbnc,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini);
-    
-    istate.resize(ngrains);
-    for (int i = 0; i < ngrains; i++)   istate[i] = 0;
-
-    // Convert values to SI units
-    mstar = MsolToKg(mstar);
-    mdisk *= mstar;
-
-    if (stepmethod == 2)    step = 1.;
-
-	Reader.close();
 }
 
 
@@ -322,77 +319,104 @@ void WriteInputFile()
     writerinput << "   ngrains = 10         >Number of dust grains" << endl;
     writerinput << endl;
     writerinput << "   Initial radii (AU)" << endl;
-    writerinput << "       R01 = 5" << endl;
-    writerinput << "       R02 = 10" << endl;
-    writerinput << "       R03 = 20" << endl;
-    writerinput << "       R04 = 50" << endl;
-    writerinput << "       R05 = 75" << endl;
-    writerinput << "       R06 = 100" << endl;
-    writerinput << "       R07 = 150" << endl;
-    writerinput << "       R08 = 200" << endl;
-    writerinput << "       R09 = 250" << endl;
-    writerinput << "       R10 = 300" << endl;
+    writerinput << "        R01 = 5" << endl;
+    writerinput << "        R02 = 10" << endl;
+    writerinput << "        R03 = 20" << endl;
+    writerinput << "        R04 = 50" << endl;
+    writerinput << "        R05 = 75" << endl;
+    writerinput << "        R06 = 100" << endl;
+    writerinput << "        R07 = 150" << endl;
+    writerinput << "        R08 = 200" << endl;
+    writerinput << "        R09 = 250" << endl;
+    writerinput << "        R10 = 300" << endl;
     writerinput << endl;
 
     writerinput.close();
 }
 
 void WriteProfileFile(ofstream& outputprofile, const double& Rprofile, const double& hg, const double& cg, const double& sigma,
-                      const double& rhog, const double& dustfrac, const double& Pg, const double& T)
+                      const double& rhog, const double& dustfrac, const double& pg, const double& T)
 {
-    WriteValue(outputprofile,6,6,Rprofile);
-    WriteValue(outputprofile,10,6,hg);
-    WriteValue(outputprofile,10,6,cg);
-    WriteValue(outputprofile,10,6,sigma);
-    WriteValue(outputprofile,12,6,rhog);
-    WriteValue(outputprofile,10,6,dustfrac);
-    WriteValue(outputprofile,12,6,Pg);
-    WriteValue(outputprofile,10,6,T);
+    WriteValue(outputprofile,  6, 6, Rprofile);
+    WriteValue(outputprofile, 10, 6, hg);
+    WriteValue(outputprofile, 10, 6, cg);
+    WriteValue(outputprofile, 10, 6, sigma);
+    WriteValue(outputprofile, 12, 6, rhog);
+    WriteValue(outputprofile, 10, 6, dustfrac);
+    WriteValue(outputprofile, 12, 6, pg);
+    WriteValue(outputprofile, 10, 6, T);
     outputprofile << "\n";
 }
 
 void WriteProfileHeader()
 {
     ofstream writecol("disk_profiles_header.txt");
-    writecol << "R\n" << "Hg\n" << "cg\n" << "sigma\n" << "rhog\n" << "dustfrac\n" << "Pg\n" << "T\n";
+    writecol << "R(AU)\n" << "Hg(AU)\n" << "cg(m/s)\n" << "sigma(kg/m^2)\n" << "rhog(kg/m^3)\n" << "dustfrac\n" << "Pg(Pa)\n" << "T(K)\n";
     writecol.close();
 }
 
 void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, const double& massf, const double& filfacf,// ->
-                     const double& sizef, const double& St, const double& cg, const double& sigma,// ->
+                     const double& sizef, const double& st, const double& cg, const double& sigma,// ->
                      const double& rhog, const double& dustfrac, const double& vrel, const double& omegak,// ->
                      const double& drdt, const double& dvardt, const int& iregime)
 {
-    WriteValue(outputfile,11,6,t);
-    WriteValue(outputfile,10,6,Rf);
-    WriteValue(outputfile,12,6,massf);
-    WriteValue(outputfile,12,6,filfacf);
-    WriteValue(outputfile,12,6,sizef);
-    WriteValue(outputfile,12,6,St);
-    WriteValue(outputfile,10,6,cg);
-    WriteValue(outputfile,10,6,sigma);
-    WriteValue(outputfile,12,6,rhog);
-    WriteValue(outputfile,10,6,dustfrac);
-    WriteValue(outputfile,12,6,vrel);
-    WriteValue(outputfile,12,6,omegak);
-    WriteValue(outputfile,13,6,drdt);
-    WriteValue(outputfile,12,6,dvardt);
-    WriteValue(outputfile,2,1,iregime);
+    WriteValue(outputfile, 11, 6, t);
+    WriteValue(outputfile, 10, 6, Rf);
+    WriteValue(outputfile, 12, 6, massf);
+    WriteValue(outputfile, 12, 6, filfacf);
+    WriteValue(outputfile, 12, 6, sizef);
+    WriteValue(outputfile, 12, 6, st);
+    WriteValue(outputfile, 10, 6, cg);
+    WriteValue(outputfile, 10, 6, sigma);
+    WriteValue(outputfile, 12, 6, rhog);
+    WriteValue(outputfile, 10, 6, dustfrac);
+    WriteValue(outputfile, 12, 6, vrel);
+    WriteValue(outputfile, 12, 6, omegak);
+    WriteValue(outputfile, 13, 6, drdt);
+    WriteValue(outputfile, 12, 6, dvardt);
+    WriteValue(outputfile,  2, 1, iregime);
     outputfile << "\n";
 }
 
 void WriteOutputHeader(const double& massorsize)
 {
     ofstream writecol("output_header.txt");
-    writecol << "t\n" << "R\n" << "mass\n" << "filfac\n" << "size\n" << "St\n" << "cg\n" << "sigma\n"
-             << "rhog\n" << "dustfrac\n" << "vrel\n" << "omegak\n" << "drdt\n";
+    writecol << "t(yr)\n" << "R(AU)\n" << "mass(kg)\n" << "filfac\n" << "size(m)\n" << "St\n" << "cg(m/s)\n" << "sigma(kg/m^2)\n"
+             << "rhog(kg/m^3)\n" << "dustfrac\n" << "vrel(m/s)\n" << "omegak(1/s)\n" << "drdt(au/s)\n";
 
     if (massorsize == 0)
-    {   writecol << "dmdt\n";  }
+    {   writecol << "dmdt(kg/s)\n";  }
     else
-    {   writecol << "dsdt\n";  }
+    {   writecol << "dsdt(m/s)\n";  }
 
     writecol << "drag_regime\n";
+    writecol.close();
+}
+
+void WriteDisruptFile(ofstream& outputfile, const double& R, const double& massf, const double& filfacf, const double& sizef, 
+                      const double& st, const double& vrel, const double& freqspin, const double& tensilestress,
+                      const double& gammaft, const double& alpha, const double& a0)
+{
+    WriteValue(outputfile,  6, 4, R);
+    WriteValue(outputfile,  6, 4, gammaft);
+    WriteValue(outputfile,  6, 4, a0);
+    WriteValue(outputfile,  6, 4, alpha);
+    WriteValue(outputfile, 10, 6, vrel);
+    WriteValue(outputfile, 12, 6, massf);
+    WriteValue(outputfile, 12, 6, filfacf);
+    WriteValue(outputfile, 12, 6, sizef);
+    WriteValue(outputfile, 12, 6, st);
+    WriteValue(outputfile, 10, 6, freqspin);
+    WriteValue(outputfile, 10, 6, tensilestress);
+    outputfile << "\n";
+}
+
+void WriteDisruptHeader()
+{
+    ofstream writecol("disrupt_param_header.txt");
+    writecol << "R(AU)\n" << "gammaft\n" << "a0(m)\n" << "alpha\n" << "vrel(m/s)\n" << "mass(kg)\n" << "filfac\n" << "size(m)\n"
+             << "St\n" << "freqspin(rad/s)\n" << "tensilestress(Pa)\n";
+
     writecol.close();
 }
 
@@ -589,9 +613,9 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
 
 /* ------------------------ TOOLS ------------------------*/
 
-void Error(bool& error, const string& variable)
+void ErrorValue(bool& error, const string& variable)
 {
-    cout << "Error, " << variable << endl;
+    cerr << "Error: " << variable << endl;
     error = true;
 }
 
@@ -602,7 +626,7 @@ string ToStringWithPrecision(const double& value, const int& precision)
     return out.str();
 }
 
-string FileName(const int& massorsize, const double& Rini, const int& iporosity)
+string OutputFileName(const int& massorsize, const double& Rini, const int& iporosity)
 {
     string ms;
     string porosity;
@@ -616,14 +640,20 @@ string FileName(const int& massorsize, const double& Rini, const int& iporosity)
     return "output" + porosity + ms + ToStringWithPrecision(Rini,10).c_str() + ".out";
 }
 
-void WriteValue(ostream& writer, const int& width, const double& precision, const double& value)
+string DisruptFileName(const int& massorsize)
 {
-    writer << setw(width)<< setprecision(precision) << value << " ";
+    string ms;
+
+    if (massorsize == 0) ms = "M_";
+    else                 ms = "S_";
+
+    return "disrupt_param_" + ms + ".out";
 }
 
 void ReadVoid(ifstream& reader, int nbvoid)
 {
     string blank;
     for (int i = 0; i < nbvoid; i++)
-    {   reader>>blank;  }
+    {   reader >> blank;  }
 }
+

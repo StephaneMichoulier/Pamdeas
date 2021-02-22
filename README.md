@@ -4,7 +4,7 @@
 
 Author: Stéphane Michoulier
 
-Eden: version 1.1
+Eden: version 1.2
 
 DESCRIPTION:
 
@@ -13,7 +13,7 @@ This code allow you to follow the evolution of a given number of particles from 
 This code is mainly developed to understand the behaviour of porous grains constrain by numerous physical processes and to test the algorithms for a future implementation in 3D Hydrodynamics code.
 
 
-FEW WORDS ON INPUT FILE OPTION (Respect the blank space, or be ready for unforeseen consequences)
+FEW WORDS ON INPUT FILE OPTION (Respect the blank space, or expect unforeseen consequences)
 2 models can be used to study the evolution of the porosity. 
 One is based on the increase of mass (dm/dt) and use A. Garcia's algorithms, the other one is based on the increase of size (ds/dt) and use my algorithms
 The dmdt model support the bounce process, but not the dsdt model.
@@ -36,16 +36,18 @@ LAUNCHING THE PROGRAM
     -Once in the directory, build the code with: make
     -Then, source file will be compiled in "source" folder and the program will be built
     -The simulation can then be launch. To do this, go inside the "build" folder where the executable is: cd build
-    -First, the input file need to be created. In order to write it, launch Eden: ./eden
+    -First, the input file need to be created. In order to write it, write: ./eden setup
     -Then, modify the input file to make your own simulation. Don't forget to save your setup
-    -Finally, run again Eden: ./eden
+    -Finally, run Eden: ./eden
 
-  Once the simulation is finished, multiple output files are written into the output folder.
+  Once the simulation is finished, multiple output files are written into the output folder depending on the option
     -Initials_Conditions_<Rref>.txt summarises your setup
     -output<setup name>.out: one output file for each particle. The file name depends on the model used (dmdt/dsdt and porous/compact grains)
-	-output_header.txt gives you the corresponding columns present in output files.
-	-diskprofiles.out contains different profiles (surface density, pressure, etc).
-	-disk_profiles_header.txt gives you the corresponding columns present in the diskprofiles.out files.
+	-output_header.txt gives you the corresponding columns in output files.
+	-disk_profiles.out contains different profiles (surface density, pressure, etc).
+	-disk_profiles_header.txt gives you the corresponding columns in the diskprofiles.out files.
+    -disrupt_param_<model>.out contains parameters of disrupted grains.
+    -disrupt_param_header.txt gives you the corresponding columns in the disrupt_param.out  files.
 
 HOW THE PROGRAM IS BUILT ?
 
