@@ -1,13 +1,13 @@
-### **+-----------------------------------                     -----------------------------------+**  
-### **!+----------------------------             **READ ME**             ----------------------------+!**  
-### **+-----------------------------------                     -----------------------------------+**  
+## **+-----------------------------------                     -----------------------------------+**  
+## **!+----------------------------               **READ ME**               ----------------------------+!**  
+## **+-----------------------------------                     -----------------------------------+**  
 
 *Author:* Stéphane Michoulier  
-*email:* <stephane.michoulier@univ-lyon1.fr>
+*Email:* <stephane.michoulier@univ-lyon1.fr>
 
 *Eden:* version 1.2
 
-#### **DESCRIPTION**:
+### **DESCRIPTION**:
 
 Eden is a 1D code primarily wrote to study the evolution of grains porosity within protoplanetary disc considering different physical process such as growth, fragmentation, drift, pressure bump, etc.  
 This code allow you to follow the evolution of a given number of particles from a set of initials conditions chosen by the user in a stationary non self-gravitating gas disk.  
@@ -25,7 +25,7 @@ Be aware that using a pressure bump with radial drift and fragmentation is way s
 
 For porous grains, physical properties of the material have to be changed if the intrinsic density is changed.  
 
-#### **LAUNCHING THE PROGRAM**
+### **LAUNCHING THE PROGRAM**
 
 Set your SYSTEM environment to be able to build programs in C++: export SYSTEM=g++  
 To use all functionality of the program, be sure to  have the latest C++ version installed.  
@@ -49,7 +49,7 @@ Once the simulation is finished, multiple output files are written into the outp
 > - disrupt_param_<model>.out contains parameters of disrupted grains.
 > - disrupt_param_header.txt gives you the corresponding columns in the disrupt_param.out  files.
 
-#### **HOW THE PROGRAM IS BUILT ?**
+### **HOW THE PROGRAM IS BUILT ?**
 
 The program contains multiple files in the source folder "source" and the header folder "header":
 
