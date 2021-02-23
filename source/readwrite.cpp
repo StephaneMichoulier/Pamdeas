@@ -25,7 +25,7 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ifstream Reader("input.in");
     if (!Reader)
    	{   
-        cerr << "Error: input.in is missing\n";
+        cerr << "Error: input.in is missing" << endl;
         exit(1);
     }
 

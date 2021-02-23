@@ -33,7 +33,7 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
     else if (C1 == 0 && C2 != 0)       CFLcdt = C2;
     else
     {
-        cout << "Error, time step iteration impossible" << endl;
+        cerr << "Error: time step iteration impossible" << endl;
         exit(1);
     }
 
@@ -88,10 +88,10 @@ double DRDt(const double& R, const double& mstar, double p, double q, const doub
             const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
     double dfbr = 1.;
+    if (ibr == 1)   dfbr += dustfrac;
+
     double vdrift = VDrift(R,mstar,p,q,rhog,cg,R0,sigma0,hg0,ibump,Rbump,bumpwidth,bumpheight);
     double vvisc = VVisc(R,mstar,p,q,rhog,cg,R0,sigma0,hg0,alpha,ibump,Rbump,bumpwidth,bumpheight);
-
-    if (ibr == 1)   dfbr = 1.+dustfrac;
 
     vdrift *= st/(dfbr*dfbr+st*st);
     vvisc *= dfbr/(dfbr*dfbr+st*st);
@@ -107,15 +107,13 @@ double DeltaV(const double& R, const double& mstar, double p, double q, const do
               const int& ibump, const int& idrift, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
     double dfbr = 1.;
+    if (ibr == 1)   dfbr += dustfrac; 
+
     double vdrift = VDrift(R,mstar,p,q,rhog,cg,R0,sigma0,hg0,ibump,Rbump,bumpwidth,bumpheight);
     double vvisc = VVisc(R,mstar,p,q,rhog,cg,R0,sigma0,hg0,alpha,ibump,Rbump,bumpwidth,bumpheight);
-
     double deltavradial = 0.;
-    double deltavorbital = st/(dfbr*dfbr+st*st)*vdrift + dfbr/(dfbr*dfbr+st*st)*vvisc;
 
-    deltavorbital *= -0.5*st;
-
-    if (ibr == 1)   dfbr = 1.+dustfrac;
+    double deltavorbital = -0.5*st*(st*vdrift + dfbr*vvisc)/(dfbr*dfbr+st*st);
 
     if (idrift == 1)
     {   

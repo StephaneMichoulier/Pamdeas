@@ -235,7 +235,7 @@ int main(int argc, char* argv[])
         writer.open(outputfile.c_str());
 
         // Initialize loop parameters
-        if (stepmethod == 0) dt = step; else dt = 1.;
+        if (stepmethod == 0) dt = step;
         t = 0;
         sizei = sizeini;
         sizef = sizeini;
@@ -287,7 +287,7 @@ int main(int argc, char* argv[])
 
                     // Compute new dt and new time t
                     switch (stepmethod)
-                    {   case (0):   break;
+                    {   
                         case (1):
                         {
                             dt = KeplerDt(step,Omegak(Ri,mstar));
@@ -345,7 +345,7 @@ int main(int argc, char* argv[])
                     //State of the grain
                     State(istate[j],Rf/Rin,sizef/limsize,disrupted);
 
-                    if (istate[j] == 3)    
+                    if (istate[j] == 3)
                     {   
                         WriteDisruptFile(writerdisruption,Rf,massf,filfacf,sizef,st,vrel,FreqSpin(sizef,deltav,gammaft),
                         TensileStess(sizef,filfacf,rhos,deltav,gammaft),gammaft,alpha,a0);
@@ -375,7 +375,7 @@ int main(int argc, char* argv[])
 
                     // Compute new dt and new time t
                     switch (stepmethod)
-                    {   case (0):   break;
+                    {
                         case (1):
                         {
                             dt = KeplerDt(step,Omegak(Ri,mstar));
@@ -428,7 +428,7 @@ int main(int argc, char* argv[])
                    //State of the grain
                     State(istate[j],Rf/Rin,sizef/limsize,disrupted);
 
-                    if (istate[j] == 3)    
+                    if (istate[j] == 3)
                     {   
                         WriteDisruptFile(writerdisruption,Rf,massf,filfacf,sizef,st,vrel,FreqSpin(sizef,deltav,gammaft),
                         TensileStess(sizef,filfacf,rhos,deltav,gammaft),gammaft,alpha,a0);
@@ -472,7 +472,7 @@ int main(int argc, char* argv[])
         else cerr << "Error: unknown argument passed" << endl;
     }
     else
-    {   cerr << "Error; to many argument passed" << endl;   }
+    {   cerr << "Error: to many arguments passed" << endl;   }
 
     return 0;
 }
