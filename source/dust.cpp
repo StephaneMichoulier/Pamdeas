@@ -164,10 +164,7 @@ double CoeffRest(const double& vrel, const double& vstick, const double& vyield)
 
 void State(int& istate, const double& RfRin, const double& sizelimsize, const bool& disrupted)
 {
-    if (sizelimsize > 1.)
-    {   istate = 1; } //maxsize is reached   
-    if (RfRin < 1.)
-    {   istate = 2; } //is accreted
-    if (disrupted == true)
-    {   istate = 3; } //is disrupted
+    if (sizelimsize > 1.)   istate = 1; //maxsize is reached   
+    if (RfRin < 1.)         istate = 2; //is accreted
+    if (disrupted == true)  istate = 3; //is disrupted
 }

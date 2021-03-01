@@ -135,11 +135,7 @@ double DmDt(const double& size, const double& rhog, const double& dustfrac, cons
     {
         case (0):
         {
-            if ((vrel < vfrag && ifrag > 0) || ifrag == 0)
-            {
-                    break;
-            }
-            else switch (ifrag)
+            if (vrel >= vfrag && ifrag > 0) switch (ifrag)
             {
                 case (1):
                 {
@@ -156,20 +152,9 @@ double DmDt(const double& size, const double& rhog, const double& dustfrac, cons
         }
         case (1):
         {
-            if ((vrel < vfrag && ifrag > 0) || ifrag == 0)
-            {
-                if (vrel <= vstick)
-                {
-                    break;
-                }
-                else
-                {
-                    dmdt *= probabounce;
-                    break;
-                }
-            }
-            else switch (ifrag)
-            {   case (1):
+            if (vrel >= vfrag && ifrag > 0)    switch (ifrag)
+            {   
+                case (1):
                 {
                     dmdt *= -1.;
                     break;
@@ -179,6 +164,14 @@ double DmDt(const double& size, const double& rhog, const double& dustfrac, cons
                     dmdt *= -vrel*vrel/(vrel*vrel+vfrag*vfrag);
                     break;
                 }
+            }
+            else
+            {
+                if (vrel > vstick)
+                    {
+                        dmdt *= probabounce;
+                        break;
+                    }
             }
             break;
         }

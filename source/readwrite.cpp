@@ -78,11 +78,14 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
 
     ReadVoid(Reader, 7);
 
-    Rini.resize(ngrains);
-
-    for (int i = 0; i < ngrains; i++)
+    if (ngrains > 0)
     {
-        ReadVoid(Reader, 2); CheckType(Reader, Rini[i],"Rini for grain "+to_string(i+1));
+        Rini.resize(ngrains);
+
+        for (int i = 0; i < ngrains; i++)
+        {
+            ReadVoid(Reader, 2); CheckType(Reader, Rini[i],"Rini for grain "+to_string(i+1));
+        }
     }
     CheckData(massorsize,tend,stepmethod,step,profile,mstar,mdisk,Rin,Rout,R0,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
               filfacini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,gammaft,vfragi,constvfrag,
@@ -229,7 +232,7 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
     if (ngrains < 0)                            ErrorValue(error, "ngrain < 0");
     else
     {
-        if (error == false)
+        if (error == false && ngrains > 0)
         {   for (int i=0; i<ngrains; i++)
             {   
                 if (Rini[i] < Rin)              ErrorValue(error, "Rini < Rin for grain " + to_string(i+1));

@@ -24,9 +24,9 @@ using namespace std;
 void PresentationAnim()
 {
     cout << "\e[1m\n" ;
-    cout << "!+-----                 -----+!\n\n";
-    cout << "      Welcome in EDEN !\n\n";
-    cout << "!+-----                 -----+!\n\n";
+    cout << "!+-----                 -----+!\n";
+    cout << "      Welcome in EDEN !\n";
+    cout << "!+-----                 -----+!\n";
     cout << "\e[0m\n";
 }
 
@@ -180,10 +180,13 @@ int main(int argc, char* argv[])
 
     /*------------------------ READ INPUT FILE ------------------------*/
 
+    cout << "Reading input file\n";
+
     ReadFile(massorsize,tend,stepmethod,step,profile,mstar,mdisk,Rin,Rout,R0,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
              filfacini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,gammaft,vfragi,constvfrag,
              filfaclim,filfacbnc,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini,istate);
 
+    cout << "\r\rInput file read" << flush << "\n\n";
 
     /*------------------------ INITIALIZATION OF PARAMETERS AT R0 ------------------------*/
 
@@ -198,6 +201,7 @@ int main(int argc, char* argv[])
 
     if (profile == 1)
     {
+        cout << "Compute disk profiles\n";
         ofstream writebump;
         writebump.open("disk_profiles.out");
         Rprofile = Rin;
@@ -212,6 +216,7 @@ int main(int argc, char* argv[])
         }
         WriteProfileHeader();
         writebump.close();
+        cout << "\n";
     }
 
 
@@ -227,6 +232,8 @@ int main(int argc, char* argv[])
 
     /*------------------------ TIME LOOP FOR SIMULATION ------------------------*/
    
+    cout << "\e[1m" << "Simulation starting:" << "\e[0m\n\n";
+
     for (int j = 0; j < ngrains; j++)
     {
         // Set output file name
@@ -319,7 +326,7 @@ int main(int argc, char* argv[])
 
                         // Compute the new filling factor after dt
                         filfacf = FilFacMFinal(Ri,mstar,rhog,cg,deltav,st,massf,massi,filfaci,a0,rhos,eroll,alpha,ncoll,ifrag,
-                                         ibounce,vfrag,vrel,vstick,probabounce,filfaclim,Yd0,Ydpower,ireg);
+                                         ibounce,vfrag,vrel,vstick,probabounce,filfaclim,Yd0,Ydpower);
                     }
 
                     // Compute gas and dust quantities at time t and radius R for a new loop
@@ -462,6 +469,7 @@ int main(int argc, char* argv[])
 
 
     /*------------------------ WRITE INPUT FILE ------------------------*/
+
     else if (argc == 2)
     {
         if (strcmp(argv[1], "setup") == 0)
@@ -469,10 +477,11 @@ int main(int argc, char* argv[])
             WriteInputFile();
             cout << "Input file has been written: input.in" << endl;
         }
-        else cerr << "Error: unknown argument passed" << endl;
+        else
+        {   cerr << "Error: unknown argument passed" << endl;   }
     }
     else
-    {   cerr << "Error: to many arguments passed" << endl;   }
+    {   cerr << "Error: to many arguments passed" << endl;  }
 
     return 0;
 }

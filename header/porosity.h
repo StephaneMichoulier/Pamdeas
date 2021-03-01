@@ -57,19 +57,19 @@ double M5(const double& R, const double cparam, const double& mstar, const doubl
 double FilFacMGr(const double& massf, const double& massi, const double& filfaci,// ->
                  const double& rhos, const double& eroll, const double& vrel);
 
-// Filling factor due to collision [Okuzumi]
+// Filling factor due to collision, mfrac is massf/m0 [Okuzumi]
 double FilFacMColl(const double& R, const double& mstar, const double& rhog, const double& cg, const double& st,// ->
-                   const double& massf, const double eroll, const double& a0, const double& rhos, const double& alpha);
+                   const double& mfrac, const double eroll, const double& a0, const double& rhos, const double& alpha);
 
 
 /* ------------------------ KATAOKA ------------------------*/
 
 // Filling factor due to gas compression
 double FilFacMGas(const double& R, const double& mstar, const double& deltav, const double& st, const double& massf, const double& rhos,// -> 
-                  const double& eroll, const double& a0);//, const int& iregime, const double& rhog, const double& cg);
+                  const double& eroll, const double& a0, const double& m0);//, const int& iregime, const double& rhog, const double& cg);
 
 // Filling factor due to self-gravity
-double FilFacMGrav(const double& massf, const double& rhos, const double& a0, const double& eroll);
+double FilFacMGrav(const double& massf, const double& rhos, const double& eroll, const double& a0, const double& m0);
 
 
 /* ------------------------ FINAL FILLING FACTOR ------------------------*/
@@ -77,14 +77,14 @@ double FilFacMGrav(const double& massf, const double& rhos, const double& a0, co
 // Return the minimum filling factor between FilFacMColl, FilFacMGas and FilFacMgrav
 double FilFacMinMColGasGrav(const double& R, const double& mstar, const double& rhog, const double cg, const double& deltav,// ->
                             const double st, const double& massf, const double& rhos, const double& eroll, const double& a0,// ->
-                            const double& alpha, const int& iregime);
+                            const double& m0, const double& alpha);//, const int& iregime);
 
 // Return the minimum filling factor between filfacMGr, FilFacMinMColGasGrav and FilFacMBounce
 double FilFacMFinal(const double& R, const double& mstar, const double& rhog, const double& cg, const double deltav, const double st,// ->
                     const double& massf, const double& massi, const double& filfaci, const double& a0, const double& rhos, const double& eroll,// ->
                     const double& alpha, const double& ncoll, const int& ifrag, const int& ibounce, const double& vfrag, const double& vrel,// ->
-                    const double& vstick, const double& probabounce, const double& filfaclim, const double& Yd0, const double& Ydpower,// ->
-                    const int& iregime);
+                    const double& vstick, const double& probabounce, const double& filfaclim, const double& Yd0, const double& Ydpower);
+                    //const int& iregime);
 
 
 /* ------------------------ SIZE MODEL ------------------------ */
@@ -113,9 +113,8 @@ double FilFacSGr(const double& sizef, const double& sizei, const double& filfaci
               const double& rhos, const double& eroll, const double& vrel, double&filfacpow);
 
 // Filling factor due to collision [Okuzumi]
-double FilFacSColl(const double& R, const double& mstar, const double& rhog, const double& cg, const double st,// ->
-                   const double& sizef, const double& eroll, const double& a0, const double& rhos, const double& alpha,// ->
-                   const int& iregime, double& filfacpow);
+double FilFacSColl(const double& R, const double& mstar, const double& rhog, const double& cg, const double st, const double& sfrac,// ->
+                   const double& eroll, const double& a0, const double& rhos, const double& alpha, const int& iregime, double& filfacpow);
 
 
 /* ------------------------ KATAOKA ------------------------*/

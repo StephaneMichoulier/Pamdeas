@@ -12,6 +12,7 @@ using namespace std;
 double FreqSpin(const double& size, const double& deltav, const double& gammaft);
 
 // Compute the tensile stress due to the centrifugal force [Pa]
+double TensileStess(const double& size, const double& filfac, const double& rhos, const double& freqspin);
 double TensileStess(const double& size, const double& filfac, const double& rhos, const double& deltav, const double& gammaft);
 
 // Compare tensile stress and tensile strength 
