@@ -43,17 +43,17 @@ void ProgressionAnim(const double& iteratedvalue, const double endvalue, const i
         {   
             case(1):    
             {   
-                cout << "\nParticle size bigger than max size       " << flush;
+                cout << "\nGrain size bigger than max size       " << flush;
                 break;
             }     
             case(2):    
             {
-                cout << "\nR < Rin: particle accreted               " << flush;
+                cout << "\nR < Rin: grain accreted               " << flush;
                 break;
             }
             case(3):    
             {   
-                cout << "\nParticle disrupted by spinning motion    " << flush;
+                cout << "\nGrain disrupted by spinning motion    " << flush;
                 break;
             }
         }
