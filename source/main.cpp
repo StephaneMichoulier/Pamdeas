@@ -23,11 +23,11 @@ using namespace std;
 // Presentation animation
 void PresentationAnim()
 {
-    cout << "\e[1m\n" ;
-    cout << "!+-----                 -----+!\n";
-    cout << "      Welcome in EDEN !\n";
-    cout << "!+-----                 -----+!\n";
-    cout << "\e[0m\n";
+    cout << "\e[1m" << endl;
+    cout << "!+-----                 -----+!" << endl;
+    cout << "      Welcome in EDEN !" << endl;
+    cout << "!+-----                 -----+!" << endl;
+    cout << "\e[0m" << endl;
 }
 
 // Terminal progression / waiting animation
@@ -37,40 +37,40 @@ void ProgressionAnim(const double& iteratedvalue, const double endvalue, const i
 
     if (iteratedvalue >= endvalue || istate != 0)
     {
-        cout << "\rProgression: " << iteratedvalue*100./(endvalue) << " %             ";
+        cout << "\rProgression: " << iteratedvalue*100./(endvalue) << " %             " << endl;
 
         switch (istate)
         {   
             case(1):    
             {   
-                cout << "\nGrain size bigger than max size       " << flush;
+                cout << "Grain size bigger than max size       " << endl;
                 break;
             }     
             case(2):    
             {
-                cout << "\nR < Rin: grain accreted               " << flush;
+                cout << "R < Rin: grain accreted               " << endl;
                 break;
             }
             case(3):    
             {   
-                cout << "\nGrain disrupted by spinning motion    " << flush;
+                cout << "Grain disrupted by spinning motion    " << endl;
                 break;
             }
         }
 
-        cout << "\n" << outputfile << " written\n\n";
+        cout << outputfile << " written\n" << endl;
     }
 }
 
 // Running time
 void Runningtime(const double& runningtime)
-{   cout << "\nRunning time: " << runningtime << " s\n";  }
+{   cout << "\nRunning time: " << runningtime << " s" << endl;  }
 
 // End animation
 void EndAnim()
-{   cout << "\e[1m\n";
-    cout << "Job done !\n";
-    cout << "\e[0m\n";
+{   cout << "\e[1m" << endl;
+    cout << "Job done !" << endl;
+    cout << "\e[0m" << endl;
 }
 
 
@@ -180,13 +180,18 @@ int main(int argc, char* argv[])
 
     /*------------------------ READ INPUT FILE ------------------------*/
 
-    cout << "Reading input file\n";
+    cout << "Reading input file" << endl;
 
     ReadFile(massorsize,tend,stepmethod,step,profile,mstar,mdisk,Rin,Rout,R0,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
              filfacini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,gammaft,vfragi,constvfrag,
              filfaclim,filfacbnc,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini,istate);
 
-    cout << "\r\rInput file read" << flush << "\n\n";
+    cout << "Input file read\n" << endl;
+
+    if (ngrains == 0 && profile == 0)
+    {   cout << "Too bad, nothing to compute" << endl;  }
+
+
 
     /*------------------------ INITIALIZATION OF PARAMETERS AT R0 ------------------------*/
 
@@ -201,7 +206,7 @@ int main(int argc, char* argv[])
 
     if (profile == 1)
     {
-        cout << "Compute disk profiles\n";
+        cout << "Compute disk profiles" << endl;
         ofstream writebump;
         writebump.open("disk_profiles.out");
         Rprofile = Rin;
@@ -216,7 +221,6 @@ int main(int argc, char* argv[])
         }
         WriteProfileHeader();
         writebump.close();
-        cout << "\n";
     }
 
 
@@ -232,7 +236,8 @@ int main(int argc, char* argv[])
 
     /*------------------------ TIME LOOP FOR SIMULATION ------------------------*/
    
-    cout << "\e[1m" << "Simulation starting:" << "\e[0m\n\n";
+    if (ngrains > 0)
+    {   cout << "\n\e[1m" << "Simulation starting:" << "\e[0m\n" << endl;   }
 
     for (int j = 0; j < ngrains; j++)
     {
