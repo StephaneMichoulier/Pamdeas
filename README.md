@@ -3,7 +3,7 @@
 ### **+-----------------------------------                       -----------------------------------+**  
 
 *Author:* Stéphane Michoulier  
-*Email:* <stephane.michoulier@univ-lyon1.fr>
+*Email:* <stephane.michoulier@gmail.com>
 
 *Eden:* version 1.3
 
