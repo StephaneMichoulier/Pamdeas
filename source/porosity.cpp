@@ -19,9 +19,6 @@ double CParam(const double& R, const double& mstar, const double& rhog, const do
     return (243.*M_SQRT2*M_PI/15625.)*(rossby*alpha*pow(a0,4.)*rhos*rhos*cg*Omegak(R,mstar)/(rhog*b_oku*eroll));
 }
 
-double Porosity(const double& filfacfinal)
-{   return 1.-filfacfinal; }
-
 
 /* ------------------------ BOUNCE ------------------------*/
 
@@ -210,7 +207,7 @@ double FilFacMColl(const double& R, const double& mstar, const double& rhog, con
             else
             {   if (mfrac <= M3(m1,m2))
                 {
-                    filfaccoll = pow(m1,cratio+0.125)*pow(mfrac,-0.125);   // FilFac Ep-St<1
+                    filfaccoll = pow(m1,cratio+0.125)/pow(mfrac,0.125);   // FilFac Ep-St<1
                 }
                 else
                 {
@@ -240,6 +237,7 @@ double FilFacMColl(const double& R, const double& mstar, const double& rhog, con
 
 /* ------------------------ KATAOKA ------------------------*/
 
+// Original algorithm
 /*double FilFacMGas(const double& R, const double& mstar, const double& p, const double& q, const double& rhog,// ->
                const double& cg, const double& massf, const double& rhos, const double& eroll, const double& a0)
 {

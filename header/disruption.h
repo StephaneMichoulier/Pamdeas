@@ -6,6 +6,12 @@
 using namespace std;
 
 
+/* ------------------------- DISPLAY ------------------------- */
+
+// Display disrupt param of a grain
+void DisplayDisruptParam(const double& size, const double& filfac, const double& rhos,const double& freqspin, const double& tensilestress);
+
+
 /* ------------------------- DISRUPTION ------------------------- */
 
 // Compute the steady-state angular velocity [rad/s]

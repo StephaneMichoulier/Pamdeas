@@ -12,24 +12,24 @@ using namespace std;
 /* ------------------------ READING ------------------------*/
 
 // Read the input file
-void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, double& mstar, double& mdisk,// ->
-              double& Rin, double& Rout, double& R0, double& dustfrac0, double& H0R0, double& p, double& q, double& alpha,// ->
-              int& iporosity, double& sizeini, double& filfacini, double& a0, double& rhos, double& youngmod0, double& esurf,// ->
-              double& Yd0, double& Ydpower, int& idrift, int& ibounce, int& idisrupt, int& ifrag, int& ibr, int& ibump,// ->
-              double& gammaft, double& vfragi, int& constvfrag, double& filfaclim, double& filfacbnc, double& limsize,// ->
-              double& Rbump, double& dustfracmax, double& bumpwidth, double& bumpheight, int& ngrains, vector <double>& Rini,// ->
-              vector <int>& istate);
+void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, int& isetdens, int& isettemp,// ->
+              double& Rin, double& Rout, double& R0, double& mstar, double& mdisc, double& sigma0, double& h0R0, double& T0,// ->
+              double& dustfrac0, double& p, double& q, double& alpha, int& ibr, int& ibump, double& Rbump, double& dustfracmax,// ->
+              double& bumpwidth, double& bumpheight, int& iporosity, double& sizeini, double& a0, double& rhos, int& idrift,// ->
+              int& ibounce, int& idisrupt, int& ifrag, double& vfragi, double& gammaft, double& limsize, double& filfacini,// ->
+              double& youngmod0, double& esurf, double& Yd0, double& Ydpower, int& constvfrag, double& filfaclim, double& filfacbnc,// ->
+              int& ngrains, vector <double>& Rini, vector <int>& istate);
 
 // Check data from the input file
-void CheckData(const int& massorsize, const double& tend, const int& stepmethod, const double& step, const int& profile,// ->
-               const double& mstar, const double& mdisk, const double& Rin, const double& Rout, const double& R0,// ->
-               const double& dustfrac0, const double& H0R0, const double& p, const double& q, const double& alpha, // ->
-               const int& iporosity, const double& sizeini, const double& filfacini, const double& a0, const double& rhos,// ->
-               const double& youngmod0, const double& esurf, const double& Yd0, const double& Ydpower, const int& idrift,// ->
-               const int& ibounce, const int& idisrupt, const int& ifrag, const int& ibr, const int& ibump,// ->
-               const double& gammaft, const double& vfragi, const int& constvfrag, const double& filfaclim,// ->
-               const double& filfacbnc, const double& limsize, const double& Rbump, const double& dustfracmax,// ->
-               const double& bumpwidth, const double& bumpheight, const int& ngrains, const vector <double>& Rini);
+void CheckData(const int& massorsize, const double& tend, const int& stepmethod, const double& step, const int& profile, const int& isetdens,// ->
+               const int& isettemp, const double& Rin, const double& Rout, const double& R0, const double& mstar, const double& mdisc,// ->
+               const double& sigma0, const double& h0R0, const double& T0, const double& dustfrac0, const double& p, const double& q,// ->
+               const double& alpha, const int& ibr, const int& ibump, const double& Rbump, const double& dustfracmax, const double& bumpwidth,// ->
+               const double& bumpheight, const int& iporosity, const double& sizeini, const double& a0, const double& rhos, const int& idrift,// ->
+               const int& ibounce, const int& idisrupt, const int& ifrag, const double& vfragi, const double& gammaft, const double& limsize,// ->
+               const double& filfacini, const double& youngmod0, const double& esurf, const double& Yd0, const double& Ydpower,// ->
+               const int& constvfrag, const double& filfaclim, const double& filfacbnc, const int& ngrains, const vector <double>& Rini,// ->
+               const vector <int>& istate);
                
 
 /* ------------------------ WRITING ------------------------*/
@@ -37,11 +37,11 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 // Write the input file if it does not exist
 void WriteInputFile();
 
-// Write disk profiles data
+// Write disc profiles data
 void WriteProfileFile(ofstream& outputfile, const double& Rprofile, const double& hg, const double& cg, const double& sigma,// ->
                       const double& rhog, const double& dustfrac, const double& pg, const double& T);
 
-// Write disk profiles columns
+// Write disc profiles columns
 void WriteProfileHeader();
 
 // Write computed data in output files
@@ -61,19 +61,19 @@ void WriteDisruptFile(ofstream& outputfile, const double& R, const double& massf
 void WriteDisruptHeader();
 
 // Write the initials conditions
-void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const double& mstar,// ->
-                   const double& mdisk, const double& Rin, const double& Rout, const double& R0, const double& Rbump,// ->
-                   const double& dustfrac0, const double& H0R0, const double& p, const double& q, const double& alpha,// ->
-                   const int& iporosity, const double& sizeini, const double& filfacini, const double& a0, const double& rhos,// ->
-                   const int& idrift, const int& ibounce, const int& ifrag, const int& ibr, const int& ibump,// ->
-                   const int& idisrupt, const double& vfragi, const int& ngrains, const double& sigma0, const double& rhog0,// ->
-                   const double& cg0, const vector <int>& istate, const double& runningtime);               
+void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const int& isetdens,// ->
+                   const int& isettemp, const double& Rin, const double& Rout, const double& R0, const double& mstar, const double& mdisc,// ->
+                   const double& sigma0, const double& h0, const double& T0, const double& dustfrac0, const double& rhog0, const double& cg0,// ->
+                   const double& p, const double& q, const double& alpha, const int& ibr, const int& ibump, const double& Rbump,// ->
+                   const int& iporosity, const double& sizeini, const double& a0, const double& rhos, const int& idrift, const int& ibounce,// ->
+                   const int& idisrupt, const int& ifrag, const double& vfragi, const double& gammaft, const double& filfacini,// ->
+                   const int& ngrains, const vector <double>& Rini, const  vector <int>& istate, const double& runningtime);               
 
 
 /* ------------------------ TOOLS ------------------------*/
 
 // Print error
-void ErrorValue(bool& error, const string& variable);
+void ErrorValue(bool& error, const string& typerror, const string& variable);
 
 // Check type of input values
 template <typename T>

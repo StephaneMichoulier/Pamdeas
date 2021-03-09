@@ -5,17 +5,16 @@
 *Author:* Stéphane Michoulier  
 *Email:* <stephane.michoulier@univ-lyon1.fr>
 
-*Eden:* version 1.2
+*Eden:* version 1.3
 
 #### **DESCRIPTION**:
 
 Eden is a 1D code primarily wrote to study the evolution of grains porosity within protoplanetary disc considering different physical process such as growth, fragmentation, drift, pressure bump, etc.  
-This code allow you to follow the evolution of a given number of particles from a set of initials conditions chosen by the user in a stationary non self-gravitating gas disk.  
-This code is mainly developed to understand the behaviour of porous grains constrain by numerous physical processes and to test the algorithms for a future implementation in 3D Hydrodynamics code.  
+This code allow you to follow the evolution of a given number of particles from a set of initials conditions chosen by the user in a stationary non self-gravitating gas disc and was mainly developed to understand the behaviour of porous grains, but also to test algorithms for future implementation in 3D Hydrodynamics code.  
 
 FEW WORDS ON INPUT FILE OPTION (Respect the blank space, or expect unforeseen consequences).  
 2 models can be used to study the evolution of the porosity. 
-One is based on the increase of mass (dm/dt) and use A. Garcia's algorithms, the other one is based on the increase of size (ds/dt) and use my algorithms.  
+One is based on the increase of mass (dm/dt) and use A. Garcia's reformulated algorithms, the other one is based on the increase of size (ds/dt) and use my algorithms.  
 The dmdt model support the bounce process, but not the dsdt model.  
 The degeneracy due to the filling factor in the dsdt model is taken into account.  
 
@@ -47,7 +46,11 @@ Once the simulation is finished, multiple output files are written into the outp
 > - disk_profiles.out contains different profiles (surface density, pressure, etc).
 > - disk_profiles_header.txt gives you the corresponding columns in the diskprofiles.out files.
 > - disrupt_param_<model>.out contains parameters of disrupted grains.
-> - disrupt_param_header.txt gives you the corresponding columns in the disrupt_param.out  files.
+> - disrupt_param_header.txt gives you the corresponding columns in the disrupt_param.out files.
+
+A script is available to plot directly some useful quantities. To do so, write in your terminal (in the build folder):
+> - ./ploteden help to display how to plot things
+All python scripts are in the python folder, you can modify them as you wish to suit your data.
 
 #### **HOW THE PROGRAM IS BUILT ?**
 

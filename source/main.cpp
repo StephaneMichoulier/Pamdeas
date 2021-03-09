@@ -84,23 +84,25 @@ int main(int argc, char* argv[])
     /*------------------------ INITIALS PARAMETERS FROM THE USER ------------------------*/
 
     int    massorsize;      // choose between dm/dt or ds/dt
-    double tend;            // End time of the simulation   [yr]
+    double tend;            // End time of the simulation [yr]
     int    stepmethod;      // Choose a time-stepping method
     double step;            // time step related to stepmethod
-    int    profile;         // Compute disk profiles
-    double mstar;           // Star mass    [Msol]
-    double mdisk;           // Disk mass    [Msol]
+    int    profile;         // Compute disc profiles
+    double mstar;           // Star mass [Msol]
+    double mdisc;           // Disc mass [Msol]
+    double sigma0;          // Gas surface density at R0 [kg/m²]
     double Rin;             // Inner radius [AU]
     double Rout;            // Outer radius [AU]
     double R0;              // Reference radius [AU]
     double Rbump;           // Radius of the pressure bump (when ibump enabled) [AU]
     double dustfrac0;       // Initial dust to gas ratio at reference radius
     double dustfracmax;     // Max dust to gas ratio possible (when ibackreaction enabled)
-    double h0R0;            // H/R at reference radius
+    double hg0R0;            // H/R at reference radius
+    double T0;              // Temperature at R0 [K]
     double p;               // p index
     double q;               // q index
     double alpha;           // Alpha turbulence Shakura & Sunyaev
-    double bumpwidth;       // half width at half maximum (when ibump enabled)  [AU]
+    double bumpwidth;       // half width at half maximum (when ibump enabled) [AU]
     double bumpheight;      // fraction of surface density
     double sizeini;         // Initial size [m]
     double filfacini;       // Initial filling factor
@@ -108,8 +110,10 @@ int main(int argc, char* argv[])
     double rhos;            // Dust monomer density [kg/m³]
     double youngmod0;       // Young Modulus of grains [PA]
     double esurf;           // Surface energy of grains [J/m²]
-    double Yd0;             // Dynamic compression resistance constant  [Pa]
+    double Yd0;             // Dynamic compression resistance constant [Pa]
     double Ydpower;         // Dynamic compression resistance power law
+    int    isetdens;        // Set density profile option
+    int    isettemp;        // Set temperature profile option
     int    iporosity;       // Porous or compact grain option
     int    idrift;          // Drift option
     int    ibounce;         // Bounce option
@@ -122,28 +126,27 @@ int main(int argc, char* argv[])
     int    constvfrag;      // Constant vfrag option (when fragmentation enabled)
     double filfaclim;       // Filling factor dynamic compression resistance limit (when fragmentation enabled)
     double filfacbnc;       // Filling factor bounce limit (when bounce enabled)
-    double limsize;         // Limit to the max size    [m]
+    double limsize;         // Limit to the max size [m]
     int    ngrains;         // Number of grains
     vector <double> Rini;   // Initials radii
 
     /*------------------------ INITIALS PARAMETERS TO COMPUTE ------------------------*/
 
-    double h0;              // Disc height at R0    [AU]
-    double hg;              // Disc height at R     [AU]
-    double rhog0;           // Gas density at R0    [kg/m³]
-    double rhog;            // Gas density at R     [kg/m³]
-    double cg0;             // Gas sound speed at R0    [m/s]
-    double cg;              // Gas sound speed at R     [m/s]
-    double sigma0;          // Gas surface density at R0    [kg/m²]
-    double sigma;           // Gas surface density at R     [kg/m²]
+    double hg0;              // Disc height at R0 [AU]
+    double hg;              // Disc height at R [AU]
+    double rhog0;           // Gas density at R0 [kg/m³]
+    double rhog;            // Gas density at R [kg/m³]
+    double cg0;             // Gas sound speed at R0 [m/s]
+    double cg;              // Gas sound speed at R [m/s]
+    double sigma;           // Gas surface density at R [kg/m²]
     double st;              // Stoke number
     double dustfrac;        // dust to gas ratio at R
     double vrel;            // Relative velocity between grains [m/s]
-    double vfrag;           // Fragmentation threshold  [m/s]
-    double vstick;          // Sticking velocity    [m/s]
+    double vfrag;           // Fragmentation threshold [m/s]
+    double vstick;          // Sticking velocity [m/s]
     double probabounce;     // Probability for a grain to bounce
-    double ncoll;           // number of collision per dt   [s⁻¹]
-    double eroll;           // Rolling energy   [J]
+    double ncoll;           // number of collision per dt [s⁻¹]
+    double eroll;           // Rolling energy [J]
 
 
     /*------------------------ LOOP PARAMETERS ------------------------*/
@@ -151,23 +154,24 @@ int main(int argc, char* argv[])
     double massi;           // Mass before one loop [kg]
     double sizei;           // Size before one loop [m]
     double filfaci;         // Filling factor before one loop
-    double Ri;              // Radius before one loop   [AU]
-    double massf;           // Mass after one loop  [kg]
-    double sizef;           // Size after one loop  [m]
+    double Ri;              // Radius before one loop [AU]
+    double massf;           // Mass after one loop [kg]
+    double sizef;           // Size after one loop [m]
     double filfacf;         // Filling factor after one loop
-    double Rf;              // Radius after one loop    [AU]
-    double dt;              // time step for loop   [yr]
-    double t;               // time for loop    [ye]
-    double dmdt;            // Variation of mass per unit of time   [kg/s]
-    double dsdt;            // Variation of size per unit of time   [m/s]
-    double drdt;            // Variation of radius per unit of time (drift velocity)    [AU/s]
-    double deltav;          // Velocity difference between dust and gas     [m/s]
+    double Rf;              // Radius after one loop [AU]
+    double dt;              // time step for loop [yr]
+    double t;               // time for loop [yr]
+    double tlastwrite;      // time since last write in output to not write ridiculous amount of unecessary data [yr]
+    double dmdt;            // Variation of mass per unit of time [kg/s]
+    double dsdt;            // Variation of size per unit of time [m/s]
+    double drdt;            // Variation of radius per unit of time (drift velocity) [AU/s]
+    double deltav;          // Velocity difference between dust and gas [m/s]
     int    ireg;            // Regime of the dust grain (growth, h&s, Ep-St<1, frag etc)
     double filfacpow;       // Power of the dominante filling factor to remove dsdt degeneracy
     bool   disrupted;       // Is grain disrupted by spinning motion
     vector <int> istate;    // State of the grain: 0=alive, 1=maxsize, 2=accreted,3=disrupted 
 
-    double Rprofile;        // Radius to compute disk profiles
+    double Rprofile;        // Radius to compute disc profiles
 
     string outputfile;      // Variable for the name of the output file
 
@@ -182,9 +186,9 @@ int main(int argc, char* argv[])
 
     cout << "Reading input file" << endl;
 
-    ReadFile(massorsize,tend,stepmethod,step,profile,mstar,mdisk,Rin,Rout,R0,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
-             filfacini,a0,rhos,youngmod0,esurf,Yd0,Ydpower,idrift,ibounce,idisrupt,ifrag,ibr,ibump,gammaft,vfragi,constvfrag,
-             filfaclim,filfacbnc,limsize,Rbump,dustfracmax,bumpwidth,bumpheight,ngrains,Rini,istate);
+    ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,
+             Rbump,dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,gammaft,limsize,
+             filfacini,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,ngrains,Rini,istate);
 
     cout << "Input file read\n" << endl;
 
@@ -192,13 +196,21 @@ int main(int argc, char* argv[])
     {   cout << "Too bad, nothing to compute" << endl;  }
 
 
-
     /*------------------------ INITIALIZATION OF PARAMETERS AT R0 ------------------------*/
 
-    h0 = h0R0*R0;
-    sigma0 = Sigma0(Rin,Rout,R0,mdisk,p,ibump,Rbump,bumpwidth,bumpheight);
-    cg0 = Cg(R0,mstar,h0);
-    rhog0 = Rhog(sigma0,h0);
+    if (isetdens == 0)  sigma0 = Sigma0(Rin,Rout,R0,mdisc,p,ibump,Rbump,bumpwidth,bumpheight);
+    else                mdisc = Mdisc(Rin,Rout,R0,sigma0,p,ibump,Rbump,bumpwidth,bumpheight);
+
+    if (isettemp == 0)  
+    {   
+        hg0 = hg0R0*R0;
+        T0 = T(R0,mstar,q,R0,hg0);
+    }
+    else                
+    {   hg0 = Hg(R0,mstar,Cg(T0));   }
+
+    cg0 = Cg(R0,mstar,hg0);
+    rhog0 = Rhog(sigma0,hg0);
     eroll = Eroll(a0,esurf,youngmod0);
 
 
@@ -206,18 +218,18 @@ int main(int argc, char* argv[])
 
     if (profile == 1)
     {
-        cout << "Compute disk profiles" << endl;
+        cout << "Compute disc profiles" << endl;
         ofstream writebump;
-        writebump.open("disk_profiles.out");
+        writebump.open("disc_profiles.out");
         Rprofile = Rin;
         for (Rprofile = Rin; Rprofile <= Rout; Rprofile += 0.01)
-        {   hg = Hg(Rprofile,q,R0,h0);
+        {   hg = Hg(Rprofile,q,R0,hg0);
             cg = Cg(Rprofile,mstar,hg);
             sigma = Sigma(Rprofile,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
             dustfrac = DustFrac(dustfrac0,dustfracmax,Rprofile,Rbump,bumpwidth,ibump);
             rhog = Rhog(sigma,hg);
-            WriteProfileFile(writebump,Rprofile,hg,cg ,sigma,rhog,dustfrac,Pg(rhog,cg),T(Rprofile,q,R0,cg));
-            ProgressionAnim(Rprofile,Rout-0.01,0,"diskprofiles.out");
+            WriteProfileFile(writebump,Rprofile,hg,cg ,sigma,rhog,dustfrac,Pg(rhog,cg),T(cg));
+            ProgressionAnim(Rprofile,Rout-0.01,0,"disc_profiles.out");
         }
         WriteProfileHeader();
         writebump.close();
@@ -227,7 +239,7 @@ int main(int argc, char* argv[])
     /*------------------------ OPEN FILE FOR DISRUPTION PARAM ------------------------*/
 
     ofstream writerdisruption;
-    if (idisrupt == 1)  
+    if (idisrupt == 1 && ngrains > 0)  
     {   
         writerdisruption.open(DisruptFileName(massorsize).c_str());
         WriteDisruptHeader();
@@ -249,6 +261,7 @@ int main(int argc, char* argv[])
         // Initialize loop parameters
         if (stepmethod == 0) dt = step;
         t = 0;
+        tlastwrite = -1;
         sizei = sizeini;
         sizef = sizeini;
         filfaci = filfacini;
@@ -261,13 +274,13 @@ int main(int argc, char* argv[])
         disrupted = false;
 
         // Compute gas and dust quantities at t=0
-        hg = Hg(Rf,q,R0,h0);
+        hg = Hg(Rf,q,R0,hg0);
         sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
         dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
         cg = Cg(Rf,mstar,hg);
         rhog = Rhog(sigma,hg);
-        st = St(Ri,mstar,rhog,cg,sizei,filfacini,rhos,0.,ireg); //we assume deltav very small for small grain strongly coupled with gas
-        deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
+        st = St(Ri,mstar,rhog,cg,sizei,filfacini,rhos,0.,ireg); //we assume deltav very small for small grain strongly coupled with gas in the epstein regime
+        deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
         vrel = Vrel(cg,st,alpha);
 
         // Write in output file quantities at t=0
@@ -292,7 +305,7 @@ int main(int argc, char* argv[])
 
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
-                    {   drdt = DRDt(Ri,mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,Rbump,bumpwidth,bumpheight); }
+                    {   drdt = DRDt(Ri,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,Rbump,bumpwidth,bumpheight); }
 
                     // Compute dm/dt
                     dmdt = DmDt(sizef,rhog,dustfrac,vrel,ifrag,ibounce,vfrag,vstick,probabounce);
@@ -331,7 +344,7 @@ int main(int argc, char* argv[])
 
                         // Compute the new filling factor after dt
                         filfacf = FilFacMFinal(Ri,mstar,rhog,cg,deltav,st,massf,massi,filfaci,a0,rhos,eroll,alpha,ncoll,ifrag,
-                                         ibounce,vfrag,vrel,vstick,probabounce,filfaclim,Yd0,Ydpower);
+                                               ibounce,vfrag,vrel,vstick,probabounce,filfaclim,Yd0,Ydpower);
                     }
 
                     // Compute gas and dust quantities at time t and radius R for a new loop
@@ -341,13 +354,13 @@ int main(int argc, char* argv[])
                     filfaci = filfacf;
                     sizef = GrainMassToSize(massf,filfacf,rhos);
 
-                    hg = Hg(Rf,q,R0,h0);
+                    hg = Hg(Rf,q,R0,hg0);
                     sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
                     dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
                     cg = Cg(Rf,mstar,hg);
                     rhog = Rhog(sigma,hg);
                     st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,ireg);
-                    deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
+                    deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     vrel = Vrel(cg,st,alpha);
 
                     // Disruption by spinning motion
@@ -357,6 +370,7 @@ int main(int argc, char* argv[])
                     //State of the grain
                     State(istate[j],Rf/Rin,sizef/limsize,disrupted);
 
+                    // Write parameters when grain is disrupted
                     if (istate[j] == 3)
                     {   
                         WriteDisruptFile(writerdisruption,Rf,massf,filfacf,sizef,st,vrel,FreqSpin(sizef,deltav,gammaft),
@@ -364,7 +378,11 @@ int main(int argc, char* argv[])
                     }
 
                     // Write in output file quantities at time t
-                    WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dmdt,ireg);
+                    if ( t-tlastwrite > 0.01 || t >= tend || istate[j] != 0)
+                    {   
+                        WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dmdt,ireg);
+                        tlastwrite = t;
+                    }
 
                     // Waiting animation
                     ProgressionAnim(t,tend,istate[j],outputfile);
@@ -380,7 +398,7 @@ int main(int argc, char* argv[])
 
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
-                    {   drdt = DRDt(Ri,mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,Rbump,bumpwidth,bumpheight);  }
+                    {   drdt = DRDt(Ri,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,Rbump,bumpwidth,bumpheight);  }
 
                     // Compute ds/dt
                     dsdt = DsDt(filfaci,rhog,rhos,dustfrac,vrel,ifrag,vfrag,filfacpow);
@@ -424,13 +442,13 @@ int main(int argc, char* argv[])
                     filfaci = filfacf;
                     massf = GrainMass(sizef,filfacf,rhos);
 
-                    hg = Hg(Rf,q,R0,h0);
+                    hg = Hg(Rf,q,R0,hg0);
                     sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
                     dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
                     cg = Cg(Rf,mstar,hg);
                     rhog = Rhog(sigma,hg);
                     st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,ireg);
-                    deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,h0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
+                    deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     vrel = Vrel(cg,st,alpha);
 
                     // Disruption by spinning motion
@@ -440,14 +458,19 @@ int main(int argc, char* argv[])
                    //State of the grain
                     State(istate[j],Rf/Rin,sizef/limsize,disrupted);
 
+                    // Write parameters when grain is disrupted
                     if (istate[j] == 3)
                     {   
                         WriteDisruptFile(writerdisruption,Rf,massf,filfacf,sizef,st,vrel,FreqSpin(sizef,deltav,gammaft),
                         TensileStess(sizef,filfacf,rhos,deltav,gammaft),gammaft,alpha,a0);
                     }
 
-                    // Write in output file quantities at time t
-                    WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dsdt,ireg);
+                    // Write in output file quantities at time t, 
+                    if ( t-tlastwrite > 0.01 || t >= tend || istate[j] != 0)
+                    {   
+                        WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dsdt,ireg);
+                        tlastwrite = t;
+                    }
 
                     // Waiting animation
                     ProgressionAnim(t,tend,istate[j],outputfile);
@@ -464,10 +487,12 @@ int main(int argc, char* argv[])
     Runningtime((t2-t1)/(1.*CLOCKS_PER_SEC));
 
     // Write initials conditions
-    WriteInitFile(massorsize,tend,stepmethod,step,mstar,mdisk,Rin,Rout,R0,Rbump,dustfrac0,h0R0,p,q,alpha,iporosity,sizeini,
-                  filfacini,a0,rhos,idrift,ibounce,ifrag,ibr,ibump,idisrupt,vfragi,ngrains,sigma0,rhog0,cg0,istate,
+    WriteInitFile(massorsize,tend,stepmethod,step,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0,T0,dustfrac0,rhog0,cg0,p,q,alpha,
+                  ibr,ibump,Rbump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,gammaft,filfacini,ngrains,Rini,istate,
                   (t2-t1)/(1.*CLOCKS_PER_SEC));
+
     WriteOutputHeader(massorsize);
+    
     EndAnim();
 
     }

@@ -7,28 +7,28 @@
 using namespace std;
 
 
-/* ------------------------- DISK QUANTITIES ------------------------- */
+/* ------------------------- DISC QUANTITIES ------------------------- */
 
-double Sigma0(const double& Rin, const double& Rout, const double& R0, const double& mdisk, const double& p,
+double Sigma0(const double& Rin, const double& Rout, const double& R0, const double& mdisc, const double& p,
               const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
-    double sigma0;
+    double extractsigma0;
 
     if (p != 2.)
-    {   sigma0 = AUtoMeter(R0)*AUtoMeter(R0)/(2.-p)*(pow(Rout/R0,2.-p)-pow(Rin/R0,2.-p));  }
+    {   extractsigma0 = AUtoMeter(R0)*AUtoMeter(R0)/(2.-p)*(pow(Rout/R0,2.-p)-pow(Rin/R0,2.-p));  }
     else
-    {   sigma0 = AUtoMeter(R0)*AUtoMeter(R0)*log(Rout/Rin);    }
+    {   extractsigma0 = AUtoMeter(R0)*AUtoMeter(R0)*log(Rout/Rin);    }
 
     if (ibump == 1)
     {
         double bumpin = (Rin-Rbump)/(M_SQRT2*bumpwidth);
         double bumpout = (Rout-Rbump)/(M_SQRT2*bumpwidth);
 
-        sigma0 += bumpheight*AUtoMeter(bumpwidth)*(M_SQRT_PI/M_SQRT2*AUtoMeter(Rbump)*(erf(bumpout)-erf(bumpin))
+        extractsigma0 += bumpheight*AUtoMeter(bumpwidth)*(M_SQRT_PI/M_SQRT2*AUtoMeter(Rbump)*(erf(bumpout)-erf(bumpin))
         +AUtoMeter(bumpwidth)*(exp(-bumpin*bumpin)-exp(-bumpout*bumpout)));
     }
 
-    return (mdisk/2./M_PI)/sigma0;
+    return (mdisc/2./M_PI)/extractsigma0;
 }
 
 double Sigma(const double& R, const double& p, const double& R0, const double& sigma0,
@@ -42,6 +42,31 @@ double Sigma(const double& R, const double& p, const double& R0, const double& s
     return sigma;
 }
 
+double Mdisc(const double& Rin, const double& Rout, const double& R0, const double& sigma0, const double& p,
+             const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
+{
+    double extractmdisc;
+
+    if (p != 2.)
+    {   extractmdisc = AUtoMeter(R0)*AUtoMeter(R0)/(2.-p)*(pow(Rout/R0,2.-p)-pow(Rin/R0,2.-p));  }
+    else
+    {   extractmdisc = AUtoMeter(R0)*AUtoMeter(R0)*log(Rout/Rin);    }
+
+    if (ibump == 1)
+    {
+        double bumpin = (Rin-Rbump)/(M_SQRT2*bumpwidth);
+        double bumpout = (Rout-Rbump)/(M_SQRT2*bumpwidth);
+        
+        extractmdisc += bumpheight*AUtoMeter(bumpwidth)*(M_SQRT_PI/M_SQRT2*AUtoMeter(Rbump)*(erf(bumpout)-erf(bumpin))
+        +AUtoMeter(bumpwidth)*(exp(-bumpin*bumpin)-exp(-bumpout*bumpout)));
+    }
+
+    return 2.*M_PI*sigma0*extractmdisc;
+}
+
+double Hg(const double& R, const double& mstar, const double& cg)
+{   return MeterToAU(cg/Omegak(R,mstar));  }
+
 double Hg(const double& R, const double& q, const double& R0, const double& hg0)
 {   return hg0*pow(R/R0,(3.-q)*0.5); }
 
@@ -54,17 +79,23 @@ double Vk(const double& R, const double& mstar)
 double Gravity(const double& R, double& mstar)
 {   return G*mstar/(AUtoMeter(R)*AUtoMeter(R));    }
 
+double Cg(const double& T)
+{   return sqrt(kboltzmann*T/mgasmean);   }
+
 double Cg(const double& R, const double& mstar, const double& hg)
 {   return AUtoMeter(hg)*Omegak(R,mstar);   }
 
 double Cg(const double& R, const double& mstar, const double& q, const double& R0, const double& hg0)
 {   return AUtoMeter(Hg(R,q,R0,hg0))*Omegak(R,mstar);   }
 
-double T(const double& R, const double& q, const double& R0, const double& cg)
+double T(const double& cg)
 {   return cg*cg*mgasmean/kboltzmann;  }
 
 double T(const double& R, const double& mstar, const double& q, const double& R0, const double& hg0)
-{   return Cg(R,mstar,q,R0,hg0)*mgasmean/kboltzmann;  }
+{   
+    double cg = Cg(R,mstar,q,R0,hg0);
+    return cg*cg*mgasmean/kboltzmann;
+}
 
 double Rhog(const double& sigma, const double& hg)
 {   return sigma/(AUtoMeter(hg)*M_SQRT2*M_SQRT_PI);    }
@@ -113,3 +144,27 @@ double Lambda(const double& rhog, const double& cg)
 
 double TransRegEpSt(const double& rhog, const double& cg, const double& size)
 {   return size/(2.25*Lambda(rhog,cg));  }
+
+
+/* ------------------------  VELOCITIES ------------------------*/
+
+double VDrift(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+              const double& sigma0, const double& hg0, const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight) 
+{
+    double vdrift = Pg(R+deltaR,mstar,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight);
+    vdrift -= Pg(R-deltaR,mstar,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight);
+    vdrift /= 2.*AUtoMeter(deltaR);
+    
+    return vdrift*cg*cg*AUtoMeter(R)/Pg(rhog,cg)/Vk(R,mstar);
+}
+
+double VVisc(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+              const double& sigma0, const double& hg0, const double& alpha, const int& ibump, const double& Rbump,// ->
+              const double& bumpwidth, const double& bumpheight) 
+{
+    double vvisc = NuTurbGas(R+deltaR,mstar,q,R0,hg0,alpha)*AUtoMeter(R+deltaR)*Rhog(R+deltaR,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R+deltaR,mstar);
+    vvisc -= NuTurbGas(R-deltaR,mstar,q,R0,hg0,alpha)*AUtoMeter(R-deltaR)*Rhog(R-deltaR,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R-deltaR,mstar);
+    vvisc /= 2.*AUtoMeter(deltaR);
+
+    return vvisc*3./(rhog*AUtoMeter(R)*Vk(R,mstar));
+}

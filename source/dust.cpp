@@ -63,6 +63,27 @@ double St(const double& R, const double& mstar, const double& rhog, const double
     return st*Omegak(R,mstar);
 }
 
+double DeltaV(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+              const double& sigma0, const double& hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
+              const int& ibump, const int& idrift, const double& Rbump, const double& bumpwidth, const double& bumpheight)
+{
+    double dfbr = 1.;
+    if (ibr == 1)   dfbr += dustfrac; 
+
+    double vdrift = VDrift(R,mstar,p,q,rhog,cg,R0,sigma0,hg0,ibump,Rbump,bumpwidth,bumpheight);
+    double vvisc = VVisc(R,mstar,p,q,rhog,cg,R0,sigma0,hg0,alpha,ibump,Rbump,bumpwidth,bumpheight);
+    double deltavradial = 0.;
+
+    double deltavorbital = -0.5*st*(st*vdrift + dfbr*vvisc)/(dfbr*dfbr+st*st);
+
+    if (idrift == 1)
+    {   
+        deltavradial = st*dfbr/(dfbr*dfbr+st*st)*vdrift - st*st/(dfbr*dfbr+st*st)*vvisc;
+    }
+
+    return sqrt(deltavorbital*deltavorbital+deltavradial*deltavradial);
+}
+
 
 /* ------------------------ ENERGIES & VELOCITIES ------------------------ */
 
@@ -112,10 +133,10 @@ double Vyield(const double& vstick)
 {   return 10.*vstick;  }
 
 double Vend(const double& size, const double& filfac, const double& rhos, const double& esurf, const double& youngmod0)
-{   return 24343220.*Vstick(size,filfac,rhos,esurf,youngmod0);    }     // constant taken from the initial code PACED
+{   return 24343220.*Vstick(size,filfac,rhos,esurf,youngmod0);    }     // constant taken from PACED code
 
 double Vend(const double& vstick)
-{   return 24343220.*vstick;   }     // constant taken from the initial code PACED
+{   return 24343220.*vstick;   }     // constant taken from PACED code
 
 double Vfrag(const double& filfac, const double& filfaclim, const double& vfragi, const int& constvfrag)
 {

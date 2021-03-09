@@ -1,0 +1,77 @@
+#!/bin/bash
+
+if [[ -n "$1" ]]; then
+
+    if [[ -n "$2" ]]; then 
+        if [ $2 == "S" ] || [ $2 == "s" ]; then
+            set -- "${@:1}" "S"
+        else
+            printf "Arg not recognized,\n"
+            printf "Use S,s if the model used is ds/dt else no arg to pass\n" 
+            exit
+        fi
+    else
+        set -- "${@:1}" "M"
+    fi
+
+    if [ $1 == "all" ]; then
+	python3 ../python/fig_m-phi.py $2
+	python3 ../python/fig_s-phi.py $2
+	python3 ../python/fig_s-phi-t.py $2
+	python3 ../python/fig_r-s-t.py $2
+	python3 ../python/fig_r-s-st.py $2
+	python3 ../python/fig_t-r-s.py $2
+	python3 ../python/fig_t-s-r.py $2
+	python3 ../python/fig_s-st.py $2
+    # Add your plot
+	python3 ../python/fig_r-sigma.py
+
+    elif [ $1 == "m-phi" ]; then
+	    python3 ../python/fig_m-phi.py $2
+        if [ $2 == "M" ]; then  open fig_M_m-phi.png; else open fig_S_m-phi.png; fi
+        
+    elif [ $1 == "s-phi" ]; then
+        python3 ../python/fig_s-phi.py $2
+        if [ $2 == "M" ]; then  open fig_M_s-phi.png; else open fig_S_s-phi.png; fi
+
+    elif [ $1 == "s-phi-t" ]; then
+        python3 ../python/fig_s-phi-t.py $2
+        if [ $2 == "M" ]; then  open fig_M_s-phi-t.png; else open fig_S_s-phi-t.png; fi
+
+    elif [ $1 == "r-s-t" ]; then
+        python3 ../python/fig_r-s-t.py $2
+        if [ $2 == "M" ]; then  open fig_M_r-s-t.png; else open fig_S_r-s-t.png; fi
+
+    elif [ $1 == "r-s-st" ]; then
+        python3 ../python/fig_r-s-st.py $2
+        if [ $2 == "M" ]; then  open fig_M_r-s-st.png; else open fig_S_r-s-st.png; fi
+
+    elif [ $1 == "t-r-s" ]; then
+        python3 ../python/fig_t-r-s.py $2
+        if [ $2 == "M" ]; then  open fig_M_t-r-s.png; else open fig_S_t-r-s.png; fi
+
+    elif [ $1 == "t-s-r" ]; then
+        python3 ../python/fig_t-s-r.py $2
+        if [ $2 == "M" ]; then  open fig_M_t-s-r.png; else open fig_S_t-s-r.png; fi
+
+    elif [ $1 == "s-st" ]; then
+        python3 ../python/fig_s-st.py $2
+        if [ $2 == "M" ]; then  open fig_M_s-st.png; else open fig_S_s-st.png; fi
+
+    elif [ $1 == "r-sig" ]; then
+        python3 ../python/fig_r-sigma.py
+        open fig_r-sigma.png
+
+    #elif [ $1 == "x-y" ]; then
+    #    python3 ../python/fig_x-y.py
+    #    open fig_x-y.png
+    else
+        printf "Arg not recognized\n"
+        printf "Use all to plot everything or: \ns-phi, s-phi-t, r-s-t, r-s-st, t-r-s, t-s-r, s-st, r-sig\n"
+    fi
+      
+else
+    printf "Arg problem\n"
+    printf "Use all to plot everything or: \ns-phi, s-phi-t, r-s-t, r-s-st, t-r-s, t-s-r, s-st, r-sig\n"
+    printf "Specify which model used: M,m if dm/dt else S,s for ds/dt\n"
+fi

@@ -30,6 +30,10 @@ double GrainVolumeSize(const double& size, const double& filfac, const double& r
 double St(const double& R, const double& mstar, const double& rhog, const double& cg, const double& size,// ->
           const double& filfac, const double& rhos, const double& deltav, int& iregime);
 
+// Accurate velocity difference between gas and dust [m/s]
+double DeltaV(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
+              const double& sigma0, const double& hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
+              const int& ibump, const int& idrift, const double& Rbump, const double& bumpwidth, const double& bumpheight);
 
 /* ------------------------ ENERGIES & VELOCITIES ------------------------ */
 

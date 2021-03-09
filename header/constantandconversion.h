@@ -17,6 +17,7 @@ using namespace std;
 #define     cratio -0.5801454844   // Common ratio for a power related to h&s regime
 #define      b_oku 0.15            // Parameter b (Okuzumi et al. 2012)
 #define     deltaR 1e-5            // DeltaR to compute derivative d/dr [m]
+#define       year 31556952.       // Year [s]
 
 
 /* ------------------------- CONVERSIONS ------------------------- */
@@ -39,10 +40,10 @@ inline double KgToMsol(const double& mass)
 
 // Convert time from second to year
 inline double SecToYear(const double& time)
-{   return time/365.25/3600./24.;   }
+{   return time/year;   }
 
 // Convert time from year to second
 inline double YearToSec(const double& time)
-{   return time*365.25*3600.*24.;   }
+{   return time*year;   }
 
 #endif // CONSTANTANDCONVERSION_H_INCLUDED
