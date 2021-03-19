@@ -105,7 +105,6 @@ int main(int argc, char* argv[])
     double bumpwidth;       // half width at half maximum (when ibump enabled) [AU]
     double bumpheight;      // fraction of surface density
     double sizeini;         // Initial size [m]
-    double filfacini;       // Initial filling factor
     double a0;              // Monomer size [m]
     double rhos;            // Dust monomer density [kg/m³]
     double youngmod0;       // Young Modulus of grains [PA]
@@ -132,7 +131,7 @@ int main(int argc, char* argv[])
 
     /*------------------------ INITIALS PARAMETERS TO COMPUTE ------------------------*/
 
-    double hg0;              // Disc height at R0 [AU]
+    double hg0;             // Disc height at R0 [AU]
     double hg;              // Disc height at R [AU]
     double rhog0;           // Gas density at R0 [kg/m³]
     double rhog;            // Gas density at R [kg/m³]
@@ -186,9 +185,9 @@ int main(int argc, char* argv[])
 
     cout << "Reading input file" << endl;
 
-    ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,
-             Rbump,dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,gammaft,limsize,
-             filfacini,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,ngrains,Rini,istate);
+    ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,
+             alpha,ibr,ibump,Rbump,dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,
+             vfragi,gammaft,limsize,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,ngrains,Rini,istate);
 
     cout << "Input file read\n" << endl;
 
@@ -264,24 +263,33 @@ int main(int argc, char* argv[])
         tlastwrite = -1;
         sizei = sizeini;
         sizef = sizeini;
-        filfaci = filfacini;
-        filfacf = filfacini;
-        massi = GrainMass(sizeini,filfacini,rhos);
-        massf = GrainMass(sizeini,filfacini,rhos);
         Ri = Rini[j];
         Rf = Rini[j];
         filfacpow = 3.*cratio/(1.-cratio);
         disrupted = false;
 
         // Compute gas and dust quantities at t=0
-        hg = Hg(Rf,q,R0,hg0);
-        sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
-        dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
-        cg = Cg(Rf,mstar,hg);
+        hg = Hg(Ri,q,R0,hg0);
+        sigma = Sigma(Ri,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
+        dustfrac = DustFrac(dustfrac0,dustfracmax,Ri,Rbump,bumpwidth,ibump);
+        cg = Cg(Ri,mstar,hg);
         rhog = Rhog(sigma,hg);
-        st = St(Ri,mstar,rhog,cg,sizei,filfacini,rhos,0.,ireg); //we assume deltav very small for small grain strongly coupled with gas in the epstein regime
-        deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
+        st = St(Ri,mstar,rhog,cg,sizei,filfaci,rhos,0.,ireg); //we assume deltav very small for small grain strongly coupled with gas in the epstein regime
+        deltav = DeltaV(Ri,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
         vrel = Vrel(cg,st,alpha);
+
+        if(sizei > a0)
+        {
+            filfaci = InitFilfac(Ri,mstar,rhog,cg,sizeini,eroll,a0,rhos,alpha);
+            filfacf = filfaci;
+        }
+        else
+        {   
+            filfaci = 1;
+            filfacf = 1;
+        }
+        massi = GrainMass(sizei,filfaci,rhos);
+        massf = GrainMass(sizei,filfaci,rhos);
 
         // Write in output file quantities at t=0
         WriteOutputFile(writer,t,Ri,massi,filfaci,sizei,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Ri,mstar),0.,0.,ireg);
@@ -487,12 +495,12 @@ int main(int argc, char* argv[])
     Runningtime((t2-t1)/(1.*CLOCKS_PER_SEC));
 
     // Write initials conditions
-    WriteInitFile(massorsize,tend,stepmethod,step,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0,T0,dustfrac0,rhog0,cg0,p,q,alpha,
-                  ibr,ibump,Rbump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,gammaft,filfacini,ngrains,Rini,istate,
+    WriteInitFile(massorsize,tend,stepmethod,step,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0,T0,dustfrac0,rhog0,cg0,p,q,
+                  alpha,ibr,ibump,Rbump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,gammaft,ngrains,Rini,istate,
                   (t2-t1)/(1.*CLOCKS_PER_SEC));
 
     WriteOutputHeader(massorsize);
-    
+
     EndAnim();
 
     }

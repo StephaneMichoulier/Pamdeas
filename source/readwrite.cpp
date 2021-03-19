@@ -18,8 +18,8 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
               double& Rin, double& Rout, double& R0, double& mstar, double& mdisc, double& sigma0, double& h0R0, double& T0,// ->
               double& dustfrac0, double& p, double& q, double& alpha, int& ibr, int& ibump, double& Rbump, double& dustfracmax,// ->
               double& bumpwidth, double& bumpheight, int& iporosity, double& sizeini, double& a0, double& rhos, int& idrift,// ->
-              int& ibounce, int& idisrupt, int& ifrag, double& vfragi, double& gammaft, double& limsize, double& filfacini,// ->
-              double& youngmod0, double& esurf, double& Yd0, double& Ydpower, int& constvfrag, double& filfaclim, double& filfacbnc,// ->
+              int& ibounce, int& idisrupt, int& ifrag, double& vfragi, double& gammaft, double& limsize, double& youngmod0,// ->
+              double& esurf, double& Yd0, double& Ydpower, int& constvfrag, double& filfaclim, double& filfacbnc,// ->
               int& ngrains, vector <double>& Rini, vector <int>& istate)
 {
     ifstream Reader("input.in");
@@ -71,8 +71,7 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader, 5);     CheckType(Reader, gammaft, "gammaft");
     ReadVoid(Reader, 9);     CheckType(Reader, limsize, "limsize");
 
-    ReadVoid(Reader, 15);    CheckType(Reader, filfacini, "filfacini");
-    ReadVoid(Reader, 5);     CheckType(Reader, youngmod0, "youngmod0");
+    ReadVoid(Reader, 15);     CheckType(Reader, youngmod0, "youngmod0");
     ReadVoid(Reader, 11);    CheckType(Reader, esurf, "esurf");
     ReadVoid(Reader, 13);    CheckType(Reader, Yd0, "Yd0");
     ReadVoid(Reader, 9);     CheckType(Reader, Ydpower, "Ydpower");
@@ -96,7 +95,7 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
 
     CheckData(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,h0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,
               Rbump,dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,gammaft,limsize,
-              filfacini,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,ngrains,Rini,istate);
+              youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,ngrains,Rini,istate);
     
     // Initialize some parameters depending on option
     istate.resize(ngrains);
@@ -116,9 +115,8 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
                const double& alpha, const int& ibr, const int& ibump, const double& Rbump, const double& dustfracmax, const double& bumpwidth,// ->
                const double& bumpheight, const int& iporosity, const double& sizeini, const double& a0, const double& rhos, const int& idrift,// ->
                const int& ibounce, const int& idisrupt, const int& ifrag, const double& vfragi, const double& gammaft, const double& limsize,// ->
-               const double& filfacini, const double& youngmod0, const double& esurf, const double& Yd0, const double& Ydpower,// ->
-               const int& constvfrag, const double& filfaclim, const double& filfacbnc, const int& ngrains, const vector <double>& Rini,// ->
-               const vector <int>& istate)
+               const double& youngmod0, const double& esurf, const double& Yd0, const double& Ydpower, const int& constvfrag,// ->
+               const double& filfaclim, const double& filfacbnc, const int& ngrains, const vector <double>& Rini, const vector <int>& istate)
 {
     bool error = false;
 
@@ -200,12 +198,6 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
     }
 
     if (limsize <= sizeini)                     ErrorValue(error, "Error", "limsize <= sizeini");
-
-    if (filfacini <= 0 || filfacini > 1)
-    {
-        if(filfacini > 1)                       ErrorValue(error, "Error", "filfacini > 1");
-        else                                    ErrorValue(error, "Error", "filfacini <= 0");
-    }
 
     if (youngmod0 <= 0)                         ErrorValue(error, "Error", "Youngmod0 <= 0");
     if (esurf <= 0)                             ErrorValue(error, "Error", "Esurf <= 0");
@@ -316,7 +308,6 @@ void WriteInputFile()
     writerinput << endl;
     writerinput << "#-Porosity properties, Available if iporosity = 1" << endl;
     writerinput << endl;
-    writerinput << " filfacini = 1          >Initial filling factor" << endl;
     writerinput << " Youngmod0 = 9.4e9      >Young Modulus for ice [Yamamoto et al. 2014] (Pa)" << endl;
     writerinput << "     Esurf = 7.3e-2     >Surface energy for ice grains J/m² [Yamamoto et al. 2014] (J/m²)" << endl;
     writerinput << "       Yd0 = 9.8e6      >Dynamic compression resistance constant for ice (Pa)" << endl;
@@ -436,8 +427,8 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
                    const double& sigma0, const double& h0, const double& T0, const double& dustfrac0, const double& rhog0, const double& cg0,// ->
                    const double& p, const double& q, const double& alpha, const int& ibr, const int& ibump, const double& Rbump,// ->
                    const int& iporosity, const double& sizeini, const double& a0, const double& rhos, const int& idrift, const int& ibounce,// ->
-                   const int& idisrupt, const int& ifrag, const double& vfragi, const double& gammaft, const double& filfacini,// ->
-                   const int& ngrains, const vector <double>& Rini, const  vector <int>& istate, const double& runningtime)
+                   const int& idisrupt, const int& ifrag, const double& vfragi, const double& gammaft, const int& ngrains,// ->
+                   const vector <double>& Rini, const  vector <int>& istate, const double& runningtime)
 {
     ofstream writerdoc;
     string dash;
@@ -546,8 +537,6 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     else                 writerdoc << "porous" << endl;
 
     writerdoc << "     Initial grain size: " << sizeini << " m" << endl;
-    if (iporosity == 0) writerdoc << " Initial filling factor: " << filfacini << endl;
-
     writerdoc << "           Monomer size: " << a0 << " m" << endl;
     writerdoc << " Dust intrinsic density: " << rhos << " kg/m³" << endl;
     if (ifrag !=0)      writerdoc << "Fragmentation threshold: " << vfragi << " m/s" << endl;

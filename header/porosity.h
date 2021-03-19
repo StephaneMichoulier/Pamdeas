@@ -12,7 +12,9 @@ using namespace std;
 double CParam(const double& R, const double& mstar, const double& rhog, const double& cg, const double& eroll,// ->
               const double& a0, const double& rhos, const double& alpha);
 
-
+double InitFilfac(const double& R, const double& mstar, const double& rhog, const double& cg, const double& size,// ->
+                   const double& eroll, const double& a0, const double& rhos, const double& alpha);
+                   
 /* ------------------------ BOUNCE ------------------------*/
 
 // Compute the probability to bounce

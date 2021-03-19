@@ -16,8 +16,8 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
               double& Rin, double& Rout, double& R0, double& mstar, double& mdisc, double& sigma0, double& h0R0, double& T0,// ->
               double& dustfrac0, double& p, double& q, double& alpha, int& ibr, int& ibump, double& Rbump, double& dustfracmax,// ->
               double& bumpwidth, double& bumpheight, int& iporosity, double& sizeini, double& a0, double& rhos, int& idrift,// ->
-              int& ibounce, int& idisrupt, int& ifrag, double& vfragi, double& gammaft, double& limsize, double& filfacini,// ->
-              double& youngmod0, double& esurf, double& Yd0, double& Ydpower, int& constvfrag, double& filfaclim, double& filfacbnc,// ->
+              int& ibounce, int& idisrupt, int& ifrag, double& vfragi, double& gammaft, double& limsize, double& youngmod0,// ->
+              double& esurf, double& Yd0, double& Ydpower, int& constvfrag, double& filfaclim, double& filfacbnc,// ->
               int& ngrains, vector <double>& Rini, vector <int>& istate);
 
 // Check data from the input file
@@ -27,9 +27,8 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
                const double& alpha, const int& ibr, const int& ibump, const double& Rbump, const double& dustfracmax, const double& bumpwidth,// ->
                const double& bumpheight, const int& iporosity, const double& sizeini, const double& a0, const double& rhos, const int& idrift,// ->
                const int& ibounce, const int& idisrupt, const int& ifrag, const double& vfragi, const double& gammaft, const double& limsize,// ->
-               const double& filfacini, const double& youngmod0, const double& esurf, const double& Yd0, const double& Ydpower,// ->
-               const int& constvfrag, const double& filfaclim, const double& filfacbnc, const int& ngrains, const vector <double>& Rini,// ->
-               const vector <int>& istate);
+               const double& youngmod0, const double& esurf, const double& Yd0, const double& Ydpower, const int& constvfrag,// ->
+               const double& filfaclim, const double& filfacbnc, const int& ngrains, const vector <double>& Rini, const vector <int>& istate);
                
 
 /* ------------------------ WRITING ------------------------*/
@@ -66,8 +65,8 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
                    const double& sigma0, const double& h0, const double& T0, const double& dustfrac0, const double& rhog0, const double& cg0,// ->
                    const double& p, const double& q, const double& alpha, const int& ibr, const int& ibump, const double& Rbump,// ->
                    const int& iporosity, const double& sizeini, const double& a0, const double& rhos, const int& idrift, const int& ibounce,// ->
-                   const int& idisrupt, const int& ifrag, const double& vfragi, const double& gammaft, const double& filfacini,// ->
-                   const int& ngrains, const vector <double>& Rini, const  vector <int>& istate, const double& runningtime);               
+                   const int& idisrupt, const int& ifrag, const double& vfragi, const double& gammaft, const int& ngrains,// ->
+                   const vector <double>& Rini, const  vector <int>& istate, const double& runningtime);               
 
 
 /* ------------------------ TOOLS ------------------------*/
