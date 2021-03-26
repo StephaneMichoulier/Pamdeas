@@ -159,25 +159,28 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
     if (alpha <= 0)                             ErrorValue(error, "Error", "alpha <= 0");
     if (ibr != 0 && ibr != 1)                   ErrorValue(error, "Error", "ibr != 0 & != 1");
     if (ibump != 0 && ibump != 1)               ErrorValue(error, "Error", "ibump != 0 & != 1");
+    
+    if (ibump == 1)
+    {   if (Rbump < Rin || Rbump > Rout)
+        {
+            if (Rbump < Rin )                   ErrorValue(error, "Error", "Rbump < Rin");
+            else                                ErrorValue(error, "Error", "Rbump > Rout");
+        }
 
-    if (Rbump < Rin || Rbump > Rout)
-    {
-        if (Rbump < Rin )                       ErrorValue(error, "Error", "Rbump < Rin");
-        else                                    ErrorValue(error, "Error", "Rbump > Rout");
+        if (dustfracmax < dustfrac0 || dustfracmax >= 1)
+        {
+            if (dustfracmax >= 1 )              ErrorValue(error, "Error", "dustfracmax >= 1");
+            else                                ErrorValue(error, "Error", "dustfracmax < dustfrac0");
+        }
+
+        if (bumpwidth <= 0)                     ErrorValue(error, "Error", "bumpwidth <= 0");
+        if (bumpheight <= 0)                    ErrorValue(error, "Error", "bumpheight <= 0");
     }
 
-    if (dustfracmax < dustfrac0 || dustfracmax >= 1)
-    {
-        if (dustfracmax >= 1 )                  ErrorValue(error, "Error", "dustfracmax >= 1");
-        else                                    ErrorValue(error, "Error", "dustfracmax < dustfrac0");
-    }
-
-    if (bumpwidth <= 0)                         ErrorValue(error, "Error", "bumpwidth <= 0");
-    if (bumpheight <= 0)                        ErrorValue(error, "Error", "bumpheight <= 0");
     if (iporosity != 0 && iporosity != 1)       ErrorValue(error, "Error", "iporosity != 0 & != 1");
     if (sizeini <= 0)                           ErrorValue(error, "Error", "sizeini <= 0");
 
-    if (a0 <= 0 || a0 > sizeini)
+    if ((a0 <= 0 || a0 > sizeini) && iporosity == 1)
     {
         if(a0 <= 0)                             ErrorValue(error, "Error", "a0 <= 0");
         else                                    ErrorValue(error, "Error", "a0 > sizeini");
@@ -191,7 +194,7 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
     if (ifrag != 0 && ifrag != 1 && ifrag != 2) ErrorValue(error, "Error", "ifrag != 0 & != 1 & != 2");
     if (vfragi < 0)                             ErrorValue(error, "Error", "vfragi < 0");
 
-    if (gammaft <= 0 || gammaft > 1)
+    if ((gammaft <= 0 || gammaft > 1) && idisrupt == 1)
     {
         if(gammaft > 1)                         ErrorValue(error, "Error", "gammaft > 1");
         else                                    ErrorValue(error, "Error", "gammaft <= 0");
@@ -199,21 +202,23 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 
     if (limsize <= sizeini)                     ErrorValue(error, "Error", "limsize <= sizeini");
 
-    if (youngmod0 <= 0)                         ErrorValue(error, "Error", "Youngmod0 <= 0");
-    if (esurf <= 0)                             ErrorValue(error, "Error", "Esurf <= 0");
-    if (Yd0 <= 0)                               ErrorValue(error, "Error", "Yd0 <= 0");
-    if (constvfrag != 0 && constvfrag != 1)     ErrorValue(error, "Error", "constvfrag != 0 & != 1");
+    if (iporosity == 1)
+    {   if (youngmod0 <= 0)                     ErrorValue(error, "Error", "Youngmod0 <= 0");
+        if (esurf <= 0)                         ErrorValue(error, "Error", "Esurf <= 0");
+        if (Yd0 <= 0)                           ErrorValue(error, "Error", "Yd0 <= 0");
+        if (constvfrag != 0 && constvfrag != 1) ErrorValue(error, "Error", "constvfrag != 0 & != 1");
 
-    if (filfaclim < 0 || filfaclim > 1)
-    {
-        if(filfaclim > 1)                       ErrorValue(error, "Error", "filfaclim > 1");
-        else                                    ErrorValue(error, "Error", "filfaclim < 0");
-    }
+        if (filfaclim < 0 || filfaclim > 1)
+        {
+            if(filfaclim > 1)                   ErrorValue(error, "Error", "filfaclim > 1");
+            else                                ErrorValue(error, "Error", "filfaclim < 0");
+        }
 
-    if (filfacbnc < 0 || filfacbnc > 1)
-    {
-        if(filfacbnc > 1)                       ErrorValue(error, "Error", "filfacbnc > 1");
-        else                                    ErrorValue(error, "Error", "filfacbnc < 0");
+        if (filfacbnc < 0 || filfacbnc > 1)
+        {
+            if(filfacbnc > 1)                   ErrorValue(error, "Error", "filfacbnc > 1");
+            else                                ErrorValue(error, "Error", "filfacbnc < 0");
+        }
     }
 
     if (ngrains < 0)                            ErrorValue(error, "Error", "ngrain < 0");
@@ -353,7 +358,7 @@ void WriteProfileFile(ofstream& outputprofile, const double& Rprofile, const dou
 void WriteProfileHeader()
 {
     ofstream writecol("disc_profiles_header.txt");
-    writecol << "R(AU)\n" << "Hg(AU)\n" << "cg(m/s)\n" << "sigma(kg/m^2)\n" << "rhog(kg/m^3)\n" << "dustfrac\n" << "Pg(Pa)\n" << "T(K)\n";
+    writecol << "r (au)\n" << "hg (au)\n" << "cg (m/s)\n" << "sigma (kg/m^2)\n" << "rhog (kg/m^3)\n" << "dustfrac\n" << "Pg (Pa)\n" << "T (K)\n";
     writecol.close();
 }
 
@@ -383,13 +388,13 @@ void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, co
 void WriteOutputHeader(const double& massorsize)
 {
     ofstream writecol("output_header.txt");
-    writecol << "t(yr)\n" << "R(AU)\n" << "mass(kg)\n" << "filfac\n" << "size(m)\n" << "St\n" << "cg(m/s)\n" << "sigma(kg/m^2)\n"
-             << "rhog(kg/m^3)\n" << "dustfrac\n" << "vrel(m/s)\n" << "omegak(1/s)\n" << "drdt(au/s)\n";
+    writecol << "t (yr)\n" << "r (au)\n" << "mass (kg)\n" << "filfac\n" << "size (m)\n" << "St\n" << "cg (m/s)\n" << "sigma (kg/m^2)\n"
+             << "rhog (kg/m^3)\n" << "dustfrac\n" << "vrel (m/s)\n" << "omegak (1/s)\n" << "drdt (au/s)\n";
 
     if (massorsize == 0)
-    {   writecol << "dmdt(kg/s)\n";  }
+    {   writecol << "dmdt (kg/s)\n";  }
     else
-    {   writecol << "dsdt(m/s)\n";  }
+    {   writecol << "dsdt (m/s)\n";  }
 
     writecol << "drag_regime\n";
     writecol.close();
@@ -416,8 +421,8 @@ void WriteDisruptFile(ofstream& outputfile, const double& R, const double& massf
 void WriteDisruptHeader()
 {
     ofstream writecol("disrupt_param_header.txt");
-    writecol << "R(AU)\n" << "gammaft\n" << "a0(m)\n" << "alpha\n" << "vrel(m/s)\n" << "mass(kg)\n" << "filfac\n" << "size(m)\n"
-             << "St\n" << "freqspin(rad/s)\n" << "tensilestress(Pa)\n";
+    writecol << "r (au)\n" << "gammaft\n" << "a0 (m)\n" << "alpha\n" << "vrel (m/s)\n" << "mass (kg)\n" << "filfac\n" << "size (m)\n"
+             << "St\n" << "freqspin (rad/s)\n" << "tensilestress (Pa)\n";
 
     writecol.close();
 }
