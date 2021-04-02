@@ -274,22 +274,18 @@ int main(int argc, char* argv[])
         dustfrac = DustFrac(dustfrac0,dustfracmax,Ri,Rbump,bumpwidth,ibump);
         cg = Cg(Ri,mstar,hg);
         rhog = Rhog(sigma,hg);
+
+        if(sizei > a0)
+        {   filfaci = FilFacSColl(Ri,mstar,rhog,cg,0.,sizeini/a0,eroll,a0,rhos,alpha,filfacpow); }
+        else
+        {   filfaci = 1.;   }
+        
+        filfacf = filfaci;
+        massi = GrainMass(sizei,filfaci,rhos);
+        massf = GrainMass(sizei,filfaci,rhos);
         st = St(Ri,mstar,rhog,cg,sizei,filfaci,rhos,0.,ireg); //we assume deltav very small for small grain strongly coupled with gas in the epstein regime
         deltav = DeltaV(Ri,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
         vrel = Vrel(cg,st,alpha);
-
-        if(sizei > a0)
-        {
-            filfaci = InitFilfac(Ri,mstar,rhog,cg,sizeini,eroll,a0,rhos,alpha);
-            filfacf = filfaci;
-        }
-        else
-        {   
-            filfaci = 1;
-            filfacf = 1;
-        }
-        massi = GrainMass(sizei,filfaci,rhos);
-        massf = GrainMass(sizei,filfaci,rhos);
 
         // Write in output file quantities at t=0
         WriteOutputFile(writer,t,Ri,massi,filfaci,sizei,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Ri,mstar),0.,0.,ireg);
@@ -386,7 +382,7 @@ int main(int argc, char* argv[])
                     }
 
                     // Write in output file quantities at time t
-                    if ( t-tlastwrite > 0.01 || t >= tend || istate[j] != 0)
+                    if ( t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 ))
                     {   
                         WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dmdt,ireg);
                         tlastwrite = t;
@@ -474,7 +470,7 @@ int main(int argc, char* argv[])
                     }
 
                     // Write in output file quantities at time t, 
-                    if ( t-tlastwrite > 0.01 || t >= tend || istate[j] != 0)
+                    if ( t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 ))
                     {   
                         WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dsdt,ireg);
                         tlastwrite = t;

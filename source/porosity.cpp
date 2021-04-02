@@ -19,20 +19,6 @@ double CParam(const double& R, const double& mstar, const double& rhog, const do
     return (243.*M_SQRT2*M_PI/15625.)*(rossby*alpha*pow(a0,4.)*rhos*rhos*cg*Omegak(R,mstar)/(rhog*b_oku*eroll));
 }
 
-double InitFilfac(const double& R, const double& mstar, const double& rhog, const double& cg, const double& size,// ->
-                   const double& eroll, const double& a0, const double& rhos, const double& alpha)
-{
-    double cparam = CParam(R,mstar,rhog,cg,eroll,a0,rhos,alpha);
-    double s1 = S1(cparam);
-    double filfacini;
-    double sfrac = size/a0;
-    
-    if (sfrac <= s1)    filfacini = pow(sfrac,3.*cratio/(1.-cratio));   // FilFac h&s
-    else                filfacini = pow(s1,(1.+8.*cratio)/(3.*(1.-cratio)))/pow(sfrac,1./3.);   // FilFac Ep-St<1
-
-    return filfacini;
-}
-
 /* ------------------------ BOUNCE ------------------------*/
 
 double ProbaBounce(const double& filfac, const double& filfacbnc, const double& vrel, const double& vstick, const double& vend)
@@ -431,7 +417,7 @@ double FilFacSGr(const double& sizef, const double& sizei, const double& filfaci
 }
 
 double FilFacSColl(const double& R, const double& mstar, const double& rhog, const double& cg, const double st, const double& sfrac,// ->
-                   const double& eroll, const double& a0, const double& rhos, const double& alpha, const int& iregime, double& filfacpow)
+                   const double& eroll, const double& a0, const double& rhos, const double& alpha, double& filfacpow)
 {
     // here, s1 to s5 and the associated functions S1 to S5 are normalized by a0 !
     double cparam = CParam(R,mstar,rhog,cg,eroll,a0,rhos,alpha);
@@ -456,7 +442,8 @@ double FilFacSColl(const double& R, const double& mstar, const double& rhog, con
                     filfaccoll = pow(s1,(1.+8.*cratio)/(3.*(1.-cratio)))*pow(sfrac,filfacpow);   // FilFac Ep-St<1
                 }
                 else
-                {   filfacpow = 0.;
+                {   
+                    filfacpow = 0.;
                     filfaccoll = pow(s2,3.*cratio/(1.-cratio));   // FilFac St-St<1
 
                 }
@@ -536,7 +523,7 @@ double FilFacMinSColGasGrav(const double& R, const double& mstar, const double& 
     double filfacmin;
     double filfacpowgas;
     int maxindex;
-    double filfaccoll = FilFacSColl(R,mstar,rhog,cg,st,sizef/a0,eroll,a0,rhos,alpha,iregime,filfacpow);
+    double filfaccoll = FilFacSColl(R,mstar,rhog,cg,st,sizef/a0,eroll,a0,rhos,alpha,filfacpow);
     double filfacgas  = FilFacSGas(R,mstar,deltav,st,sizef,eroll,a0,rhos,iregime,filfacpowgas);
     double filfacgrav = FilFacSGrav(sizef,rhos,a0,eroll);
 
