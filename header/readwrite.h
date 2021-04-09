@@ -36,12 +36,16 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 // Write the input file if it does not exist
 void WriteInputFile();
 
+// Write disc profiles columns
+void WriteProfileHeader(ofstream& outputprofile);
+
 // Write disc profiles data
-void WriteProfileFile(ofstream& outputfile, const double& Rprofile, const double& hg, const double& cg, const double& sigma,// ->
+void WriteProfileFile(ofstream& outputprofile, const double& Rprofile, const double& hg, const double& cg, const double& sigma,// ->
                       const double& rhog, const double& dustfrac, const double& pg, const double& T);
 
-// Write disc profiles columns
-void WriteProfileHeader();
+
+// Write output columns
+void WriteOutputHeader(ofstream& outputfile, const double& massorsize);
 
 // Write computed data in output files
 void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, const double& massf, const double& filfacf,// ->
@@ -49,15 +53,14 @@ void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, co
                      const double& rhog, const double& dustfrac, const double& vrel, const double& omegak,// ->
                      const double& drdt, const double& dvardt, const int& iregime);
 
-void WriteOutputHeader(const double& massorsize);
+// Write disrupt files columns
+void WriteDisruptHeader(ofstream& outputfile);
 
 // Write data in the disrupt file
 void WriteDisruptFile(ofstream& outputfile, const double& R, const double& massf, const double& filfacf, const double& sizef, 
                       const double& st, const double& vrel, const double& freqspin, const double& tensilestress,
                       const double& gammaft, const double& alpha, const double& a0);
 
-// Write disrupt files columns
-void WriteDisruptHeader();
 
 // Write the initials conditions
 void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const int& isetdens,// ->

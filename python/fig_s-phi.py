@@ -26,6 +26,7 @@ fig, axes = plt.subplots(1, 1, sharex = "col", sharey = "row", gridspec_kw = {"h
 for rad, col in zip(r0, col):
     file = path1 + "outputpor_" + mass_or_size + "_" + str(rad) + ".out"
     with open(file, "r") as f:
+        next(f) # skip first line
         phi = []
         s = []
         for ligne in f:

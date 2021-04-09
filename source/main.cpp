@@ -220,6 +220,7 @@ int main(int argc, char* argv[])
         cout << "Compute disc profiles" << endl;
         ofstream writebump;
         writebump.open("disc_profiles.out");
+        WriteProfileHeader(writebump);
         Rprofile = Rin;
         for (Rprofile = Rin; Rprofile <= Rout; Rprofile += 0.01)
         {   hg = Hg(Rprofile,q,R0,hg0);
@@ -230,7 +231,6 @@ int main(int argc, char* argv[])
             WriteProfileFile(writebump,Rprofile,hg,cg ,sigma,rhog,dustfrac,Pg(rhog,cg),T(cg));
             ProgressionAnim(Rprofile,Rout-0.01,0,"disc_profiles.out");
         }
-        WriteProfileHeader();
         writebump.close();
     }
 
@@ -241,7 +241,7 @@ int main(int argc, char* argv[])
     if (idisrupt == 1 && ngrains > 0)  
     {   
         writerdisruption.open(DisruptFileName(massorsize).c_str());
-        WriteDisruptHeader();
+        WriteDisruptHeader(writerdisruption);
     }
 
 
@@ -288,6 +288,7 @@ int main(int argc, char* argv[])
         vrel = Vrel(cg,st,alpha);
 
         // Write in output file quantities at t=0
+        WriteOutputHeader(writer,massorsize);
         WriteOutputFile(writer,t,Ri,massi,filfaci,sizei,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Ri,mstar),0.,0.,ireg);
 
         // This is where the loop begin
@@ -494,8 +495,6 @@ int main(int argc, char* argv[])
     WriteInitFile(massorsize,tend,stepmethod,step,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0,T0,dustfrac0,rhog0,cg0,p,q,
                   alpha,ibr,ibump,Rbump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,gammaft,ngrains,Rini,istate,
                   (t2-t1)/(1.*CLOCKS_PER_SEC));
-
-    WriteOutputHeader(massorsize);
 
     EndAnim();
 

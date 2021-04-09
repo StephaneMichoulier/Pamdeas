@@ -341,25 +341,56 @@ void WriteInputFile()
     writerinput.close();
 }
 
+void WriteProfileHeader(ofstream& outputprofile)
+{
+    WriteValue(outputprofile,  6, 6, "r_(au)");
+    WriteValue(outputprofile, 14, 6, "hg_(au)");
+    WriteValue(outputprofile, 14, 6, "cg_(m/s)");
+    WriteValue(outputprofile, 14, 6, "sigma_(kg/m^2)");
+    WriteValue(outputprofile, 14, 6, "rhog_(kg/m^3)");
+    WriteValue(outputprofile, 14, 6, "dustfrac");
+    WriteValue(outputprofile, 14, 6, "Pg_(Pa)");
+    WriteValue(outputprofile, 14, 6, "T_(K)");
+    outputprofile << "\n";
+}
+
 void WriteProfileFile(ofstream& outputprofile, const double& Rprofile, const double& hg, const double& cg, const double& sigma,
                       const double& rhog, const double& dustfrac, const double& pg, const double& T)
 {
     WriteValue(outputprofile,  6, 6, Rprofile);
-    WriteValue(outputprofile, 10, 6, hg);
-    WriteValue(outputprofile, 10, 6, cg);
-    WriteValue(outputprofile, 10, 6, sigma);
-    WriteValue(outputprofile, 12, 6, rhog);
-    WriteValue(outputprofile, 10, 6, dustfrac);
-    WriteValue(outputprofile, 12, 6, pg);
-    WriteValue(outputprofile, 10, 6, T);
+    WriteValue(outputprofile, 14, 6, hg);
+    WriteValue(outputprofile, 14, 6, cg);
+    WriteValue(outputprofile, 14, 6, sigma);
+    WriteValue(outputprofile, 14, 6, rhog);
+    WriteValue(outputprofile, 14, 6, dustfrac);
+    WriteValue(outputprofile, 14, 6, pg);
+    WriteValue(outputprofile, 14, 6, T);
     outputprofile << "\n";
 }
 
-void WriteProfileHeader()
+void WriteOutputHeader(ofstream& outputfile, const double& massorsize)
 {
-    ofstream writecol("disc_profiles_header.txt");
-    writecol << "r (au)\n" << "hg (au)\n" << "cg (m/s)\n" << "sigma (kg/m^2)\n" << "rhog (kg/m^3)\n" << "dustfrac\n" << "Pg (Pa)\n" << "T (K)\n";
-    writecol.close();
+    WriteValue(outputfile, 12, 0, "t_(yr)");
+    WriteValue(outputfile, 12, 0, "r_(au)");
+    WriteValue(outputfile, 14, 0, "mass_(kg)");
+    WriteValue(outputfile, 14, 0, "filfac");
+    WriteValue(outputfile, 14, 0, "size_(m)");
+    WriteValue(outputfile, 14, 0, "St");
+    WriteValue(outputfile, 14, 0, "cg_(m/s)");
+    WriteValue(outputfile, 14, 0, "sigma_(kg/m^2)");
+    WriteValue(outputfile, 14, 0, "rhog_(kg/m^3)");
+    WriteValue(outputfile, 14, 0, "dustfrac");
+    WriteValue(outputfile, 14, 0, "vrel_(m/s)");
+    WriteValue(outputfile, 14, 0, "omegak_(1/s)");
+    WriteValue(outputfile, 14, 0, "drdt_(au/s)");
+    
+    if (massorsize == 0)
+    {   WriteValue(outputfile, 14, 0, "dmdt_(kg/s)");  }
+    else
+    {   WriteValue(outputfile, 14, 0, "dsdt_(m/s)");  }
+
+    WriteValue(outputfile,  7, 0, "dragreg");
+    outputfile << "\n";
 }
 
 void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, const double& massf, const double& filfacf,// ->
@@ -367,45 +398,46 @@ void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, co
                      const double& rhog, const double& dustfrac, const double& vrel, const double& omegak,// ->
                      const double& drdt, const double& dvardt, const int& iregime)
 {
-    WriteValue(outputfile, 11, 6, t);
-    WriteValue(outputfile, 10, 6, Rf);
-    WriteValue(outputfile, 12, 6, massf);
-    WriteValue(outputfile, 12, 6, filfacf);
-    WriteValue(outputfile, 12, 6, sizef);
-    WriteValue(outputfile, 12, 6, st);
-    WriteValue(outputfile, 10, 6, cg);
-    WriteValue(outputfile, 10, 6, sigma);
-    WriteValue(outputfile, 12, 6, rhog);
-    WriteValue(outputfile, 10, 6, dustfrac);
-    WriteValue(outputfile, 12, 6, vrel);
-    WriteValue(outputfile, 12, 6, omegak);
-    WriteValue(outputfile, 13, 6, drdt);
-    WriteValue(outputfile, 12, 6, dvardt);
-    WriteValue(outputfile,  2, 1, iregime);
+    WriteValue(outputfile, 12, 6, t);
+    WriteValue(outputfile, 12, 6, Rf);
+    WriteValue(outputfile, 14, 6, massf);
+    WriteValue(outputfile, 14, 6, filfacf);
+    WriteValue(outputfile, 14, 6, sizef);
+    WriteValue(outputfile, 14, 6, st);
+    WriteValue(outputfile, 14, 6, cg);
+    WriteValue(outputfile, 14, 6, sigma);
+    WriteValue(outputfile, 14, 6, rhog);
+    WriteValue(outputfile, 14, 6, dustfrac);
+    WriteValue(outputfile, 14, 6, vrel);
+    WriteValue(outputfile, 14, 6, omegak);
+    WriteValue(outputfile, 14, 6, drdt);
+    WriteValue(outputfile, 14, 6, dvardt);
+    WriteValue(outputfile,  7, 1, iregime);
     outputfile << "\n";
 }
 
-void WriteOutputHeader(const double& massorsize)
+void WriteDisruptHeader(ofstream& outputfile)
 {
-    ofstream writecol("output_header.txt");
-    writecol << "t (yr)\n" << "r (au)\n" << "mass (kg)\n" << "filfac\n" << "size (m)\n" << "St\n" << "cg (m/s)\n" << "sigma (kg/m^2)\n"
-             << "rhog (kg/m^3)\n" << "dustfrac\n" << "vrel (m/s)\n" << "omegak (1/s)\n" << "drdt (au/s)\n";
-
-    if (massorsize == 0)
-    {   writecol << "dmdt (kg/s)\n";  }
-    else
-    {   writecol << "dsdt (m/s)\n";  }
-
-    writecol << "drag_regime\n";
-    writecol.close();
+    WriteValue(outputfile,  8, 0, "r_(au)");
+    WriteValue(outputfile,  8, 0, "gammaft");
+    WriteValue(outputfile,  6, 0, "a0_(m)");
+    WriteValue(outputfile,  6, 0, "alpha");
+    WriteValue(outputfile, 10, 0, "vrel_(m/s)");
+    WriteValue(outputfile, 12, 0, "mass_(kg)");
+    WriteValue(outputfile, 12, 0, "filfac");
+    WriteValue(outputfile, 12, 0, "size_(m)");
+    WriteValue(outputfile, 12, 0, "St");
+    WriteValue(outputfile, 14, 0, "f-spin_(rad/s)");
+    WriteValue(outputfile, 14, 0, "t-stress_(Pa)");
+    outputfile << "\n";
 }
 
 void WriteDisruptFile(ofstream& outputfile, const double& R, const double& massf, const double& filfacf, const double& sizef, 
                       const double& st, const double& vrel, const double& freqspin, const double& tensilestress,
                       const double& gammaft, const double& alpha, const double& a0)
 {
-    WriteValue(outputfile,  6, 4, R);
-    WriteValue(outputfile,  6, 4, gammaft);
+    WriteValue(outputfile,  8, 4, R);
+    WriteValue(outputfile,  8, 4, gammaft);
     WriteValue(outputfile,  6, 4, a0);
     WriteValue(outputfile,  6, 4, alpha);
     WriteValue(outputfile, 10, 6, vrel);
@@ -413,18 +445,9 @@ void WriteDisruptFile(ofstream& outputfile, const double& R, const double& massf
     WriteValue(outputfile, 12, 6, filfacf);
     WriteValue(outputfile, 12, 6, sizef);
     WriteValue(outputfile, 12, 6, st);
-    WriteValue(outputfile, 10, 6, freqspin);
-    WriteValue(outputfile, 10, 6, tensilestress);
+    WriteValue(outputfile, 14, 6, freqspin);
+    WriteValue(outputfile, 14, 6, tensilestress);
     outputfile << "\n";
-}
-
-void WriteDisruptHeader()
-{
-    ofstream writecol("disrupt_param_header.txt");
-    writecol << "r (au)\n" << "gammaft\n" << "a0 (m)\n" << "alpha\n" << "vrel (m/s)\n" << "mass (kg)\n" << "filfac\n" << "size (m)\n"
-             << "St\n" << "freqspin (rad/s)\n" << "tensilestress (Pa)\n";
-
-    writecol.close();
 }
 
 void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const int& isetdens,// ->
@@ -658,8 +681,8 @@ string DisruptFileName(const int& massorsize)
 {
     string ms;
 
-    if (massorsize == 0) ms = "M_";
-    else                 ms = "S_";
+    if (massorsize == 0) ms = "M";
+    else                 ms = "S";
 
     return "disrupt_param_" + ms + ".out";
 }

@@ -15,6 +15,7 @@ fig, (axe1, axe2, axe3) = plt.subplots(1, 3, gridspec_kw = {"hspace": 0, "wspace
 
 file = path1 + "disc_profiles.out"
 with open(file, "r") as f:
+    next(f) # skip first line
     r = []
     sigma = []
     dustfrac = []
