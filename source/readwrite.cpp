@@ -42,10 +42,10 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader, 5);     CheckType(Reader, Rout, "Rout");
     ReadVoid(Reader, 5);     CheckType(Reader, R0, "R0");
     ReadVoid(Reader, 5);     CheckType(Reader, mstar, "mstar");
-    ReadVoid(Reader, 5);     CheckType(Reader, mdisc, "mdisc");
+    ReadVoid(Reader, 6);     CheckType(Reader, mdisc, "mdisc");
     ReadVoid(Reader, 5);     CheckType(Reader, sigma0, "sigma0");
     ReadVoid(Reader, 7);     CheckType(Reader, h0R0, "h0R0");
-    ReadVoid(Reader, 5);     CheckType(Reader, T0, "T0");
+    ReadVoid(Reader, 6);     CheckType(Reader, T0, "T0");
     ReadVoid(Reader, 5);     CheckType(Reader, dustfrac0, "dustfrac0");
     ReadVoid(Reader, 9);     CheckType(Reader, p, "p");
     ReadVoid(Reader, 3);     CheckType(Reader, q, "q");
@@ -276,10 +276,10 @@ void WriteInputFile()
     writerinput << "      Rout = 300.       >Outer radius (AU)" << endl;
     writerinput << "      Rref = 100.       >Reference radius (AU)" << endl;
     writerinput << "     mstar = 1.         >Star mass (Msol)" << endl;
-    writerinput << "     mdisc = 0.02       >Disc mass (Msol)" << endl;
-    writerinput << "    sigma0 = 9.1        >Surface density at Rref (kg/m²)" << endl;
-    writerinput << "     H0/R0 = 0.05       >H/R at Rref" << endl;
-    writerinput << "        T0 = 6.2        >Temperature at Rref" << endl;
+    writerinput << "   / mdisc = 0.02       >Disc mass (Msol)" << endl;
+    writerinput << "   \\sigma0 = 9.1        >Surface density at Rref (kg/m²)" << endl;
+    writerinput << "    /H0/R0 = 0.05       >H/R at Rref" << endl;
+    writerinput << "    \\   T0 = 6.2        >Temperature at Rref" << endl;
     writerinput << " dustfrac0 = 0.01       >Dust to gas ratio at Rref" << endl;
     writerinput << "   p index = 1.5        " << endl;
     writerinput << "   q index = 0.75       " << endl;
