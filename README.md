@@ -42,11 +42,8 @@ If the program is not yet built, follow the instruction below:
 Once the simulation is finished, multiple output files are written into the output folder depending on the option:
 > - Initials_Conditions_*Rref*.txt summarises your setup
 > - output_*setup name*.out: one output file for each particle. The file name depends on the model used (dmdt/dsdt and porous/compact grains) 
-> - output_header.txt gives you the corresponding columns in output files.
 > - disk_profiles.out contains different profiles (surface density, pressure, etc).
-> - disk_profiles_header.txt gives you the corresponding columns in the diskprofiles.out files.
 > - disrupt_param_<model>.out contains parameters of disrupted grains.
-> - disrupt_param_header.txt gives you the corresponding columns in the disrupt_param.out files.
 
 A script is available to plot directly some useful quantities. To do so, write in your terminal (in the build folder):
 > - ./ploteden help to display how to plot things
