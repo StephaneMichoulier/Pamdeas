@@ -421,7 +421,7 @@ void WriteDisruptHeader(ofstream& outputfile)
     WriteValue(outputfile,  8, 0, "r_(au)");
     WriteValue(outputfile,  8, 0, "gammaft");
     WriteValue(outputfile,  6, 0, "a0_(m)");
-    WriteValue(outputfile,  6, 0, "alpha");
+    WriteValue(outputfile,  8, 0, "alpha");
     WriteValue(outputfile, 10, 0, "vrel_(m/s)");
     WriteValue(outputfile, 12, 0, "mass_(kg)");
     WriteValue(outputfile, 12, 0, "filfac");
@@ -439,7 +439,7 @@ void WriteDisruptFile(ofstream& outputfile, const double& R, const double& massf
     WriteValue(outputfile,  8, 4, R);
     WriteValue(outputfile,  8, 4, gammaft);
     WriteValue(outputfile,  6, 4, a0);
-    WriteValue(outputfile,  6, 4, alpha);
+    WriteValue(outputfile,  8, 4, alpha);
     WriteValue(outputfile, 10, 6, vrel);
     WriteValue(outputfile, 12, 6, massf);
     WriteValue(outputfile, 12, 6, filfacf);
