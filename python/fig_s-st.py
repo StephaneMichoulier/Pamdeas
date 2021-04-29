@@ -11,7 +11,7 @@ path1 = "../build/"
 path2 = "../build/"
 
 # PACED data
-radius0 = [5, 10, 20, 50, 75, 100, 150, 200, 250, 300]
+radius0 = [10, 15, 25, 50, 75, 100, 150, 200, 250, 300]
 col = ["k", "g", "b", "tab:orange", "tab:purple", "tab:brown", "c", "tab:pink", "m", "y", 
        "tab:blue", "tab:green", "tab:red", "tab:gray", "tab:olive", "tab:cyan"]
 
@@ -47,6 +47,6 @@ axes.legend(fontsize = "small", loc = "lower left")
 
 plt.axhline(y=1,lw=0.5, color="black")
 
-plt.savefig(path2 + "fig_" + mass_or_size + "_s-st_Ice.png")
+plt.savefig(path2 + "fig_" + mass_or_size + "_s-st.png")
 
 print("fig_" + mass_or_size + "_s-st.png done")

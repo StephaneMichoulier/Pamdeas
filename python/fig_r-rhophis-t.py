@@ -14,7 +14,7 @@ path1 = "../build/"
 path2 = "../build/"
 
 # PACED data
-r0 = [5,10, 20, 50, 75, 100, 150, 200, 250, 300]
+radius0 = [10, 15, 25, 50, 75, 100, 150, 200, 250, 300]
 
 density = 917.0
 
@@ -24,8 +24,8 @@ fig, axes = plt.subplots(1, 1, sharex="col", sharey="row", gridspec_kw={"hspace"
             "wspace": 0, "left": 0.11, "right": 0.99, "bottom": 0.1, "top": .975},
             figsize=(7., 4.8), dpi=300)
 
-for rad in r0:
-    file = path1+"outputpor_"+mass_or_size+"_"+str(rad)+".out"
+for radius in radius0:
+    file = path1+"outputpor_"+mass_or_size+"_"+str(radius)+".out"
     with open(file, "r") as f:
         next(f) # skip first line
         t =[]
@@ -41,7 +41,7 @@ for rad in r0:
             phi.append(float(ligne[3]))
     aero=np.multiply(s,phi)
     line = axes.scatter(r, aero*density, c=t, s=0.5, norm=colors.LogNorm(1,1e5),cmap="rainbow")
-    line.set_label(r"$R_0=$"+str(rad)+" au")
+    line.set_label(r"$R_0=$"+str(radius)+" au")
 
 clb=fig.colorbar(line, pad=0.005)
 clb.set_label(r"$t$ (yr)")

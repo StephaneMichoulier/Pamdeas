@@ -138,25 +138,38 @@ double Vend(const double& size, const double& filfac, const double& rhos, const 
 double Vend(const double& vstick)
 {   return 24343220.*vstick;   }     // constant taken from PACED code
 
-double Vfrag(const double& filfac, const double& filfaclim, const double& vfragi, const int& constvfrag)
+double Vfrag(const double& R, const int& isnow, const double& Rsnow, const double& filfac, const double& filfaclim,
+             const double& vfragi, const double& vfragin, const double& vfragout, const int& constvfrag)
 {
+    double vfrag;
+
+    if (isnow == 1)
+    {
+        if (R > Rsnow)  vfrag = vfragout;
+        else            vfrag = vfragin;
+    }
+    else
+    {
+        vfrag = vfragi;
+    }
+
     if (constvfrag == 1)
-    {   return vfragi;  }
+    {   return vfrag;  }
     else
     {                     // Need to look at the model for variable vfrag
         if (filfac >= 0.6)
         {
-            return vfragi*sqrt(pow(100.,1.5*(1-sqrt(filfac)))*pow(filfac,3.75*sqrt(filfac)-1.));
+            return vfrag*sqrt(pow(100.,1.5*(1-sqrt(filfac)))*pow(filfac,3.75*sqrt(filfac)-1.));
         }
         else
         {
             if (filfac >= filfaclim)
             {
-                return vfragi*sqrt(pow(100.,3.*(0.5-(1./2.58)))*pow(filfac,4.92/2.58));
+                return vfrag*sqrt(pow(100.,3.*(0.5-(1./2.58)))*pow(filfac,4.92/2.58));
             }
             else
             {
-                return vfragi*sqrt(pow(100.,3.*(0.5-(1./2.58)))*pow(filfaclim,4.92/2.58));
+                return vfrag*sqrt(pow(100.,3.*(0.5-(1./2.58)))*pow(filfaclim,4.92/2.58));
             }
         }
     }

@@ -68,7 +68,8 @@ double Vend(const double& size, const double& filfac, const double& rhos, const 
 double Vend(const double& vstick);
 
 // Fragmentation threshold velocity [m/s]
-double Vfrag(const double& filfac, const double& filfaclim, const double& vfragi, const int& constvfrag);
+double Vfrag(const double& R, const int& isnow, const double& Rsnow, const double& filfac, const double& filfaclim,// ->
+             const double& vfragi, const double& vfragin, const double& vfragout, const int& constvfrag);
 
 // Restitution coefficient e
 double CoeffRest(const double& vrel, const double& vstick, const double& vyield);

@@ -9,12 +9,12 @@
 
 #### **DESCRIPTION**:
 
-Eden is a 1D code primarily wrote to study the evolution of grains porosity within protoplanetary disc considering different physical process such as growth, fragmentation, drift, pressure bump, etc.  
+Eden is a 1D code primarily wrote to study the evolution of grains porosity within protoplanetary disc considering different physical process such as growth, fragmentation, drift, pressure bump, snowline (Vericel & Gonzalez 2020) etc.  
 This code allow you to follow the evolution of a given number of particles from a set of initials conditions chosen by the user in a stationary non self-gravitating gas disc and was mainly developed to understand the behaviour of porous grains, but also to test algorithms for future implementation in 3D Hydrodynamics code.  
 
 FEW WORDS ON INPUT FILE OPTION (Respect the blank space, or expect unforeseen consequences).  
 2 models can be used to study the evolution of the porosity. 
-One is based on the increase of mass (dm/dt) and use A. Garcia's reformulated algorithms, the other one is based on the increase of size (ds/dt) and use my algorithms.  
+One is based on the increase of mass (dm/dt) and use A. Garcia's reformulated algorithms (Garcia 2018),(Garcia & Gonzalez 2020), the other one is based on the increase of size (ds/dt) and use my algorithms.  
 The dmdt model support the bounce process, but not the dsdt model.  
 The degeneracy due to the filling factor in the dsdt model is taken into account.  
 
@@ -85,3 +85,11 @@ The program contains multiple files in the source folder "source" and the header
 
 	Contains the declaration of physical constants and conversion functions between some useful  units
 
+#### **Reference**
+Arnaud Vericel and Jean-François Gonzalez. Self-induced dust traps around snow lines in pro- toplanetary discs. MNRAS, 492(1) :210–222, February 2020. doi : 10.1093/mnras/stz3444.
+
+Anthony Garcia. Evolution of grain porosity during growth : a solution to planetary for- mation barriers? Phd thesis, Université de Lyon, September 2018. URL https://tel. archives-ouvertes.fr/tel-01977317.
+
+Anthony J. L. Garcia and Jean-François Gonzalez. Evolution of porous dust grains in pro- toplanetary discs - I. Growing grains. MNRAS, 493(2) :1788–1800, April 2020. doi : 10.1093/mnras/staa382.
+
+J. D. Hunter. Matplotlib : A 2d graphics environment. Computing in Science & Engineering, 9(3) :90–95, 2007. doi : 10.1109/MCSE.2007.55.

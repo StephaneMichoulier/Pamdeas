@@ -18,9 +18,9 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
               double& Rin, double& Rout, double& R0, double& mstar, double& mdisc, double& sigma0, double& h0R0, double& T0,// ->
               double& dustfrac0, double& p, double& q, double& alpha, int& ibr, int& ibump, double& Rbump, double& dustfracmax,// ->
               double& bumpwidth, double& bumpheight, int& iporosity, double& sizeini, double& a0, double& rhos, int& idrift,// ->
-              int& ibounce, int& idisrupt, int& ifrag, double& vfragi, double& gammaft, double& limsize, double& youngmod0,// ->
-              double& esurf, double& Yd0, double& Ydpower, int& constvfrag, double& filfaclim, double& filfacbnc,// ->
-              int& ngrains, vector <double>& Rini, vector <int>& istate)
+              int& ibounce, int& idisrupt, int& ifrag, double& vfragi, double& gammaft, double& limsize, int& isnow, double& Rsnow,// ->
+              double& vfragin, double& vfragout, double& youngmod0, double& esurf, double& Yd0, double& Ydpower, int& constvfrag,// ->
+              double& filfaclim, double& filfacbnc, int& ngrains, vector <double>& Rini, vector <int>& istate)
 {
     ifstream Reader("input.in");
     if (!Reader)
@@ -30,7 +30,7 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     }
 
     ReadVoid(Reader, 6);     CheckType(Reader, massorsize, "massorsize");
-    ReadVoid(Reader, 10);    CheckType(Reader, tend, "tend");
+    ReadVoid(Reader, 6);     CheckType(Reader, tend, "tend");
     ReadVoid(Reader, 5);     CheckType(Reader, stepmethod, "stepmethod");
     ReadVoid(Reader, 9);     CheckType(Reader, step, "step");
     ReadVoid(Reader, 18);    CheckType(Reader, profile, "profile");
@@ -68,10 +68,15 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader, 5);     CheckType(Reader, idisrupt, "idisrupt");
     ReadVoid(Reader, 6);     CheckType(Reader, ifrag, "ifrag");
     ReadVoid(Reader, 6);     CheckType(Reader, vfragi, "vfragi");
-    ReadVoid(Reader, 5);     CheckType(Reader, gammaft, "gammaft");
+    ReadVoid(Reader, 7);     CheckType(Reader, gammaft, "gammaft");
     ReadVoid(Reader, 9);     CheckType(Reader, limsize, "limsize");
 
-    ReadVoid(Reader, 15);     CheckType(Reader, youngmod0, "youngmod0");
+    ReadVoid(Reader, 16);    CheckType(Reader, isnow, "isnow");
+    ReadVoid(Reader, 7);     CheckType(Reader, Rsnow, "Rsnow");
+    ReadVoid(Reader, 6);     CheckType(Reader, vfragin, "vfragin");
+    ReadVoid(Reader, 6);     CheckType(Reader, vfragout, "vfragout");
+
+    ReadVoid(Reader, 13);    CheckType(Reader, youngmod0, "youngmod0");
     ReadVoid(Reader, 11);    CheckType(Reader, esurf, "esurf");
     ReadVoid(Reader, 13);    CheckType(Reader, Yd0, "Yd0");
     ReadVoid(Reader, 9);     CheckType(Reader, Ydpower, "Ydpower");
@@ -95,7 +100,7 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
 
     CheckData(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,h0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,
               Rbump,dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,gammaft,limsize,
-              youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,ngrains,Rini,istate);
+              isnow,Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,ngrains,Rini,istate);
     
     // Initialize some parameters depending on option
     istate.resize(ngrains);
@@ -109,14 +114,16 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
 	Reader.close();
 }
 
-void CheckData(const int& massorsize, const double& tend, const int& stepmethod, const double& step, const int& profile, const int& isetdens,// ->
-               const int& isettemp, const double& Rin, const double& Rout, const double& R0, const double& mstar, const double& mdisc,// ->
-               const double& sigma0, const double& h0R0, const double& T0, const double& dustfrac0, const double& p, const double& q,// ->
-               const double& alpha, const int& ibr, const int& ibump, const double& Rbump, const double& dustfracmax, const double& bumpwidth,// ->
-               const double& bumpheight, const int& iporosity, const double& sizeini, const double& a0, const double& rhos, const int& idrift,// ->
-               const int& ibounce, const int& idisrupt, const int& ifrag, const double& vfragi, const double& gammaft, const double& limsize,// ->
-               const double& youngmod0, const double& esurf, const double& Yd0, const double& Ydpower, const int& constvfrag,// ->
-               const double& filfaclim, const double& filfacbnc, const int& ngrains, const vector <double>& Rini, const vector <int>& istate)
+void CheckData(const int& massorsize, const double& tend, const int& stepmethod, const double& step, const int& profile,// ->
+               const int& isetdens, const int& isettemp, const double& Rin, const double& Rout, const double& R0, const double& mstar,// ->
+               const double& mdisc, const double& sigma0, const double& h0R0, const double& T0, const double& dustfrac0,// ->
+               const double& p, const double& q, const double& alpha, const int& ibr, const int& ibump, const double& Rbump,// ->
+               const double& dustfracmax, const double& bumpwidth, const double& bumpheight, const int& iporosity, const double& sizeini,// ->
+               const double& a0, const double& rhos, const int& idrift, const int& ibounce, const int& idisrupt, const int& ifrag,// ->
+               const double& vfragi, const double& gammaft, const double& limsize, const int& isnow, const double& Rsnow,// ->
+               const double& vfragin, const double& vfragout, const double& youngmod0, const double& esurf, const double& Yd0,// ->
+               const double& Ydpower, const int& constvfrag, const double& filfaclim, const double& filfacbnc, const int& ngrains,// ->
+               const vector <double>& Rini, const vector <int>& istate)
 {
     bool error = false;
 
@@ -192,7 +199,7 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
     if (ibounce != 0 && ibounce != 1)           ErrorValue(error, "Error", "ibounce != 0 & != 1");
     if (idisrupt != 0 && idisrupt != 1)         ErrorValue(error, "Error", "idisrupt != 0 & != 1");
     if (ifrag != 0 && ifrag != 1 && ifrag != 2) ErrorValue(error, "Error", "ifrag != 0 & != 1 & != 2");
-    if (vfragi < 0)                             ErrorValue(error, "Error", "vfragi < 0");
+    if (vfragi < 0 && isnow == 0)               ErrorValue(error, "Error", "vfragi < 0");
 
     if ((gammaft <= 0 || gammaft > 1) && idisrupt == 1)
     {
@@ -201,6 +208,19 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
     }
 
     if (limsize <= sizeini)                     ErrorValue(error, "Error", "limsize <= sizeini");
+
+    if (isnow != 0 && isnow != 1)               ErrorValue(error, "Error", "isnow != 0 & != 1");
+    if (isnow == 1)
+    {
+        if (Rsnow < Rin || Rsnow > Rout)
+        {
+            if (Rsnow < Rin )                   ErrorValue(error, "Error", "Rsnow < Rin");
+            else                                ErrorValue(error, "Error", "Rsnow > Rout");
+        }
+
+        if (vfragin <= 0)                       ErrorValue(error, "Error", "vfragin <= 0");
+        if (vfragout <= 0)                      ErrorValue(error, "Error", "vfragout <= 0");
+    }
 
     if (iporosity == 1)
     {   if (youngmod0 <= 0)                     ErrorValue(error, "Error", "Youngmod0 <= 0");
@@ -256,14 +276,14 @@ void WriteInputFile()
 
     writerinput << endl;
     writerinput << "#-Use dm/dt or ds/dt" << endl;
-    writerinput << "massorsize = 0          >(dm/dt = 0, ds/dt = 1)" << endl;
+    writerinput << "massorsize = 0          >(dm/dt=0, ds/dt=1)" << endl;
     writerinput << endl;
     writerinput << "#-Time options" << endl;
     writerinput << "      tend = 1.0e6      >End time (yrs)" << endl;
     writerinput << "stepmethod = 2          >(Fixe=0, Fraction of orbital period=1, Adaptative dt=2)" << endl;
-    writerinput << "      step = 1          >(stepmethod=0 -> step in yrs, stepmethod=1 -> step in fraction of orbital time)" << endl;
+    writerinput << "      step = 0.1        >(stepmethod=0 -> step in yrs, stepmethod=1 -> step in fraction of orbital time)" << endl;
     writerinput << endl;
-    writerinput << "#-Compute Disc profiles" << endl;
+    writerinput << "#-Compute disc profiles" << endl;
     writerinput << "  profile  = 0          >(0=no, 1=yes)" << endl;
     writerinput << endl;
     writerinput << "#-Set disc profiles" << endl;
@@ -272,34 +292,34 @@ void WriteInputFile()
     writerinput << endl;
     writerinput << "#-Gas disc properties" << endl;
     writerinput << endl;
-    writerinput << "      Rin  = 3.         >Inner radius (AU)" << endl;
+    writerinput << "      Rin  = 10.        >Inner radius (AU)" << endl;
     writerinput << "      Rout = 300.       >Outer radius (AU)" << endl;
-    writerinput << "      Rref = 100.       >Reference radius (AU)" << endl;
+    writerinput << "      Rref = 1.         >Reference radius (AU)" << endl;
     writerinput << "     mstar = 1.         >Star mass (Msol)" << endl;
-    writerinput << "   / mdisc = 0.02       >Disc mass (Msol)" << endl;
-    writerinput << "   \\sigma0 = 9.1        >Surface density at Rref (kg/m²)" << endl;
-    writerinput << "    /H0/R0 = 0.05       >H/R at Rref" << endl;
-    writerinput << "    \\   T0 = 6.2        >Temperature at Rref" << endl;
+    writerinput << "   / mdisc = 0.01       >Disc mass (Msol)" << endl;
+    writerinput << "   \\sigma0 = 487.63     >Surface density at Rref (kg/m²)" << endl;
+    writerinput << "    /H0/R0 = 0.0283     >H/R at Rref" << endl;
+    writerinput << "    \\   T0 = 198.3      >Temperature at Rref" << endl;
     writerinput << " dustfrac0 = 0.01       >Dust to gas ratio at Rref" << endl;
-    writerinput << "   p index = 1.5        " << endl;
-    writerinput << "   q index = 0.75       " << endl;
+    writerinput << "   p index = 1.         " << endl;
+    writerinput << "   q index = 0.5        " << endl;
     writerinput << "     alpha = 1.e-2      >Turbulence Shakura & Sunyaev" << endl;
     writerinput << "       ibr = 0          >Back-reaction (0=no, 1=yes)" << endl;
     writerinput << "     ibump = 0          >Pressure bump (0=no, 1=yes)" << endl;
     writerinput << endl;
-    writerinput << "#-Pressure bump option, Available if ibump = 1" << endl;
+    writerinput << "#-Pressure bump option, available if ibump = 1" << endl;
     writerinput << endl;
-    writerinput << "      Rbump = 6.5       >Pressure bump radius (AU)" << endl;
+    writerinput << "      Rbump = 12.5      >Pressure bump radius (AU)" << endl;
     writerinput << "dustfracmax = 0.1       >Max dustfrac possible" << endl;
-    writerinput << "  bumpwidth = 1.1       >Bump half width at half maximum (AU)" << endl;
-    writerinput << " bumpheight = 300       >Bump height (Surface density at Rref)" << endl;
+    writerinput << "  bumpwidth = 2.        >Bump half width at half maximum (AU)" << endl;
+    writerinput << " bumpheight = 0.5       >Bump height (Surface density at Rref)" << endl;
     writerinput << endl;
     writerinput << "#-Dust properties" << endl;
     writerinput << endl;
     writerinput << " iporosity = 1          >(compact=0, porous=1)" << endl;
     writerinput << "   sizeini = 1.0e-7     >Initial size (m)" << endl;
     writerinput << "        a0 = 1.0e-7     >Monomer size (m)" << endl;
-    writerinput << "      rhos = 917        >Dust intrinsic density (kg/m³)" << endl;
+    writerinput << "      rhos = 1000       >Dust intrinsic density (kg/m³)" << endl;
     writerinput << endl;
     writerinput << "#-Grain options" << endl;
     writerinput << endl;
@@ -307,11 +327,17 @@ void WriteInputFile()
     writerinput << "   ibounce = 0          >Bounce (0=no, 1=yes)" << endl;
     writerinput << "  idisrupt = 0          >Rotationnal disruption (0=no, 1=yes)" << endl;
     writerinput << "     ifrag = 0          >Fragmentation (0=no, 1=hardfrag, 2=smoothfrag)" << endl;
-    writerinput << "     vfrag = 15         >Fragmentation threshold (m/s)" << endl;
+    writerinput << "     vfrag = 15         >Fragmentation threshold (m/s), if isnow=0" << endl;
     writerinput << "   gammaft = 0.1        >Force-to-torque efficiency (Disruption) [Tatsuuma et al. 2021]" << endl;
     writerinput << "   maxsize = 1.0e3      >Maximum size to stop the simulation" << endl;
     writerinput << endl;
-    writerinput << "#-Porosity properties, Available if iporosity = 1" << endl;
+    writerinput << "#-Snow line option, available if ifrag != 0" << endl;
+    writerinput << "     isnow = 0          >Snow line option (0=no, 1=yes)" << endl;
+    writerinput << "     Rsnow = 50         >Snow line radius (au)" << endl;
+    writerinput << "   vfragin = 5          >Inward fragmentation threshold (m/s)" << endl;
+    writerinput << "  vfragout = 15         >Outward fragmentation threshold (m/s)" << endl;
+    writerinput << endl;
+    writerinput << "#-Porosity properties, available if iporosity = 1" << endl;
     writerinput << endl;
     writerinput << " Youngmod0 = 9.4e9      >Young Modulus for ice [Yamamoto et al. 2014] (Pa)" << endl;
     writerinput << "     Esurf = 7.3e-2     >Surface energy for ice grains J/m² [Yamamoto et al. 2014] (J/m²)" << endl;
@@ -326,9 +352,9 @@ void WriteInputFile()
     writerinput << "   ngrains = 10         >Number of dust grains" << endl;
     writerinput << endl;
     writerinput << "   Initial radii (AU)" << endl;
-    writerinput << "        R01 = 5" << endl;
-    writerinput << "        R02 = 10" << endl;
-    writerinput << "        R03 = 20" << endl;
+    writerinput << "        R01 = 10" << endl;
+    writerinput << "        R02 = 15" << endl;
+    writerinput << "        R03 = 25" << endl;
     writerinput << "        R04 = 50" << endl;
     writerinput << "        R05 = 75" << endl;
     writerinput << "        R06 = 100" << endl;
@@ -358,7 +384,7 @@ void WriteProfileFile(ofstream& outputprofile, const double& Rprofile, const dou
                       const double& rhog, const double& dustfrac, const double& pg, const double& T)
 {
     WriteValue(outputprofile,  6, 6, Rprofile);
-    WriteValue(outputprofile, 14, 6, hg);
+    WriteValue(outputprofile, 14, 6, hg/Rprofile);
     WriteValue(outputprofile, 14, 6, cg);
     WriteValue(outputprofile, 14, 6, sigma);
     WriteValue(outputprofile, 14, 6, rhog);
@@ -455,8 +481,8 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
                    const double& sigma0, const double& h0, const double& T0, const double& dustfrac0, const double& rhog0, const double& cg0,// ->
                    const double& p, const double& q, const double& alpha, const int& ibr, const int& ibump, const double& Rbump,// ->
                    const int& iporosity, const double& sizeini, const double& a0, const double& rhos, const int& idrift, const int& ibounce,// ->
-                   const int& idisrupt, const int& ifrag, const double& vfragi, const double& gammaft, const int& ngrains,// ->
-                   const vector <double>& Rini, const  vector <int>& istate, const double& runningtime)
+                   const int& idisrupt, const int& ifrag, const double& vfragi, const double& gammaft, const int& isnow, const double& Rsnow,// ->
+                   const int& ngrains, const vector <double>& Rini, const  vector <int>& istate, const double& runningtime)
 {
     ofstream writerdoc;
     string dash;
@@ -556,7 +582,17 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
         writerdoc << "   Pressure bump radius: " << Rbump << " AU" << endl;
     }
 
+    writerdoc << "              Snow line: ";
+
+    if (isnow == 0)     writerdoc << "no" << endl;
+    else
+    {
+        writerdoc << "yes" << endl;
+        writerdoc << "       Snow line radius: " << Rsnow << " AU" << endl;
+    }
+
     writerdoc << endl;
+    
     writerdoc << "   -------- Dust properties --------" << endl;
     writerdoc << endl;
     writerdoc << "                  Grain: ";

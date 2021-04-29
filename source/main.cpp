@@ -94,15 +94,16 @@ int main(int argc, char* argv[])
     double Rin;             // Inner radius [AU]
     double Rout;            // Outer radius [AU]
     double R0;              // Reference radius [AU]
-    double Rbump;           // Radius of the pressure bump (when ibump enabled) [AU]
+    double Rbump;           // Radius of the pressure bump (when ibump is enabled) [AU]
+    double Rsnow;           // Radius of the snow line (when isnow is enabled)
     double dustfrac0;       // Initial dust to gas ratio at reference radius
-    double dustfracmax;     // Max dust to gas ratio possible (when ibackreaction enabled)
+    double dustfracmax;     // Max dust to gas ratio possible (when ibackreaction is enabled)
     double hg0R0;            // H/R at reference radius
     double T0;              // Temperature at R0 [K]
     double p;               // p index
     double q;               // q index
     double alpha;           // Alpha turbulence Shakura & Sunyaev
-    double bumpwidth;       // half width at half maximum (when ibump enabled) [AU]
+    double bumpwidth;       // half width at half maximum (when ibump is enabled) [AU]
     double bumpheight;      // fraction of surface density
     double sizeini;         // Initial size [m]
     double a0;              // Monomer size [m]
@@ -120,11 +121,14 @@ int main(int argc, char* argv[])
     int    ibump;           // Pressure bump option
     int    ibr;             // Back-reaction option
     int    idisrupt;        // Disruption by spinning motion
+    int    isnow;           // Snow line option
     double gammaft;         // Force-to-torque efficiency
-    double vfragi;          // Initial fragmentation threshold (when fragmentation enabled) [m/s]
-    int    constvfrag;      // Constant vfrag option (when fragmentation enabled)
-    double filfaclim;       // Filling factor dynamic compression resistance limit (when fragmentation enabled)
-    double filfacbnc;       // Filling factor bounce limit (when bounce enabled)
+    double vfragi;          // Initial fragmentation threshold (when ifrag is enabled) [m/s]
+    double vfragin;         // Inward fragmentation threshold (when ifrag & isnow is enabled) [m/s]
+    double vfragout;        // Outward fragmentation threshold (when ifrag & isnow is enabled) [m/s]
+    int    constvfrag;      // Constant vfrag option (when fragmentation is enabled)
+    double filfaclim;       // Filling factor dynamic compression resistance limit (when ifrag is enabled)
+    double filfacbnc;       // Filling factor bounce limit (when ibounce is enabled)
     double limsize;         // Limit to the max size [m]
     int    ngrains;         // Number of grains
     vector <double> Rini;   // Initials radii
@@ -185,9 +189,9 @@ int main(int argc, char* argv[])
 
     cout << "Reading input file" << endl;
 
-    ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,
-             alpha,ibr,ibump,Rbump,dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,
-             vfragi,gammaft,limsize,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,ngrains,Rini,istate);
+    ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
+             ibr,ibump,Rbump,dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,gammaft,
+             limsize,isnow,Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,ngrains,Rini,istate);
 
     cout << "Input file read\n" << endl;
 
@@ -299,7 +303,8 @@ int main(int argc, char* argv[])
                 while(t < tend && istate[j] == 0)
                 {
                     // Compute additionnal quantities for ifrag = 1 or 2, ibounce = 1 and idrift = 1
-                    if (ifrag > 0)  vfrag = Vfrag(filfaci,filfaclim,vfragi,constvfrag);
+                    if (ifrag > 0)  
+                    {   vfrag = Vfrag(Ri,isnow,Rsnow,filfaci,filfaclim,vfragi,vfragin,vfragout,constvfrag);    }
 
                     // Compute additionnal quantities for ibounce = 1
                     if (ibounce == 1)
@@ -399,7 +404,8 @@ int main(int argc, char* argv[])
                 while(t < tend && istate[j] == 0)
                 {
                     // Compute additionnal quantities for ifrag = 1 or 2 
-                    if (ifrag > 0)  vfrag = Vfrag(filfaci,filfaclim,vfragi,constvfrag);
+                    if (ifrag > 0)
+                    {   vfrag = Vfrag(Ri,isnow,Rsnow,filfaci,filfaclim,vfragi,vfragin,vfragout,constvfrag);    }
 
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
@@ -493,8 +499,8 @@ int main(int argc, char* argv[])
 
     // Write initials conditions
     WriteInitFile(massorsize,tend,stepmethod,step,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0,T0,dustfrac0,rhog0,cg0,p,q,
-                  alpha,ibr,ibump,Rbump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,gammaft,ngrains,Rini,istate,
-                  (t2-t1)/(1.*CLOCKS_PER_SEC));
+                  alpha,ibr,ibump,Rbump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,gammaft,isnow,Rsnow,
+                  ngrains,Rini,istate,(t2-t1)/(1.*CLOCKS_PER_SEC));
 
     EndAnim();
 

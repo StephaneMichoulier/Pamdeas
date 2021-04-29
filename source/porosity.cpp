@@ -324,7 +324,7 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
                 }
                 else
                 {
-                    filfacf = filfaci;
+                    filfacf = filfaci;//*pow(massf/massi,cratio);  //compaction model
                     break;
                 }
             }

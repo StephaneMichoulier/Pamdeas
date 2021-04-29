@@ -12,7 +12,7 @@ path1 = "../build/"
 path2 = "../build/"
 
 # PACED data
-radius0 = [5, 10, 20, 50, 75, 100, 150, 200, 250, 300]
+radius0 = [10, 15, 25, 50, 75, 100, 150, 200, 250, 300]
 
 # r-s plot
 plt.clf()
@@ -39,7 +39,7 @@ clb=fig.colorbar(line, pad = 0.005)
 clb.set_label(r"$s$ (m)")
 
 # Axes and labels
-axes.set(xlim = (1, 1e8), xscale = "log", ylim = (2, 320), yscale = "log",
+axes.set(xlim = (1, 1e8), xscale = "log", ylim = (9, 320), yscale = "log",
              xlabel = r"$t$ (yr)", ylabel = r"$R$ (AU)")
 axes.xaxis.set_minor_locator(plt.LogLocator(base = 10.0, numticks = 40))
 axes.xaxis.set_minor_formatter(plt.NullFormatter())

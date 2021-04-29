@@ -13,7 +13,7 @@ path1 = "../build/"
 path2 = "../build/"
 
 # PACED data
-r0 = [5, 10, 20, 50, 75, 100, 150, 200, 250, 300]
+radius0 = [10, 15, 25, 50, 75, 100, 150, 200, 250, 300]
 col = ["k", "g", "b", "tab:orange", "tab:purple", "tab:brown", "c", "tab:pink", "m", "y",
        "tab:blue", "tab:green", "tab:red", "tab:gray", "tab:olive", "tab:cyan"]
 
@@ -23,8 +23,8 @@ fig, axes = plt.subplots(1, 1, sharex = "col", sharey = "row", gridspec_kw = {"h
             "wspace": 0, "left": 0.11, "right": 0.99, "bottom": 0.1, "top": .975},
             figsize = (6.4, 4.8), dpi = 300)
 
-for rad, col in zip(r0, col):
-    file = path1 + "outputpor_" + mass_or_size + "_" + str(rad) + ".out"
+for radius, col in zip(radius0, col):
+    file = path1 + "outputpor_" + mass_or_size + "_" + str(radius) + ".out"
     with open(file, "r") as f:
         next(f) # skip first line
         phi = []
@@ -34,7 +34,7 @@ for rad, col in zip(r0, col):
             phi.append(float(ligne[3]))
             s.append(float(ligne[4]))
     line = axes.scatter(s, phi, color = col, s = 0.1)
-    line.set_label(r"$R_0=$" + str(rad) + " au")
+    line.set_label(r"$R_0=$" + str(radius) + " au")
 
 # Axes and labels
 axes.set(xlim = (5e-8, 5e6), xscale = "log", ylim = (1e-5, 1), yscale = "log",
