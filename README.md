@@ -85,7 +85,7 @@ The program contains multiple files in the source folder "source" and the header
 
 	Contains the declaration of physical constants and conversion functions between some useful  units
 
-#### **Reference**
+#### **References**
 Arnaud Vericel and Jean-François Gonzalez. Self-induced dust traps around snow lines in pro- toplanetary discs. MNRAS, 492(1) :210–222, February 2020. doi : 10.1093/mnras/stz3444.
 
 Anthony Garcia. Evolution of grain porosity during growth : a solution to planetary for- mation barriers? Phd thesis, Université de Lyon, September 2018. URL https://tel. archives-ouvertes.fr/tel-01977317.
