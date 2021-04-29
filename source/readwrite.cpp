@@ -384,7 +384,7 @@ void WriteProfileFile(ofstream& outputprofile, const double& Rprofile, const dou
                       const double& rhog, const double& dustfrac, const double& pg, const double& T)
 {
     WriteValue(outputprofile,  6, 6, Rprofile);
-    WriteValue(outputprofile, 14, 6, hg/Rprofile);
+    WriteValue(outputprofile, 14, 6, hg);
     WriteValue(outputprofile, 14, 6, cg);
     WriteValue(outputprofile, 14, 6, sigma);
     WriteValue(outputprofile, 14, 6, rhog);
