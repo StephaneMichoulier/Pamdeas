@@ -279,7 +279,7 @@ int main(int argc, char* argv[])
         cg = Cg(Ri,mstar,hg);
         rhog = Rhog(sigma,hg);
 
-        if(sizei > a0)
+        if(sizei > a0 && iporosity == 1)
         {   filfaci = FilFacSColl(Ri,mstar,rhog,cg,0.,sizeini/a0,eroll,a0,rhos,alpha,filfacpow); }
         else
         {   filfaci = 1.;   }
@@ -385,6 +385,13 @@ int main(int argc, char* argv[])
                     {   
                         WriteDisruptFile(writerdisruption,Rf,massf,filfacf,sizef,st,vrel,FreqSpin(sizef,deltav,gammaft),
                         TensileStess(sizef,filfacf,rhos,deltav,gammaft),gammaft,alpha,a0);
+                        /*sizef /= 1000.;
+                        massi = GrainMass(sizef,filfacf,rhos);
+                        massf = massi;
+                        st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,ireg);
+                        deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
+                        vrel = Vrel(cg,st,alpha);
+                        istate[j] = 0;*/
                     }
 
                     // Write in output file quantities at time t

@@ -80,6 +80,10 @@ double DeltaV(const double& R, const double& mstar, double p, double q, const do
     {   
         deltavradial = st*dfbr/(dfbr*dfbr+st*st)*vdrift - st*st/(dfbr*dfbr+st*st)*vvisc;
     }
+    else
+    {
+        deltavradial = -(dfbr-1.)*st/(dfbr*dfbr+st*st)*vdrift + (dfbr+st*st)/(dfbr*dfbr+st*st)*vvisc;
+    }
 
     return sqrt(deltavorbital*deltavorbital+deltavradial*deltavradial);
 }

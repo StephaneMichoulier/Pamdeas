@@ -42,7 +42,7 @@ double ProbaBounce(const double& filfac, const double& filfacbnc, const double& 
 double VarVolumeBounce(const double& filfac, const double& filfaclim, const double& coeffrest, const double& ekin,// ->
                        const double& volume, const double& Yd0, const double& Ydpower)
 {
-    double compactvol = (1.-coeffrest*coeffrest)*ekin/Yd(filfac,filfaclim,Yd0,Ydpower);
+    double compactvol = 0.5*(1.-coeffrest*coeffrest)*ekin/Yd(filfac,filfaclim,Yd0,Ydpower);
 
     if (compactvol >= volume)   
     {   compactvol = volume;    }
@@ -58,7 +58,7 @@ double FilFacBounce(const double& sizei, const double& filfaci, const double& rh
     double volume = GrainVolumeSize(sizei,filfaci,rhos);
     double ekin = Ekin(sizei,filfaci,rhos,vrel);
     double varvolbounce = VarVolumeBounce(filfaci,filfaclim,coeffrest,ekin,volume,Yd0,Ydpower);
-    double filfacbounce = filfaci*pow(1./(1.-(0.5*varvolbounce/volume)),ncoll);
+    double filfacbounce = filfaci*pow(1./(1.-(varvolbounce/volume)),ncoll);
 
     if (vrel <= vyield)
     {   return filfaci; }
@@ -114,6 +114,7 @@ double FilFacMGr(const double& massf, const double& massi, const double& filfaci
     return filfaci*pow(massf/massi,power);
 }
 
+//original algorithm from Anthony Garcia
 /*double FilFacMColl(const double& R, const double& mstar, const double& rhog, const double& cg, const double& massf,// ->
                 const double eroll, const double& a0, const double& rhos, const double& alpha)
 {
@@ -323,8 +324,15 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
                     break;
                 }
                 else
-                {
-                    filfacf = filfaci;//*pow(massf/massi,cratio);  //compaction model
+                {   //compaction model during fragmentation
+                    //double vrelvf2 = vrel*vrel/vfrag/vfrag;
+                    //double xi = VarVolumeBounce(filfaci,filfaclim,0,Ekin(massi,vrel),GrainVolumeMass(massi,filfaci,rhos),Yd0,Ydpower);     
+                    //xi /= GrainVolumeMass(massi,filfaci,rhos);
+
+                    //filfacf = filfaci * pow( massf/massi, -log(1+xi)/log(1+vrelvf2) ); 
+
+                    // fragmentation at constant filling factor
+                     filfacf = filfaci;
                     break;
                 }
             }
