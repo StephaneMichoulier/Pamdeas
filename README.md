@@ -45,9 +45,7 @@ Once the simulation is finished, multiple output files are written into the outp
 > - disk_profiles.out contains different profiles (surface density, pressure, etc).
 > - disrupt_param_*model*.out contains parameters of disrupted grains.
 
-A script is available to plot directly some useful quantities. To do so, write in your terminal (in the build folder):
-> - ./ploteden help to display how to plot things
-All python scripts are in the python folder, you can modify them as you wish to suit your data.
+A Notebook is available to analyse your data easily. It is located in the python folder.
 
 #### **HOW THE PROGRAM IS BUILT ?**
 
