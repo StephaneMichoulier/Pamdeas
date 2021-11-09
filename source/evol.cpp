@@ -21,16 +21,16 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
     double limup = 0.15;
     double limdown = 0.075;
     double CFLcdt;
-    double C1 = abs(vargrowth/dvargrowthdt);
-    double C2 = abs(R/dRdt);
+    double Cgrowth = abs(vargrowth/dvargrowthdt);    // CFL from growth rate
+    double Cdrift = abs(R/dRdt);                     // CFL from radial drift rate
 
-    if (C1 != 0 && C2 != 0)
+    if (Cgrowth != 0 && Cdrift != 0)
     {
-        if (C1 < C2)        CFLcdt = C1;
-        else                CFLcdt = C2;
+        if (Cgrowth < Cdrift)       CFLcdt = Cgrowth;
+        else                        CFLcdt = Cdrift;
     }
-    else if (C1 != 0 && C2 == 0)       CFLcdt = C1;
-    else if (C1 == 0 && C2 != 0)       CFLcdt = C2;
+    else if (Cgrowth != 0 && Cdrift == 0)       CFLcdt = Cgrowth;
+    else if (Cgrowth == 0 && Cdrift != 0)       CFLcdt = Cdrift;
     else
     {
         cerr << "Error: time step iteration impossible" << endl;
@@ -63,7 +63,7 @@ double DRDt(const double& R, const double& mstar, double p, double q, const doub
             const double& sigma0, const double& hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
             const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
-    double dfbr = 1.;
+    double dfbr = 1.;   //dust fraction back reaction
     if (ibr == 1)   dfbr += dustfrac;
 
     double vdrift = VDrift(R,mstar,p,q,rhog,cg,R0,sigma0,hg0,ibump,Rbump,bumpwidth,bumpheight);

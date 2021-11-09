@@ -16,6 +16,7 @@ using namespace std;
 #define  M_SQRT_PI 1.7724538509055 // Square root of PI, undefined in <cmath>
 #define     cratio -0.5801454844   // Common ratio for a power related to h&s regime
 #define      b_oku 0.15            // Parameter b (Okuzumi et al. 2012)
+#define maxpacking 0.74048         // Max packing for hexagonal close packing 
 #define     deltaR 1e-5            // DeltaR to compute derivative d/dr [m]
 #define       year 31556952.       // Year [s]
 

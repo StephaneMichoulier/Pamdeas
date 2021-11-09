@@ -20,12 +20,12 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
               double& bumpwidth, double& bumpheight, int& iporosity, double& sizeini, double& a0, double& rhos, int& idrift,// ->
               int& ibounce, int& idisrupt, int& ifrag, double& vfragi, double& gammaft, double& limsize, int& isnow, double& Rsnow,// ->
               double& vfragin, double& vfragout, double& youngmod0, double& esurf, double& Yd0, double& Ydpower, int& constvfrag,// ->
-              double& filfaclim, double& filfacbnc, int& ngrains, vector <double>& Rini, vector <int>& istate)
+              double& filfaclim, double& filfacbnc, int& ngrains, vector <double>& Rini, vector <int>& istate, const string& input)
 {
-    ifstream Reader("input.in");
+    ifstream Reader(input);
     if (!Reader)
    	{   
-        cerr << "Error: input.in is missing" << endl;
+        cerr << "Error: " << input << " is missing" << endl;
         exit(1);
     }
 

@@ -312,6 +312,7 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
     double sizei = GrainMassToSize(massi,filfaci,rhos);
     double filfacmincollgasgrav = FilFacMinMColGasGrav(R,mstar,rhog,cg,deltav,st,massf,rhos,eroll,a0,m0,alpha);
     double filfacgr = FilFacMGr(massf,massi,filfaci,rhos,eroll,vrel);
+    double filfacmax = maxpacking + (1.-maxpacking)*(m0/massf);
 
     if (massf > m0)
     {
@@ -325,14 +326,47 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
                 }
                 else
                 {   //compaction model during fragmentation
-                    //double vrelvf2 = vrel*vrel/vfrag/vfrag;
-                    //double xi = VarVolumeBounce(filfaci,filfaclim,0,Ekin(massi,vrel),GrainVolumeMass(massi,filfaci,rhos),Yd0,Ydpower);     
-                    //xi /= GrainVolumeMass(massi,filfaci,rhos);
+                    /*double vrelvf = vrel/vfrag;
+                    double vrelvf2 = vrel*vrel/vfrag/vfrag;
+                    double xi = Ekin(massi,vrel)/(0.6*pow(filfaci,1.8)*0.1/a0);     // with Ekin and tensile strenght
+                    //double xi = 0.5*Ekin(massi,vrel)/Yd(filfaci,0,Yd0,Ydpower);   // with Ekin and Dynamical compression resistance
+                    //double xi = 1+pow(vrelvf,3.)/(e^(vrelvf)-1); 
+                    xi /= GrainVolumeMass(massi,filfaci,rhos);
+                        
+                    if (xi >= 1.)   
+                    {   xi = 1.;    }
 
-                    //filfacf = filfaci * pow( massf/massi, -log(1+xi)/log(1+vrelvf2) ); 
+                    //xi = (filfacmax - filfaci)/(1.-filfaci);                        // empicrical law based on filfac
+                    xi = -1+pow(vrelvf,1.3)/(exp(vrelvf));                           // empirical law based on vrelvf
+                    //xi = 0.74 - (0.74-filfaci)/(exp(vrelvf)+1);
+                    //xi = -0.75+  1/(vrelvf*(1+filfaci)*(1+filfaci))*exp(-pow(log(vrelvf),2) );
+
+                    if (massf != massi)
+                    {   
+                        filfacf = filfaci * pow( massf/massi, -log(1.+xi)/log(1.+vrelvf2) ); }
+                    else
+                    {   
+                        filfacf = filfaci * pow(1.+ xi, ncoll/1.4);   }
+
+                    cout << endl <<
+                    "Ekin/Smax = " << Ekin(massi,vrel)/(0.6*pow(filfaci,1.8)*0.1/a0)/GrainVolumeMass(massi,filfaci,rhos) << endl << 
+                    "Ekin/comp = " << 0.5*Ekin(massi,vrel)/Yd(filfaci,0,Yd0,Ydpower)/GrainVolumeMass(massi,filfaci,rhos) << endl <<
+                    "xi = " << xi << endl <<
+                    endl;*/
+
+                    /*
+                    if  (massf != massi)
+                    {   */
+                        //filfacf = filfaci * pow( massf/massi, -log(1+xi)/log(1+vrelvf2) );
+                     /*}
+                    else
+                    {   */
+                       //filfacf = filfaci * pow( 1+vrelvf2, ncoll*log(1+xi)/log(1+vrelvf2));
+                    /*}  */
+                    //filfacf = filfaci * pow(1.+ xi, ncoll/1.4);
 
                     // fragmentation at constant filling factor
-                     filfacf = filfaci;
+                    filfacf = filfaci;
                     break;
                 }
             }
@@ -376,8 +410,8 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
         if (filfacf < filfacmincollgasgrav)
         {   filfacf = filfacmincollgasgrav;   }
         
-        if (filfacf > 1.)
-        {   filfacf = 1.;    }
+        if (filfacf > filfacmax)
+        {   filfacf = filfacmax;    }
 
         return filfacf;
     }
@@ -552,20 +586,26 @@ double FilFacSFinal(const double& R, const double& mstar, const double& rhog, co
     double filfacf = 1.;
     double filfacmincollgasgrav = FilFacMinSColGasGrav(R,mstar,rhog,cg,deltav,st,sizef,rhos,eroll,a0,alpha,iregime,filfacpow);
     double filfacgr = FilFacSGr(sizef,sizei,filfaci,rhos,eroll,vrel);
+    double filfacmax;
 
     if (sizef > a0)
     {
         if ((vrel < vfrag && ifrag > 0) || (ifrag == 0))
         {   filfacf = filfacgr; }
         else
-        {   filfacf = filfaci;  }
+        {   filfacf = filfaci;  
+        
+        // modify for grain compaction
+        }
 
         if (filfacf <= filfacmincollgasgrav)
         {   filfacf = filfacmincollgasgrav;     }
 
-        if (filfacf > 1.)
+
+        filfacmax = maxpacking + (1.-maxpacking)*(a0/sizef/filfacf);
+        if (filfacf > filfacmax)
         {
-            filfacf = 1;
+            filfacf = filfacmax;
             filfacpow = 3.*cratio/(1.-cratio);
         }
 

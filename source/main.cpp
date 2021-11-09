@@ -6,6 +6,7 @@
 #include <sstream>
 #include <vector>
 #include <time.h>
+#include <random>
 
 #include "../header/constantandconversion.h"
 #include "../header/disc.h"
@@ -19,6 +20,14 @@ using namespace std;
 
 
 /* ------------------------ TERMINAL DISPLAY ------------------------*/
+
+void checksize(double& mass, double& filfac,const double& rhos, double& sdustmin)
+{
+    // Used to test functions for Phantom when grainsizemin != a_0
+    double sdust = GrainMassToSize(mass,filfac,rhos);
+    if (sdust < sdustmin)
+    mass = mass * pow(sdustmin/sdust,3);
+}
 
 // Presentation animation
 void PresentationAnim()
@@ -75,12 +84,11 @@ void EndAnim()
 
 
 /* ------------------------------------------------------*/
-/* ------------------------ MAIN ------------------------*/
+/* -------------------- MAIN ROUTINE --------------------*/
 /* ------------------------------------------------------*/
-
-int main(int argc, char* argv[])
-{   
-    if (argc == 1){
+    
+void Eden(const string& input)
+{
     /*------------------------ INITIALS PARAMETERS FROM THE USER ------------------------*/
 
     int    massorsize;      // choose between dm/dt or ds/dt
@@ -191,7 +199,7 @@ int main(int argc, char* argv[])
 
     ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
              ibr,ibump,Rbump,dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,gammaft,
-             limsize,isnow,Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,ngrains,Rini,istate);
+             limsize,isnow,Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,ngrains,Rini,istate,input);
 
     cout << "Input file read\n" << endl;
 
@@ -289,7 +297,7 @@ int main(int argc, char* argv[])
         massf = GrainMass(sizei,filfaci,rhos);
         st = St(Ri,mstar,rhog,cg,sizei,filfaci,rhos,0.,ireg); //we assume deltav very small for small grain strongly coupled with gas in the epstein regime
         deltav = DeltaV(Ri,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
-        vrel = Vrel(cg,st,alpha);
+        vrel = Vrel(cg,st,alpha,deltav);
 
         // Write in output file quantities at t=0
         WriteOutputHeader(writer,massorsize);
@@ -345,13 +353,12 @@ int main(int argc, char* argv[])
                     // Check if new mass < monomer mass
                     if (massf < GrainMass(a0,1.,rhos))
                     {   massf = GrainMass(a0,1.,rhos);  }
+                    //checksize(massf,filfaci,rhos,5e-5);   // Used to check compatibility with Phantom
 
                     // Compute filling factor for porous grains
                     if (iporosity == 1)
                     {
-                        // Compute additionnal quantities for ibounce = 1
-                        if (ibounce == 1)   ncoll = Ncoll(dt,Tcoll(sizef,rhog,filfaci,rhos,dustfrac,vrel));
-
+                        ncoll = Ncoll(dt,Tcoll(sizef,rhog,filfaci,rhos,dustfrac,vrel));
                         // Compute the new filling factor after dt
                         filfacf = FilFacMFinal(Ri,mstar,rhog,cg,deltav,st,massf,massi,filfaci,a0,rhos,eroll,alpha,ncoll,ifrag,
                                                ibounce,vfrag,vrel,vstick,probabounce,filfaclim,Yd0,Ydpower);
@@ -364,6 +371,29 @@ int main(int argc, char* argv[])
                     filfaci = filfacf;
                     sizef = GrainMassToSize(massf,filfacf,rhos);
 
+                    // Disruption by spinning motion
+                    if (idisrupt == 1)
+                    {   disrupted = Disrupt(sizef,filfacf,rhos,deltav,gammaft,esurf,a0);   }
+
+                    // Write parameters when grain is disrupted
+                    if (istate[j] == 3)
+                    {   
+                        WriteDisruptFile(writerdisruption,Rf,massf,filfacf,sizef,st,vrel,FreqSpin(sizef,deltav,gammaft),
+                        TensileStess(sizef,filfacf,rhos,deltav,gammaft),gammaft,alpha,a0);
+
+                        // If disruption do not stop simulation => uncomment these lines
+                        //sizef /= rand() % ( 901) + 100;
+                        /*massf /= 5;
+                        if (massf < GrainMass(a0,1.,rhos)) massf=GrainMass(a0,1.,rhos);
+                        massi = massf;
+                        sizef = GrainMassToSize(massf,filfacf,rhos);
+                        istate[j] = 0;*/
+                    }
+
+                    //State of the grain
+                    State(istate[j],Rf/Rin,sizef/limsize,disrupted);
+
+                    // Update hydro quantities
                     hg = Hg(Rf,q,R0,hg0);
                     sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
                     dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
@@ -371,28 +401,7 @@ int main(int argc, char* argv[])
                     rhog = Rhog(sigma,hg);
                     st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,ireg);
                     deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
-                    vrel = Vrel(cg,st,alpha);
-
-                    // Disruption by spinning motion
-                    if (idisrupt == 1)
-                    {   disrupted = Disrupt(sizef,filfacf,rhos,deltav,gammaft,esurf,a0);   }
-
-                    //State of the grain
-                    State(istate[j],Rf/Rin,sizef/limsize,disrupted);
-
-                    // Write parameters when grain is disrupted
-                    if (istate[j] == 3)
-                    {   
-                        WriteDisruptFile(writerdisruption,Rf,massf,filfacf,sizef,st,vrel,FreqSpin(sizef,deltav,gammaft),
-                        TensileStess(sizef,filfacf,rhos,deltav,gammaft),gammaft,alpha,a0);
-                        /*sizef /= 1000.;
-                        massi = GrainMass(sizef,filfacf,rhos);
-                        massf = massi;
-                        st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,ireg);
-                        deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
-                        vrel = Vrel(cg,st,alpha);
-                        istate[j] = 0;*/
-                    }
+                    vrel = Vrel(cg,st,alpha,deltav);
 
                     // Write in output file quantities at time t
                     if ( t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 ))
@@ -449,6 +458,9 @@ int main(int argc, char* argv[])
                     // Compute filling factor for porous grains
                     if (iporosity == 1)
                     {
+                        // ncoll for grain compaction
+                        ncoll = Ncoll(dt,Tcoll(sizef,rhog,filfaci,rhos,dustfrac,vrel));
+
                         // Compute the new filling factor after dt
                         filfacf = FilFacSFinal(Ri,mstar,rhog,cg,deltav,st,sizef,sizei,filfaci,a0,rhos,eroll,alpha,
                                          ifrag,vfrag,vrel,ireg,filfacpow);
@@ -460,6 +472,21 @@ int main(int argc, char* argv[])
                     filfaci = filfacf;
                     massf = GrainMass(sizef,filfacf,rhos);
 
+                    // Disruption by spinning motion
+                    if (idisrupt == 1)
+                    {   disrupted = Disrupt(sizef,filfacf,rhos,deltav,gammaft,esurf,a0);   }
+
+                    // Write parameters when grain is disrupted
+                    if (istate[j] == 3)
+                    {
+                        WriteDisruptFile(writerdisruption,Rf,massf,filfacf,sizef,st,vrel,FreqSpin(sizef,deltav,gammaft),
+                        TensileStess(sizef,filfacf,rhos,deltav,gammaft),gammaft,alpha,a0);
+                    }
+
+                    //State of the grain
+                    State(istate[j],Rf/Rin,sizef/limsize,disrupted);
+
+                    // Update hydro quantities
                     hg = Hg(Rf,q,R0,hg0);
                     sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
                     dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
@@ -467,21 +494,7 @@ int main(int argc, char* argv[])
                     rhog = Rhog(sigma,hg);
                     st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,ireg);
                     deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
-                    vrel = Vrel(cg,st,alpha);
-
-                    // Disruption by spinning motion
-                    if (idisrupt == 1)
-                    {   disrupted = Disrupt(sizef,filfacf,rhos,deltav,gammaft,esurf,a0);   }
-
-                   //State of the grain
-                    State(istate[j],Rf/Rin,sizef/limsize,disrupted);
-
-                    // Write parameters when grain is disrupted
-                    if (istate[j] == 3)
-                    {   
-                        WriteDisruptFile(writerdisruption,Rf,massf,filfacf,sizef,st,vrel,FreqSpin(sizef,deltav,gammaft),
-                        TensileStess(sizef,filfacf,rhos,deltav,gammaft),gammaft,alpha,a0);
-                    }
+                    vrel = Vrel(cg,st,alpha,deltav);
 
                     // Write in output file quantities at time t, 
                     if ( t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 ))
@@ -514,8 +527,14 @@ int main(int argc, char* argv[])
     }
 
 
-    /*------------------------ WRITE INPUT FILE ------------------------*/
+/*------------------------ MAIN ------------------------*/
 
+int main(int argc, char* argv[])
+{   
+    if (argc == 1)
+    {   
+        Eden("input.in");    
+    }
     else if (argc == 2)
     {
         if (strcmp(argv[1], "setup") == 0)
@@ -524,7 +543,7 @@ int main(int argc, char* argv[])
             cout << "Input file has been written: input.in" << endl;
         }
         else
-        {   cerr << "Error: unknown argument passed" << endl;   }
+        {   Eden(string(argv[1]));   }
     }
     else
     {   cerr << "Error: to many arguments passed" << endl;  }

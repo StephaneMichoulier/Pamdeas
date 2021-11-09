@@ -91,11 +91,12 @@ double DeltaV(const double& R, const double& mstar, double p, double q, const do
 
 /* ------------------------ ENERGIES & VELOCITIES ------------------------ */
 
-//double DeltaV2(const double& R, const double& mstar, const double& p, const double& q, const double& cg, const double& st)
-//{   return 0.5*(p+0.5*q+1.5)*cg*cg/Vk(R,mstar);   }
-
-double Vrel(const double& cg, const double& st, const double& alpha)
-{   return sqrt(2.*M_SQRT2*alpha*rossby*st)*cg/(1.+st); }
+double Vrel(const double& cg, const double& st, const double& alpha, const double& deltav)
+{   
+    double vt = sqrt(M_SQRT2*alpha*rossby)*cg;
+    double sc = (1.+st)*sqrt(1.+deltav*deltav/vt/vt);
+    return M_SQRT2*vt*sqrt(sc-1.)/sc; 
+}
 
 double Ekin(const double& mass, const double& vrel)
 {   return 0.25*mass*vrel*vrel;     }

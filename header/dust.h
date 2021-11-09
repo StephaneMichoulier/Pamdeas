@@ -37,11 +37,8 @@ double DeltaV(const double& R, const double& mstar, double p, double q, const do
 
 /* ------------------------ ENERGIES & VELOCITIES ------------------------ */
 
-// Simple presciption for velocity difference between gas and dust [m/s] Deltav = eta*Vk
-//double DeltaV2(const double& R, const double& Mstar, const double& p, const double& q, const double& cg, const double& st);
-
 // Compute the relative velocity between two grains [m/s]
-double Vrel(const double& cg, const double& st, const double& alpha);
+double Vrel(const double& cg, const double& st, const double& alpha, const double& deltav);
 
 // Compute the kinetic energy of 2 grains at the impact [J]
 double Ekin(const double& mass, const double& vrel);
