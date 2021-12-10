@@ -53,7 +53,7 @@ void WriteOutputHeader(ofstream& outputfile, const double& massorsize);
 void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, const double& massf, const double& filfacf,// ->
                      const double& sizef, const double& St, const double& cg, const double& sigma,// ->
                      const double& rhog, const double& dustfrac, const double& vrel, const double& omegak,// ->
-                     const double& drdt, const double& dvardt, const int& iregime);
+                     const double& drdt, const double& dvardt, const int& dragreg, const int& porreg);
 
 // Write disrupt files columns
 void WriteDisruptHeader(ofstream& outputfile);

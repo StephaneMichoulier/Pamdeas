@@ -177,10 +177,11 @@ void Eden(const string& input)
     double dsdt;            // Variation of size per unit of time [m/s]
     double drdt;            // Variation of radius per unit of time (drift velocity) [AU/s]
     double deltav;          // Velocity difference between dust and gas [m/s]
-    int    ireg;            // Regime of the dust grain (growth, h&s, Ep-St<1, frag etc)
+    int    dragreg;         // Drag regime of the dust grain (1=Ep, 2=St lin, 3=St nlin, 4=St quad)
+    int    porreg;          // Porous expansion/compression regime (1=h&s, 2=EpSt<1, 3=StSt<1, 4=EpSt>1, 5=StSt>1, 6=Gas, 7=Grav)
     double filfacpow;       // Power of the dominante filling factor to remove dsdt degeneracy
     bool   disrupted;       // Is grain disrupted by spinning motion
-    vector <int> istate;    // State of the grain: 0=alive, 1=maxsize, 2=accreted,3=disrupted 
+    vector <int> istate;    // State of the grain: 0=alive, 1=maxsize, 2=accreted, 3=disrupted 
 
     double Rprofile;        // Radius to compute disc profiles
 
@@ -288,20 +289,22 @@ void Eden(const string& input)
         rhog = Rhog(sigma,hg);
 
         if(sizei > a0 && iporosity == 1)
-        {   filfaci = FilFacSColl(Ri,mstar,rhog,cg,0.,sizeini/a0,eroll,a0,rhos,alpha,filfacpow); }
+        {   filfaci = FilFacSColl(Ri,mstar,rhog,cg,0.,sizeini/a0,eroll,a0,rhos,alpha,porreg,filfacpow); }
         else
-        {   filfaci = 1.;   }
+        {   filfaci = 1.;
+            porreg = 1;
+        }
         
         filfacf = filfaci;
         massi = GrainMass(sizei,filfaci,rhos);
         massf = GrainMass(sizei,filfaci,rhos);
-        st = St(Ri,mstar,rhog,cg,sizei,filfaci,rhos,0.,ireg); //we assume deltav very small for small grain strongly coupled with gas in the epstein regime
+        st = St(Ri,mstar,rhog,cg,sizei,filfaci,rhos,0.,dragreg); //we assume deltav very small for small grain strongly coupled with gas in the epstein regime
         deltav = DeltaV(Ri,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
         vrel = Vrel(cg,st,alpha,deltav);
 
         // Write in output file quantities at t=0
         WriteOutputHeader(writer,massorsize);
-        WriteOutputFile(writer,t,Ri,massi,filfaci,sizei,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Ri,mstar),0.,0.,ireg);
+        WriteOutputFile(writer,t,Ri,massi,filfaci,sizei,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Ri,mstar),0.,0.,dragreg,porreg);
 
         // This is where the loop begin
         switch (massorsize)
@@ -361,7 +364,7 @@ void Eden(const string& input)
                         ncoll = Ncoll(dt,Tcoll(sizef,rhog,filfaci,rhos,dustfrac,vrel));
                         // Compute the new filling factor after dt
                         filfacf = FilFacMFinal(Ri,mstar,rhog,cg,deltav,st,massf,massi,filfaci,a0,rhos,eroll,alpha,ncoll,ifrag,
-                                               ibounce,vfrag,vrel,vstick,probabounce,filfaclim,Yd0,Ydpower);
+                                               ibounce,vfrag,vrel,vstick,probabounce,filfaclim,Yd0,Ydpower,porreg);
                     }
 
                     // Compute gas and dust quantities at time t and radius R for a new loop
@@ -374,6 +377,9 @@ void Eden(const string& input)
                     // Disruption by spinning motion
                     if (idisrupt == 1)
                     {   disrupted = Disrupt(sizef,filfacf,rhos,deltav,gammaft,esurf,a0);   }
+
+                    //State of the grain
+                    State(istate[j],Rf/Rin,sizef/limsize,disrupted);
 
                     // Write parameters when grain is disrupted
                     if (istate[j] == 3)
@@ -390,23 +396,20 @@ void Eden(const string& input)
                         istate[j] = 0;*/
                     }
 
-                    //State of the grain
-                    State(istate[j],Rf/Rin,sizef/limsize,disrupted);
-
                     // Update hydro quantities
                     hg = Hg(Rf,q,R0,hg0);
                     sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
                     dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
                     cg = Cg(Rf,mstar,hg);
                     rhog = Rhog(sigma,hg);
-                    st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,ireg);
+                    st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,dragreg);
                     deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     vrel = Vrel(cg,st,alpha,deltav);
 
                     // Write in output file quantities at time t
                     if ( t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 ))
                     {   
-                        WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dmdt,ireg);
+                        WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dmdt,dragreg,porreg);
                         tlastwrite = t;
                     }
 
@@ -463,7 +466,7 @@ void Eden(const string& input)
 
                         // Compute the new filling factor after dt
                         filfacf = FilFacSFinal(Ri,mstar,rhog,cg,deltav,st,sizef,sizei,filfaci,a0,rhos,eroll,alpha,
-                                         ifrag,vfrag,vrel,ireg,filfacpow);
+                                         ifrag,vfrag,vrel,dragreg,porreg,filfacpow);
                     }
 
                     // Compute gas and dust quantities at time t and radius R for a new loop
@@ -476,6 +479,9 @@ void Eden(const string& input)
                     if (idisrupt == 1)
                     {   disrupted = Disrupt(sizef,filfacf,rhos,deltav,gammaft,esurf,a0);   }
 
+                    //State of the grain
+                    State(istate[j],Rf/Rin,sizef/limsize,disrupted);
+
                     // Write parameters when grain is disrupted
                     if (istate[j] == 3)
                     {
@@ -483,23 +489,20 @@ void Eden(const string& input)
                         TensileStess(sizef,filfacf,rhos,deltav,gammaft),gammaft,alpha,a0);
                     }
 
-                    //State of the grain
-                    State(istate[j],Rf/Rin,sizef/limsize,disrupted);
-
                     // Update hydro quantities
                     hg = Hg(Rf,q,R0,hg0);
                     sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
                     dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
                     cg = Cg(Rf,mstar,hg);
                     rhog = Rhog(sigma,hg);
-                    st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,ireg);
+                    st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,dragreg);
                     deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     vrel = Vrel(cg,st,alpha,deltav);
 
                     // Write in output file quantities at time t, 
                     if ( t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 ))
                     {   
-                        WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dsdt,ireg);
+                        WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dsdt,dragreg,porreg);
                         tlastwrite = t;
                     }
 

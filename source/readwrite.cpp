@@ -416,13 +416,14 @@ void WriteOutputHeader(ofstream& outputfile, const double& massorsize)
     {   WriteValue(outputfile, 14, 0, "dsdt_(m/s)");  }
 
     WriteValue(outputfile,  7, 0, "dragreg");
+    WriteValue(outputfile,  7, 0, "porreg");
     outputfile << "\n";
 }
 
 void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, const double& massf, const double& filfacf,// ->
                      const double& sizef, const double& st, const double& cg, const double& sigma,// ->
                      const double& rhog, const double& dustfrac, const double& vrel, const double& omegak,// ->
-                     const double& drdt, const double& dvardt, const int& iregime)
+                     const double& drdt, const double& dvardt, const int& dragreg, const int& porreg)
 {
     WriteValue(outputfile, 12, 6, t);
     WriteValue(outputfile, 12, 6, Rf);
@@ -438,7 +439,8 @@ void WriteOutputFile(ofstream& outputfile, const double& t, const double& Rf, co
     WriteValue(outputfile, 14, 6, omegak);
     WriteValue(outputfile, 14, 6, drdt);
     WriteValue(outputfile, 14, 6, dvardt);
-    WriteValue(outputfile,  7, 1, iregime);
+    WriteValue(outputfile,  7, 1, dragreg);
+    WriteValue(outputfile,  7, 1, porreg);
     outputfile << "\n";
 }
 

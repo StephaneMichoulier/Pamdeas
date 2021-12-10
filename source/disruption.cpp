@@ -41,9 +41,9 @@ bool Disrupt(const double& size, const double& filfac, const double& rhos, const
     double tensilestress = TensileStess(size,filfac,rhos,freqspin);
     double maxtensilestress = 0.6*pow(filfac,1.8)*esurf/a0;
 
-    // Formula from Kimura et al. (2020)
+    //Formula from Kimura et al. (2020)
     //double m = 5.;
-    //8000.*(esurf/0.1)*pow(a0*1e6/0.1,3./5.-1)*pow(filfac/0.1,1.5-1./m)
+    //maxtensilestress = 8000.*(esurf/0.1)*pow(a0*1e6/0.1,3./5.-1)*pow(filfac/0.1,(1.5-1.)/m)
     //*exp(0.24*(filfac/0.1 - 1.))*pow(GrainVolumeSize(size,filfac,rhos)*1.e18/686.,-1./m);       // test for new tenile strength formula
 
     if (maxtensilestress <= tensilestress)

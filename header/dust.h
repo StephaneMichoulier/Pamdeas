@@ -28,7 +28,7 @@ double GrainVolumeSize(const double& size, const double& filfac, const double& r
 
 // Compute the stokes number, return also in which regime you are: Ep-St<1 = 1, St-St<1 = 2, Ep-St>1 = 3, St-St>1 = 4
 double St(const double& R, const double& mstar, const double& rhog, const double& cg, const double& size,// ->
-          const double& filfac, const double& rhos, const double& deltav, int& iregime);
+          const double& filfac, const double& rhos, const double& deltav, int& dragreg);
 
 // Accurate velocity difference between gas and dust [m/s]
 double DeltaV(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 

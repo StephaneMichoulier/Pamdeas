@@ -32,13 +32,13 @@ double GrainVolumeSize(const double& size, const double& filfac, const double& r
 /* ------------------------- AERODYNAMICAL PARAMETERS ------------------------- */
 
 double St(const double& R, const double& mstar, const double& rhog, const double& cg, const double& size,// ->
-          const double& filfac, const double& rhos, const double& deltav, int& iregime)
+          const double& filfac, const double& rhos, const double& deltav, int& dragreg)
 {
     double st;
 
     if (TransRegEpSt(rhog,cg,size) < 1.)
     {   
-        iregime = 1;                    // Epstein regime
+        dragreg = 1;                    // Epstein regime
         st = rhos*filfac*size/(cg*rhog);
     }
     else
@@ -46,17 +46,17 @@ double St(const double& R, const double& mstar, const double& rhog, const double
         double Re = 2.*size*deltav/NuMolGas(rhog,cg);
         if (Re < 1.)
         {
-            iregime = 2;                // Linear Stokes regime
+            dragreg = 2;                // Linear Stokes regime
             st = rhos*filfac*size*size/(4.5*NuMolGas(rhog,cg)*rhog);   
         }
         else if (Re < 800.)
         {
-            iregime = 3;                // Non-linear Stokes regime
+            dragreg = 3;                // Non-linear Stokes regime
             st = pow(Re,0.6)*rhos*filfac*size/(9.*rhog*deltav);
         }
         else
         {   
-            iregime = 4;                // Quadratic Stokes regime
+            dragreg = 4;                // Quadratic Stokes regime
             st = rhos*filfac*size/(0.165*rhog*deltav);    //0.165 = 1.32/8
         }
     }
