@@ -42,8 +42,8 @@ double ProbaBounce(const double& filfac, const double& filfacbnc, const double& 
 double VarVolumeBounce(const double& filfac, const double& filfaclim, const double& coeffrest, const double& ekin,// ->
                        const double& volume, const double& Yd0, const double& Ydpower)
 {
-    double compactvol = 0.5*(1.-coeffrest*coeffrest)*ekin/Yd(filfac,filfaclim,Yd0,Ydpower);
-
+    double compactvol = (1.-coeffrest*coeffrest)*ekin/Yd(filfac,filfaclim,Yd0,Ydpower);
+    
     if (compactvol >= volume)   
     {   compactvol = volume;    }
     
@@ -58,7 +58,7 @@ double FilFacBounce(const double& sizei, const double& filfaci, const double& rh
     double volume = GrainVolumeSize(sizei,filfaci,rhos);
     double ekin = Ekin(sizei,filfaci,rhos,vrel);
     double varvolbounce = VarVolumeBounce(filfaci,filfaclim,coeffrest,ekin,volume,Yd0,Ydpower);
-    double filfacbounce = filfaci*pow(1./(1.-(varvolbounce/volume)),ncoll);
+    double filfacbounce = filfaci*pow(1./(1.-0.5*(varvolbounce/volume)),ncoll);
 
     if (vrel <= vyield)
     {   return filfaci; }
@@ -113,79 +113,6 @@ double FilFacMGr(const double& massf, const double& massi, const double& filfaci
 
     return filfaci*pow(massf/massi,power);
 }
-
-//original algorithm from Anthony Garcia
-/*double FilFacMColl(const double& R, const double& mstar, const double& rhog, const double& cg, const double& massf,// ->
-                const double eroll, const double& a0, const double& rhos, const double& alpha)
-{
-    // here, m1 to m5 and the associated functions M1 to M5 are normalized by m0 !
-    double cparam = CParam(R,mstar,rhog,cg,eroll,a0,rhos,alpha);
-    double m = massf/GrainMass(a0,1.,rhos);
-    double m1 = M1(cparam);
-    double m2 = M2(cparam,rhog,cg,a0);
-    double m3 = M3(m1,m2);
-    double m4 = M4(R,cparam,mstar,rhog,cg,a0,rhos);
-    double m5 = M5(R,cparam,mstar,rhog,cg,a0,rhos);
-    double filfaccoll;
-
-    if (m1 <= m2)
-    {
-        if (m <= m1)
-        {
-            filfaccoll = pow(m,cratio);   // FilFac h&s
-        }
-        else
-        {
-            if (m3 <= m4)
-            {
-                if (m <= m3)
-                {
-                    filfaccoll = pow(m1,cratio+0.125)*pow(m,-0.125);   // FilFac Ep-St<1
-                }
-                else
-                {
-                    if (m <= m5)
-                    {
-                        filfaccoll = pow(m2,cratio);   // FilFac St-St<1
-                    }
-                    else
-                    {
-                        filfaccoll = pow(m2,cratio)*pow(m5/m,0.2);  // FilFac St-St>1
-                    }
-                }
-            }
-            else
-            {
-                if (m <= m4)
-                {
-                    filfaccoll = pow(m1,cratio+0.125)*pow(m,-0.125);   // FilFac Ep-St<1
-                }
-                else
-                {
-                    filfaccoll = pow(m1,cratio+0.125)*pow(m4,-0.125)*pow(m4/m,0.2);   // FilFac Ep-St>1
-                }
-            }
-        }
-    }
-    else
-    {   if (m <= m2)
-        {
-            filfaccoll = pow(m,cratio);   // FilFac h&s
-        }
-        else
-        {
-            if (m <= m5)
-            {
-                filfaccoll = pow(m2,cratio);   // FilFac St-St<1
-            }
-            else
-            {
-                filfaccoll = pow(m2,cratio)*pow(m5/m,0.2);  // FilFac St-St>1
-            }
-        }
-    }
-    return filfaccoll;
-}*/
 
 double FilFacMColl(const double& R, const double& mstar, const double& rhog, const double& cg, const double& st,// ->
                    const double& mfrac, const double eroll, const double& a0, const double& rhos, const double& alpha,// ->
@@ -258,47 +185,9 @@ double FilFacMColl(const double& R, const double& mstar, const double& rhog, con
 
 /* ------------------------ KATAOKA ------------------------*/
 
-// Original algorithm
-/*double FilFacMGas(const double& R, const double& mstar, const double& p, const double& q, const double& rhog,// ->
-               const double& cg, const double& massf, const double& rhos, const double& eroll, const double& a0)
-{
-    double m0 = GrainMass(a0,1.,rhos);
-    double filfaclimSt = pow(m0*rhog*DeltaV(R,mstar,p,q,cg)*cg/(M_PI*eroll*rhos),1./3.);
-
-    if  (TransRegEpSt(rhog,cg,GrainMassToSize(massf,filfaclimSt,rhos)) < 1.)
-    {   return filfaclimSt;    }
-    else
-    {   return pow(6.*a0*a0*DeltaV(R,mstar,p,q,cg)*NuMolGas(rhog,cg)*rhog/(eroll),0.375)*pow(massf/m0,-0.125); }
-}*/
-
 double FilFacMGas(const double& R, const double& mstar, const double& deltav, const double& st, const double& massf, const double& rhos,// -> 
                   const double& eroll, const double& a0, const double& m0)//, const int& dragreg, const double& rhog, const double& cg)
 {
-    /*double filfacgas;
-    switch (dragreg)
-    {
-        case (1):
-        {
-            filfacgas = pow(m0*rhog*deltav*cg/(M_PI*eroll*rhos),1./3.);
-            break;
-        }
-        case (2):
-        {
-            filfacgas = pow(6.*a0*a0*deltav*NuMolGas(rhog,cg)*rhog/(eroll),3./8.)*pow(massf/m0,-0.125);
-            break;
-        }
-        case (3):
-        {
-            filfacgas = pow((9.*m0*deltav*deltav*rhog)/(M_PI*eroll*rhos),5./14.)*pow(NuMolGas(rhog,cg)/(2.*a0*deltav),3./14.)/pow(massf/m0,1./14.);
-            break;
-        }
-        case (4):
-        {
-            filfacgas = pow(0.165*m0*rhog*deltav*deltav/(M_PI*eroll*rhos),1./3.);
-            break;
-        }
-    }
-    return filfacgas;*/
     return pow((m0*a0*deltav*Omegak(R,mstar))/(eroll*M_PI*st),3./7.)*pow(massf/m0,1./7.);
 }
 
@@ -330,9 +219,9 @@ double FilFacMinMColGasGrav(const double& R, const double& mstar, const double& 
 
 double FilFacMFinal(const double& R, const double& mstar, const double& rhog, const double& cg, const double deltav, const double st,// ->
                     const double& massf, const double& massi, const double& filfaci, const double& a0, const double& rhos, const double& eroll,// ->
-                    const double& alpha, const double& ncoll, const int& ifrag, const int& ibounce, const double& vfrag, const double& vrel,// ->
-                    const double& vstick, const double& probabounce, const double& filfaclim, const double& Yd0, const double& Ydpower,// ->
-                    int& porreg)
+                    const double& alpha, const double& ncoll, const int& ifrag, const int& ibounce, const double& vfrag, const int& icomp,// ->
+                    const double& vrel, const double& vstick, const double& probabounce, const double& filfaclim, const double& Yd0,// -> 
+                    const double& Ydpower, int& porreg)
 {
     double filfacf = 1.;
     double m0 = GrainMass(a0,1.,rhos);
@@ -340,6 +229,7 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
     double filfacmincollgasgrav = FilFacMinMColGasGrav(R,mstar,rhog,cg,deltav,st,massf,rhos,eroll,a0,m0,alpha,porreg);
     double filfacgr = FilFacMGr(massf,massi,filfaci,rhos,eroll,vrel);
     double filfacmax = maxpacking + (1.-maxpacking)*(m0/massf);
+    int model = 5;
 
     if (massf > m0)
     {
@@ -349,10 +239,24 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
                 if ((vrel < vfrag && ifrag > 0) || (ifrag == 0))
                 {
                     filfacf = filfacgr;
+                
+                    //In developement
+                    
+                    /*if (icomp == 1)
+                    {   double vrelvf = vrel/vfrag;
+                        if (vrelvf < 0.1)
+                        {   filfacf = filfacgr;  }
+                        else if (vrelvf <= 0.3)
+                        {   filfacf = filfaci * (2.9*vrelvf*pow(filfacf,-0.2) +1); }
+                        else    
+                        {   filfacf = filfaci * (2.9*0.3*pow(filfacgr,-0.2)*exp(1.5*(0.3-vrelvf)) + 1);  }
+                    }*/
                     break;
                 }
                 else
-                {   //compaction model during fragmentation
+                {   //In developement
+
+                    //compaction model during fragmentation
                     /*double vrelvf = vrel/vfrag;
                     double vrelvf2 = vrel*vrel/vfrag/vfrag;
                     double xi = Ekin(massi,vrel)/(0.6*pow(filfaci,1.8)*0.1/a0);     // with Ekin and tensile strenght
@@ -393,7 +297,81 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
                     //filfacf = filfaci * pow(1.+ xi, ncoll/1.4);
 
                     // fragmentation at constant filling factor
-                    filfacf = filfaci;
+
+                    if (icomp == 1)
+                    {   
+                        switch (model)
+                        {
+                            case (0): // Fit1ncoll
+                            {
+                                double vrelvf = vrel/vfrag;
+                                double xi =(3*0.3*pow(filfaci,-0.2)*exp(1.5*(0.3-vrelvf))+1);
+                                filfacf = filfaci*pow(xi,ncoll);
+                                break;
+                            }
+                            case (1):// fit2ncoll
+                            {
+                                double vrelvf = vrel/vfrag;
+                                double xi2 = 27.*pow(filfaci,-0.2)*pow(vrelvf,1.5)/(2.*exp(4.*vrelvf)-1) +1;
+                                filfacf = filfaci*pow(xi2,ncoll);
+                                break;
+                            }
+                            case (2): // Garcia 
+                            {    
+                                double Vi = GrainVolumeSize(sizei,filfaci,rhos);
+                                double deltaVol = VarVolumeBounce(filfaci,filfaclim,0,Ekin(massi,vrel),Vi,Yd0,Ydpower);
+                                filfacf = filfaci*pow(1/(1-0.5*(deltaVol/Vi)),ncoll);
+                                break;
+                            }
+                            case (3):// Fit1 + ms
+                            {
+                                double vrelvf = vrel/vfrag;
+                                double xi =(3*0.3*pow(filfaci,-0.2)*exp(1.5*(0.3-vrelvf))+1);
+                                if (massf != massi)
+                                {   
+                                filfacf = filfaci * pow( massf/massi, -log(xi)/log(1.+vrelvf*vrelvf) ); 
+                                }
+                                else
+                                {   
+                                    filfacf = filfaci * pow(xi, ncoll/1.4);   
+                                }
+                                break;
+                            }
+                            case (4):// Fit1 + garcia
+                            {
+                                double vrelvf = vrel/vfrag;
+                                double Vi = GrainVolumeSize(sizei,filfaci,rhos);
+                                double xi =(3*0.3*pow(filfaci,-0.2)*exp(1.5*(0.3-vrelvf))+1);
+                                double deltaVol = Vi - massf/massi*Vi/xi;
+                                filfacf = filfaci*pow(1./(1.-(deltaVol/Vi)),ncoll);
+                                break;
+                            }
+                            case (5): // Garcia + mod compressive strenght kataoka
+                            {    
+                                double Vi = GrainVolumeSize(sizei,filfaci,rhos);
+                                double Ebreak = 1.5*48./302.46*eroll;
+                                //double Ebreak = 6*272.21/302.46*eroll;
+                                double Ecomp = Ekin(massi,vrel) - (2.*massi-massf)*Ebreak/m0;
+                                //double Ecomp = Ekin(massi,vrel) - (massi/2.-massf)*Ebreak/m0;
+
+                                if (Ecomp<0) Ecomp=0;
+
+                                double deltaVol = (Ecomp/(eroll*pow(filfaci/(maxpacking-filfaci)/a0,3)));
+/*
+                                cout <<endl<< "Ekin = "<<Ekin(massi,vrel) << " Ebreak = "<< (massi/m0 - massf/m0)*Ebreak << endl 
+                                <<"comp res = " << eroll*pow(filfaci/(maxpacking-filfaci)/a0,3) << endl
+                                << " DV = "<< deltaVol << " Vi = " << Vi << endl;
+*/
+                                if (deltaVol > Vi)  deltaVol = Vi;
+                                   
+
+                                filfacf = filfaci*pow( 1./ (1. - 0.5*exp(1-pow(vrel/vfrag,2))*(deltaVol/Vi) ),ncoll);
+                               // cout << "ratiofil = " << filfacf/filfaci << endl;
+                                break;
+                            }
+                        }
+                    }
+                    else    filfacf = filfaci;
                     break;
                 }
             }
@@ -429,7 +407,66 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
                 }
                 else
                 {
-                    filfacf = filfaci;
+                    if (icomp == 1)
+                    {   
+                        switch (model)
+                        {
+                            case (0): // Fit1ncoll
+                            {
+                                double vrelvf = vrel/vfrag;
+                                double xi =(3*0.3*pow(filfaci,-0.2)*exp(1.5*(0.3-vrelvf))+1);
+                                filfacf = filfaci*pow(xi,ncoll);
+                                break;
+                            }
+                            case (1):// fit2ncoll
+                            {
+                                double vrelvf = vrel/vfrag;
+                                double xi2 = 27.*pow(filfaci,-0.2)*pow(vrelvf,1.5)/(2.*exp(4.*vrelvf)-1) +1;
+                                filfacf = filfaci*pow(xi2,ncoll);
+                                break;
+                            }
+                            case (2): // Garcia 
+                            {    
+                                double Vi = GrainVolumeSize(sizei,filfaci,rhos);
+                                double deltaVol = VarVolumeBounce(filfaci,filfaclim,0,Ekin(massi,vrel),Vi,Yd0,Ydpower);
+                                filfacf = filfaci*pow(1/(1-0.5*(deltaVol/Vi)),ncoll);
+                                break;
+                            }
+                            case (3):// Fit1 + ms
+                            {
+                                double vrelvf = vrel/vfrag;
+                                double xi =(3*0.3*pow(filfaci,-0.2)*exp(1.5*(0.3-vrelvf))+1);
+                                if (massf != massi)
+                                {   
+                                filfacf = filfaci * pow( massf/massi, -log(xi)/log(1.+vrelvf*vrelvf) ); 
+                                }
+                                else
+                                {   
+                                    filfacf = filfaci * pow(xi, ncoll/1.4);   
+                                }
+                                break;
+                            }
+                            case (4):// Fit1 + garcia
+                            {
+                                double vrelvf = vrel/vfrag;
+                                double Vi = GrainVolumeSize(sizei,filfaci,rhos);
+                                double xi =(3*0.3*pow(filfaci,-0.2)*exp(1.5*(0.3-vrelvf))+1);
+                                double deltaVol = Vi - massf/massi*Vi/xi;
+                                filfacf = filfaci*pow(1./(1.-(deltaVol/Vi)),ncoll);
+                                break;
+                            }
+                            case (5): // Garcia + mod compressive strenght kataoka
+                            {    
+                                double Vi = GrainVolumeSize(sizei,filfaci,rhos);
+                                double deltaVol = abs(Ekin(massi,vrel)/(eroll*pow(filfaci/(maxpacking-filfaci)/a0,3)) );
+                                if (deltaVol > Vi)  deltaVol = Vi;
+                                filfacf = filfaci*pow(1./(1.-0.5*(deltaVol/Vi)),ncoll);
+                                cout << "ratio = " << filfacf/filfaci << endl;
+                                break;
+                            }
+                        }
+                    }
+                    else    filfacf = filfaci;
                     break;
                 }
             }
@@ -643,7 +680,7 @@ double FilFacSFinal(const double& R, const double& mstar, const double& rhog, co
         {   filfacf = filfacmincollgasgrav;     }
 
 
-        filfacmax = maxpacking + (1.-maxpacking)*(a0*a0*a0/sizef/sizef/sizef/filfacf);
+        filfacmax = 0.5*maxpacking * (1 + sqrt(1 + 4*(1-maxpacking)/maxpacking/maxpacking * pow(sizef/a0,-3)));
         if (filfacf > filfacmax)
         {
             filfacf = filfacmax;

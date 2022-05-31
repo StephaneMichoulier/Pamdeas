@@ -27,7 +27,8 @@ double DRDt(const double& R, const double& mstar, double p, double q, const doub
 
 // Compute the final dm/dt between growth, frag, bounce [kg/s]
 double DmDt(const double& size, const double& rhog, const double& dustfrac, const double& vrel, const int& ifrag,// ->
-            const int& ibounce, const double& vfrag, const double& vstick, const double& probabounce);
+            const int& ieros, const double& veros, const int& ibounce, const double& vfrag, const double& vstick,// ->
+            const double& probabounce);
 
 
 /* ------------------------  GROWTH-FRAG ds/dt ------------------------ */

@@ -5,11 +5,11 @@
 *Author:* Stéphane Michoulier  
 *Email:* <stephane.michoulier@gmail.com>
 
-*Eden:* version 1.3
+*Pamdeas:* version 1.4
 
 #### **DESCRIPTION**:
 
-Eden is a 1D code primarily wrote to study the evolution of grains porosity within protoplanetary disc considering different physical process such as growth, fragmentation, drift, pressure bump, snowline (Vericel & Gonzalez 2020) etc.  
+Pamdeas is a 1D code primarily wrote to study the evolution of grains porosity within protoplanetary disc considering different physical process such as growth, fragmentation, drift, pressure bump, snowline (Vericel & Gonzalez 2020), rotational disruption (Tatsuuma et al. 2021) etc.  
 This code allow you to follow the evolution of a given number of particles from a set of initials conditions chosen by the user in a stationary non self-gravitating gas disc and was mainly developed to understand the behaviour of porous grains, but also to test algorithms for future implementation in 3D Hydrodynamics code.  
 
 FEW WORDS ON INPUT FILE OPTION (Respect the blank space, or expect unforeseen consequences).  
@@ -31,7 +31,7 @@ To use all functionality of the program, be sure to  have the latest C++ version
 
 If the program is not yet built, follow the instruction below:
 > - Open a new terminal
-> - Use the command cd to reach "eden" directory: cd 'Yourdirectory'/eden
+> - Use the command cd to reach "pamdeas" directory: cd 'Yourdirectory'/pamdeas
 > - Once in the directory, build the code with: make
 > - Then, source file will be compiled in "source" folder and the program will be built
 > - The simulation can then be launch. To do this, go inside the "build" folder where the executable is: cd build
@@ -57,37 +57,43 @@ The program contains multiple files in the source folder "source" and the header
 
 	main.cpp contains all variables declarations and time loop
 
-- b. disc.cpp & disc.h
+- b. constantandconversion.h
+
+	Contains the declaration of physical constants and conversion functions between some useful  units
+
+- c. readwrite.cpp & readwrite.h
+   
+	Contain reading and writing functions
+
+- d. disc.cpp & disc.h
 	
 	Contain general functions describing gas disks such as gas density, pressure, etc.
     The full list is given in the .h file
 
-- c. dust.cpp & dust.h
+- e. dust.cpp & dust.h
 	
 	Contain general functions describing properties of dust grains as kinetic energy, relative velocity or Stokes number.
     The full list is given in the .h file
 
-- d. porosity.cpp & porosity.h
+- f. porosity.cpp & porosity.h
 
     Contain all the algorithms driving the evolution of the filling factor depending on the mass/size and the different processes: growth, frag, compression by collision/gravity etc 
 
-- e. evol.cpp & evol.h
+- g. evol.cpp & evol.h
 
     Contain all the algorithms linked to time stepping: growth rate, drift velocity, adaptative time step etc.
 
-- f. readwrite.cpp & readwrite.h
-   
-	Contain reading and writing functions
+- h. disruption.cpp & disruption.h
 
-- g. constantandconversion.h
-
-	Contains the declaration of physical constants and conversion functions between some useful  units
+    Contain all the algorithms to compute disruption of grains.
 
 #### **References**
-Arnaud Vericel and Jean-François Gonzalez. Self-induced dust traps around snow lines in pro- toplanetary discs. MNRAS, 492(1) :210–222, February 2020. doi : 10.1093/mnras/stz3444.
+Arnaud Vericel and Jean-François Gonzalez. Self-induced dust traps around snow lines in protoplanetary discs. MNRAS, 492(1) :210–222, February 2020. doi : 10.1093/mnras/stz3444.
 
-Anthony Garcia. Evolution of grain porosity during growth : a solution to planetary for- mation barriers? Phd thesis, Université de Lyon, September 2018. URL https://tel. archives-ouvertes.fr/tel-01977317.
+Anthony Garcia. Evolution of grain porosity during growth : a solution to planetary formation barriers? Phd thesis, Université de Lyon, September 2018. URL https://tel. archives-ouvertes.fr/tel-01977317.
 
-Anthony J. L. Garcia and Jean-François Gonzalez. Evolution of porous dust grains in pro- toplanetary discs - I. Growing grains. MNRAS, 493(2) :1788–1800, April 2020. doi : 10.1093/mnras/staa382.
+Anthony J. L. Garcia and Jean-François Gonzalez. Evolution of porous dust grains in protoplanetary discs - I. Growing grains. MNRAS, 493(2) :1788–1800, April 2020. doi : 10.1093/mnras/staa382.
+
+Tatsuuma M., Kataoka A., Tanaka H., Rotational Disruption of Porous Dust Aggregates due to Gas Flow in Protoplanetary Disks, 2019, The Astrophysical Journal, 874,159
 
 J. D. Hunter. Matplotlib : A 2d graphics environment. Computing in Science & Engineering, 9(3) :90–95, 2007. doi : 10.1109/MCSE.2007.55.

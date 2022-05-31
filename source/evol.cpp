@@ -79,7 +79,8 @@ double DRDt(const double& R, const double& mstar, double p, double q, const doub
 /* ------------------------  GROWTH-FRAG-BOUNCE dm/dt ------------------------ */
 
 double DmDt(const double& size, const double& rhog, const double& dustfrac, const double& vrel, const int& ifrag,// ->
-            const int& ibounce, const double& vfrag, const double& vstick, const double& probabounce)
+            const int& ieros, const double& veros, const int& ibounce, const double& vfrag, const double& vstick,// ->
+            const double& probabounce)
 {
     double dmdt = 4.*M_PI*dustfrac*rhog*size*size*vrel;
 

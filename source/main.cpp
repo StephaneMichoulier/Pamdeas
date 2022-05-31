@@ -5,8 +5,8 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <time.h>
-#include <random>
+#include <stdio.h>
+#include <chrono>
 
 #include "../header/constantandconversion.h"
 #include "../header/disc.h"
@@ -34,7 +34,7 @@ void PresentationAnim()
 {
     cout << "\e[1m" << endl;
     cout << "!+-----                 -----+!" << endl;
-    cout << "      Welcome in EDEN !" << endl;
+    cout << "      Welcome in PAMPEAS !" << endl;
     cout << "!+-----                 -----+!" << endl;
     cout << "\e[0m" << endl;
 }
@@ -71,9 +71,9 @@ void ProgressionAnim(const double& iteratedvalue, const double endvalue, const i
     }
 }
 
-// Running time
-void Runningtime(const double& runningtime)
-{   cout << "\nRunning time: " << runningtime << " s" << endl;  }
+// Wall time
+void Walltime(const double& walltime)
+{   cout << "\nWall time: " << walltime << " s" << endl;    }
 
 // End animation
 void EndAnim()
@@ -87,7 +87,7 @@ void EndAnim()
 /* -------------------- MAIN ROUTINE --------------------*/
 /* ------------------------------------------------------*/
     
-void Eden(const string& input)
+void Pamdeas(const string& input)
 {
     /*------------------------ INITIALS PARAMETERS FROM THE USER ------------------------*/
 
@@ -126,18 +126,23 @@ void Eden(const string& input)
     int    idrift;          // Drift option
     int    ibounce;         // Bounce option
     int    ifrag;           // Fragmention option
+    int    ieros;           // Erosion option
+    int    icomp;           // Compaction option
     int    ibump;           // Pressure bump option
     int    ibr;             // Back-reaction option
     int    idisrupt;        // Disruption by spinning motion
     int    isnow;           // Snow line option
-    double gammaft;         // Force-to-torque efficiency
     double vfragi;          // Initial fragmentation threshold (when ifrag is enabled) [m/s]
     double vfragin;         // Inward fragmentation threshold (when ifrag & isnow is enabled) [m/s]
     double vfragout;        // Outward fragmentation threshold (when ifrag & isnow is enabled) [m/s]
+    double verosi;          // Initial erosion threshold (when ieros is enabled) [vfrag]
     int    constvfrag;      // Constant vfrag option (when fragmentation is enabled)
     double filfaclim;       // Filling factor dynamic compression resistance limit (when ifrag is enabled)
     double filfacbnc;       // Filling factor bounce limit (when ibounce is enabled)
-    double limsize;         // Limit to the max size [m]
+    double maxsize;         // Limit to the max size [m]
+    double gammaft;         // Force-to-torque efficiency
+    int disrupteq;          // Disruption equation (0=Tatsuuma2019, 1=Kimura2020)
+    double weirmod;         // Weirbull modulus if disrupteq=1 (Kimura et al. 2020)
     int    ngrains;         // Number of grains
     vector <double> Rini;   // Initials radii
 
@@ -154,6 +159,7 @@ void Eden(const string& input)
     double dustfrac;        // dust to gas ratio at R
     double vrel;            // Relative velocity between grains [m/s]
     double vfrag;           // Fragmentation threshold [m/s]
+    double veros;           // Initial erosion threshold [m/s]
     double vstick;          // Sticking velocity [m/s]
     double probabounce;     // Probability for a grain to bounce
     double ncoll;           // number of collision per dt [s⁻¹]
@@ -187,9 +193,7 @@ void Eden(const string& input)
 
     string outputfile;      // Variable for the name of the output file
 
-    clock_t t1, t2 = 0.;    // sets of two variable to determine running time
-
-    t1 = clock();
+    auto wtbegin = chrono::high_resolution_clock::now(); // start counter for walltime
 
     PresentationAnim();
 
@@ -198,9 +202,9 @@ void Eden(const string& input)
 
     cout << "Reading input file" << endl;
 
-    ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
-             ibr,ibump,Rbump,dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,gammaft,
-             limsize,isnow,Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,ngrains,Rini,istate,input);
+    ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,Rbump,
+             dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,verosi,icomp,maxsize,isnow,
+             Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,gammaft,disrupteq,weirmod,ngrains,Rini,istate,input);
 
     cout << "Input file read\n" << endl;
 
@@ -301,6 +305,7 @@ void Eden(const string& input)
         st = St(Ri,mstar,rhog,cg,sizei,filfaci,rhos,0.,dragreg); //we assume deltav very small for small grain strongly coupled with gas in the epstein regime
         deltav = DeltaV(Ri,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
         vrel = Vrel(cg,st,alpha,deltav);
+        //vfrag = vfragi; // need to be initialized for erosion even if ifrag=0
 
         // Write in output file quantities at t=0
         WriteOutputHeader(writer,massorsize);
@@ -329,7 +334,7 @@ void Eden(const string& input)
                     {   drdt = DRDt(Ri,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,Rbump,bumpwidth,bumpheight); }
 
                     // Compute dm/dt
-                    dmdt = DmDt(sizef,rhog,dustfrac,vrel,ifrag,ibounce,vfrag,vstick,probabounce);
+                    dmdt = DmDt(sizef,rhog,dustfrac,vrel,ifrag,ieros,veros,ibounce,vfrag,vstick,probabounce);
 
                     // Compute new dt and new time t
                     switch (stepmethod)
@@ -356,7 +361,7 @@ void Eden(const string& input)
                     // Check if new mass < monomer mass
                     if (massf < GrainMass(a0,1.,rhos))
                     {   massf = GrainMass(a0,1.,rhos);  }
-                    //checksize(massf,filfaci,rhos,5e-5);   // Used to check compatibility with Phantom
+                    //checksize(massf,filfaci,rhos,sizeini);   // Used to check compatibility with Phantom
 
                     // Compute filling factor for porous grains
                     if (iporosity == 1)
@@ -364,11 +369,10 @@ void Eden(const string& input)
                         ncoll = Ncoll(dt,Tcoll(sizef,rhog,filfaci,rhos,dustfrac,vrel));
                         // Compute the new filling factor after dt
                         filfacf = FilFacMFinal(Ri,mstar,rhog,cg,deltav,st,massf,massi,filfaci,a0,rhos,eroll,alpha,ncoll,ifrag,
-                                               ibounce,vfrag,vrel,vstick,probabounce,filfaclim,Yd0,Ydpower,porreg);
+                                               ibounce,vfrag,icomp,vrel,vstick,probabounce,filfaclim,Yd0,Ydpower,porreg);
                     }
 
                     // Compute gas and dust quantities at time t and radius R for a new loop
-
                     if (idrift == 1)   Ri = Rf;
                     massi = massf;
                     filfaci = filfacf;
@@ -376,10 +380,10 @@ void Eden(const string& input)
 
                     // Disruption by spinning motion
                     if (idisrupt == 1)
-                    {   disrupted = Disrupt(sizef,filfacf,rhos,deltav,gammaft,esurf,a0);   }
+                    {   disrupted = Disruptlim(sizef,filfacf,rhos,deltav,gammaft,weirmod,esurf,a0,disrupteq);   }
 
                     //State of the grain
-                    State(istate[j],Rf/Rin,sizef/limsize,disrupted);
+                    State(istate[j],Rf/Rin,sizef/maxsize,disrupted);
 
                     // Write parameters when grain is disrupted
                     if (istate[j] == 3)
@@ -387,13 +391,15 @@ void Eden(const string& input)
                         WriteDisruptFile(writerdisruption,Rf,massf,filfacf,sizef,st,vrel,FreqSpin(sizef,deltav,gammaft),
                         TensileStess(sizef,filfacf,rhos,deltav,gammaft),gammaft,alpha,a0);
 
-                        // If disruption do not stop simulation => uncomment these lines
-                        //sizef /= rand() % ( 901) + 100;
-                        /*massf /= 5;
-                        if (massf < GrainMass(a0,1.,rhos)) massf=GrainMass(a0,1.,rhos);
-                        massi = massf;
-                        sizef = GrainMassToSize(massf,filfacf,rhos);
-                        istate[j] = 0;*/
+                        //If disruption do not stop simulation
+                        if (maxsize != -1)
+                        {
+                            Disrupt(massf,filfacf,sizeini,rhos,Rf,mstar,rhog,cg,deltav,st,eroll,a0,alpha,porreg);
+                            massi = massf;
+                            filfaci=filfacf;
+                            sizef = GrainMassToSize(massf,filfacf,rhos);
+                            istate[j] = 0;
+                        }
                     }
 
                     // Update hydro quantities
@@ -477,10 +483,10 @@ void Eden(const string& input)
 
                     // Disruption by spinning motion
                     if (idisrupt == 1)
-                    {   disrupted = Disrupt(sizef,filfacf,rhos,deltav,gammaft,esurf,a0);   }
+                    {   disrupted = Disruptlim(sizef,filfacf,rhos,deltav,gammaft,weirmod,esurf,a0,disrupteq);   }
 
                     //State of the grain
-                    State(istate[j],Rf/Rin,sizef/limsize,disrupted);
+                    State(istate[j],Rf/Rin,sizef/maxsize,disrupted);
 
                     // Write parameters when grain is disrupted
                     if (istate[j] == 3)
@@ -516,14 +522,15 @@ void Eden(const string& input)
     }
     writerdisruption.close();
 
-    // Compute running time
-    t2 = clock();
-    Runningtime((t2-t1)/(1.*CLOCKS_PER_SEC));
+    // Compute wall time
+    auto wtend = std::chrono::high_resolution_clock::now();
+    double wt = (chrono::duration_cast<chrono::nanoseconds>(wtend-wtbegin)).count()* 1e-9;
+    Walltime(wt);
 
     // Write initials conditions
-    WriteInitFile(massorsize,tend,stepmethod,step,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0,T0,dustfrac0,rhog0,cg0,p,q,
-                  alpha,ibr,ibump,Rbump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,gammaft,isnow,Rsnow,
-                  ngrains,Rini,istate,(t2-t1)/(1.*CLOCKS_PER_SEC));
+    WriteInitFile(massorsize,tend,stepmethod,step,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0,T0,dustfrac0,rhog0,cg0,p,q,alpha,ibr,
+                  ibump,Rbump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,verosi,icomp,gammaft,disrupteq,isnow,
+                  vfragin,vfragout,Rsnow,ngrains,Rini,istate,wt);
 
     EndAnim();
 
@@ -536,7 +543,7 @@ int main(int argc, char* argv[])
 {   
     if (argc == 1)
     {   
-        Eden("input.in");    
+        Pamdeas("input.in");    
     }
     else if (argc == 2)
     {
@@ -546,7 +553,7 @@ int main(int argc, char* argv[])
             cout << "Input file has been written: input.in" << endl;
         }
         else
-        {   Eden(string(argv[1]));   }
+        {   Pamdeas(string(argv[1]));   }
     }
     else
     {   cerr << "Error: to many arguments passed" << endl;  }

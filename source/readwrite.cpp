@@ -18,9 +18,10 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
               double& Rin, double& Rout, double& R0, double& mstar, double& mdisc, double& sigma0, double& h0R0, double& T0,// ->
               double& dustfrac0, double& p, double& q, double& alpha, int& ibr, int& ibump, double& Rbump, double& dustfracmax,// ->
               double& bumpwidth, double& bumpheight, int& iporosity, double& sizeini, double& a0, double& rhos, int& idrift,// ->
-              int& ibounce, int& idisrupt, int& ifrag, double& vfragi, double& gammaft, double& limsize, int& isnow, double& Rsnow,// ->
-              double& vfragin, double& vfragout, double& youngmod0, double& esurf, double& Yd0, double& Ydpower, int& constvfrag,// ->
-              double& filfaclim, double& filfacbnc, int& ngrains, vector <double>& Rini, vector <int>& istate, const string& input)
+              int& ibounce, int& idisrupt, int& ifrag, double& vfragi, int& ieros, double& verosi, int& icomp, double& maxsize,// ->
+              int& isnow, double& Rsnow, double& vfragin, double& vfragout, double& youngmod0, double& esurf, double& Yd0,// ->
+              double& Ydpower, int& constvfrag, double& filfaclim, double& filfacbnc, double& gammaft, int& disrupteq, double& weirmod,// ->
+              int& ngrains, vector <double>& Rini, vector <int>& istate, const string& input)
 {
     ifstream Reader(input);
     if (!Reader)
@@ -68,10 +69,12 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader, 5);     CheckType(Reader, idisrupt, "idisrupt");
     ReadVoid(Reader, 6);     CheckType(Reader, ifrag, "ifrag");
     ReadVoid(Reader, 6);     CheckType(Reader, vfragi, "vfragi");
-    ReadVoid(Reader, 7);     CheckType(Reader, gammaft, "gammaft");
-    ReadVoid(Reader, 9);     CheckType(Reader, limsize, "limsize");
+    ReadVoid(Reader, 7);     CheckType(Reader, ieros, "ieros");
+    ReadVoid(Reader, 7);     CheckType(Reader, verosi, "verosi");
+    ReadVoid(Reader, 8);     CheckType(Reader, icomp, "icomp");
+    ReadVoid(Reader, 7);     CheckType(Reader, maxsize, "maxsize");
 
-    ReadVoid(Reader, 16);    CheckType(Reader, isnow, "isnow");
+    ReadVoid(Reader, 24);    CheckType(Reader, isnow, "isnow");
     ReadVoid(Reader, 7);     CheckType(Reader, Rsnow, "Rsnow");
     ReadVoid(Reader, 6);     CheckType(Reader, vfragin, "vfragin");
     ReadVoid(Reader, 6);     CheckType(Reader, vfragout, "vfragout");
@@ -83,8 +86,11 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader, 10);    CheckType(Reader, constvfrag, "constvfrag");
     ReadVoid(Reader, 7);     CheckType(Reader, filfaclim, "filfaclim");
     ReadVoid(Reader, 8);     CheckType(Reader, filfacbnc, "filfacbnc");
+    ReadVoid(Reader, 6);     CheckType(Reader, gammaft, "gammaft");
+    ReadVoid(Reader, 9);     CheckType(Reader, disrupteq, "disrupteq");
+    ReadVoid(Reader, 6);     CheckType(Reader, weirmod, "weirmod");
 
-    ReadVoid(Reader, 13);    CheckType(Reader, ngrains, "ngrain");
+    ReadVoid(Reader, 16);    CheckType(Reader, ngrains, "ngrain");
 
     ReadVoid(Reader, 7);
 
@@ -99,8 +105,8 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     }
 
     CheckData(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,h0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,
-              Rbump,dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,gammaft,limsize,
-              isnow,Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,ngrains,Rini,istate);
+              Rbump,dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,verosi,icomp,maxsize,
+              isnow,Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,gammaft,disrupteq,weirmod,ngrains,Rini,istate);
     
     // Initialize some parameters depending on option
     istate.resize(ngrains);
@@ -120,10 +126,11 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
                const double& p, const double& q, const double& alpha, const int& ibr, const int& ibump, const double& Rbump,// ->
                const double& dustfracmax, const double& bumpwidth, const double& bumpheight, const int& iporosity, const double& sizeini,// ->
                const double& a0, const double& rhos, const int& idrift, const int& ibounce, const int& idisrupt, const int& ifrag,// ->
-               const double& vfragi, const double& gammaft, const double& limsize, const int& isnow, const double& Rsnow,// ->
-               const double& vfragin, const double& vfragout, const double& youngmod0, const double& esurf, const double& Yd0,// ->
-               const double& Ydpower, const int& constvfrag, const double& filfaclim, const double& filfacbnc, const int& ngrains,// ->
-               const vector <double>& Rini, const vector <int>& istate)
+               const double& vfragi, const int& ieros, const double& verosi, const int& icomp, const double& maxsize, const int& isnow,// ->
+               const double& Rsnow, const double& vfragin, const double& vfragout, const double& youngmod0, const double& esurf,// ->
+               const double& Yd0, const double& Ydpower, const int& constvfrag, const double& filfaclim, const double& filfacbnc,// ->
+               const double& gammaft, const int& disrupteq, const double& weirmod, const int& ngrains, const vector <double>& Rini,// ->
+               const vector <int>& istate)
 {
     bool error = false;
 
@@ -174,9 +181,9 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
             else                                ErrorValue(error, "Error", "Rbump > Rout");
         }
 
-        if (dustfracmax < dustfrac0 || dustfracmax >= 1)
+        if (dustfracmax < dustfrac0 || dustfracmax > 1)
         {
-            if (dustfracmax >= 1 )              ErrorValue(error, "Error", "dustfracmax >= 1");
+            if (dustfracmax > 1 )               ErrorValue(error, "Error", "dustfracmax > 1");
             else                                ErrorValue(error, "Error", "dustfracmax < dustfrac0");
         }
 
@@ -201,13 +208,16 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
     if (ifrag != 0 && ifrag != 1 && ifrag != 2) ErrorValue(error, "Error", "ifrag != 0 & != 1 & != 2");
     if (vfragi < 0 && isnow == 0)               ErrorValue(error, "Error", "vfragi < 0");
 
-    if ((gammaft <= 0 || gammaft > 1) && idisrupt == 1)
+    if (ieros != 0 && ieros != 1)               ErrorValue(error, "Error", "ieros != 0 & != 1");
+    if (verosi < 0 || verosi > 1)
     {
-        if(gammaft > 1)                         ErrorValue(error, "Error", "gammaft > 1");
-        else                                    ErrorValue(error, "Error", "gammaft <= 0");
+        if(verosi > 1)                          ErrorValue(error, "Error", "veros/vfrag > 1");
+        else                                    ErrorValue(error, "Error", "verosi < 0");                 
     }
 
-    if (limsize <= sizeini)                     ErrorValue(error, "Error", "limsize <= sizeini");
+    if (icomp != 0 && icomp != 1)               ErrorValue(error, "Error", "icomp != 0 & != 1");
+
+    if (maxsize <= sizeini && maxsize != -1)     ErrorValue(error, "Error", "maxsize <= sizeini");
 
     if (isnow != 0 && isnow != 1)               ErrorValue(error, "Error", "isnow != 0 & != 1");
     if (isnow == 1)
@@ -240,6 +250,16 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
             else                                ErrorValue(error, "Error", "filfacbnc < 0");
         }
     }
+
+    if ((gammaft <= 0 || gammaft > 1) && idisrupt == 1)
+    {
+        if(gammaft > 1)                         ErrorValue(error, "Error", "gammaft > 1");
+        else                                    ErrorValue(error, "Error", "gammaft <= 0");
+    }
+
+    if (disrupteq != 0 && disrupteq != 1)       ErrorValue(error, "Error", "dirrupteq != 0 & != 1");
+
+    if (weirmod <= 0)                           ErrorValue(error, "Error", "weirmod <= 0");
 
     if (ngrains < 0)                            ErrorValue(error, "Error", "ngrain < 0");
     else
@@ -328,8 +348,10 @@ void WriteInputFile()
     writerinput << "  idisrupt = 0          >Rotationnal disruption (0=no, 1=yes)" << endl;
     writerinput << "     ifrag = 0          >Fragmentation (0=no, 1=hardfrag, 2=smoothfrag)" << endl;
     writerinput << "     vfrag = 15         >Fragmentation threshold (m/s), if isnow=0" << endl;
-    writerinput << "   gammaft = 0.1        >Force-to-torque efficiency (Disruption) [Tatsuuma et al. 2021]" << endl;
-    writerinput << "   maxsize = 1.0e3      >Maximum size to stop the simulation" << endl;
+    writerinput << "     ieros = 0          >Erosion (0=no, 1=yes) [NOT IMPLEMENTED]" << endl;
+    writerinput << "     veros = 0.7        >Erosion threshold (in vfrag) [NOT IMPLEMENTED]" << endl;
+    writerinput << "     icomp = 0          >Compaction during fragmentation (0=no, 1=yes)" << endl;
+    writerinput << "   maxsize = 1.0e3      >Max size to stop the simulation (=-1 to stop after first disruption if idisrupt=1)" << endl;
     writerinput << endl;
     writerinput << "#-Snow line option, available if ifrag != 0" << endl;
     writerinput << "     isnow = 0          >Snow line option (0=no, 1=yes)" << endl;
@@ -346,6 +368,9 @@ void WriteInputFile()
     writerinput << "constvfrag = 1          >Constant fragmentation threshold (0=no, 1=yes)" << endl;
     writerinput << " filfaclim = 0.01       >Filling factor dynamic compression resistance limit" << endl;
     writerinput << " filfacbnc = 0.3        >Filling factor bounce limit" << endl;
+    writerinput << "   gammaft = 0.1        >Force-to-torque efficiency (Disruption) [Tatsuuma et al. 2021]" << endl;
+    writerinput << " disrupteq = 0          >Disruption equation (0=Tatsuuma2019, 1=Kimura2020)" << endl;
+    writerinput << "   weirmod = 5          >Weirbull modulus (disrupteq=1) [Kimura et al. 2020]" << endl;
     writerinput << endl;
     writerinput << "#-Number of dust grains and initial radii" << endl;
     writerinput << endl;
@@ -483,8 +508,9 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
                    const double& sigma0, const double& h0, const double& T0, const double& dustfrac0, const double& rhog0, const double& cg0,// ->
                    const double& p, const double& q, const double& alpha, const int& ibr, const int& ibump, const double& Rbump,// ->
                    const int& iporosity, const double& sizeini, const double& a0, const double& rhos, const int& idrift, const int& ibounce,// ->
-                   const int& idisrupt, const int& ifrag, const double& vfragi, const double& gammaft, const int& isnow, const double& Rsnow,// ->
-                   const int& ngrains, const vector <double>& Rini, const  vector <int>& istate, const double& runningtime)
+                   const int& idisrupt, const int& ifrag, const double& vfragi, const int& ieros, const double& verosi, const int& icomp,// ->
+                   const double& gammaft, const int& disrupteq, const int& isnow, const double& vfragin, const double& vfragout,// ->
+                   const double& Rsnow, const int& ngrains, const vector <double>& Rini, const  vector <int>& istate, const double& walltime)
 {
     ofstream writerdoc;
     string dash;
@@ -495,7 +521,7 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     
     writerdoc.open("results_setup_"+mod+".txt");
 
-	writerdoc << endl<< "     Running Time : " << runningtime << " s" << endl;
+	writerdoc << endl<< "     Wall Time : " << walltime << " s" << endl;
     writerdoc << endl;
 
     if (R0 < 10)        dash = "";
@@ -605,8 +631,6 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     writerdoc << "     Initial grain size: " << sizeini << " m" << endl;
     writerdoc << "           Monomer size: " << a0 << " m" << endl;
     writerdoc << " Dust intrinsic density: " << rhos << " kg/m³" << endl;
-    if (ifrag !=0)      writerdoc << "Fragmentation threshold: " << vfragi << " m/s" << endl;
-    if (idisrupt == 1)  writerdoc << "    Force-to-torque eff: " << gammaft << endl;
 
     writerdoc << endl;
     writerdoc << "   -------- Grain options --------" << endl<< endl;
@@ -648,8 +672,30 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
             break;
         }
     }
-    writerdoc << endl;
 
+    writerdoc << "             Compaction during fragmentation: ";
+
+    if (icomp  == 0)    writerdoc << "no" << endl;
+    else                writerdoc << "yes" << endl;
+
+    if (ieros !=0)      writerdoc << "Erosion threshold: " << verosi << " vfrag" << endl;
+    if (ifrag !=0)
+    {   
+        if (isnow == 0) writerdoc << "Fragmentation threshold: " << vfragi << " m/s" << endl;
+        else            
+        {   
+            writerdoc << "Inner fragmentation threshold: " << vfragi << " m/s" << endl;
+            writerdoc << "Outer fragmentation threshold: " << vfragout << " m/s" << endl;
+        }
+    }
+    if (idisrupt == 1)  
+    {   
+        writerdoc << "    Force-to-torque eff: " << gammaft << endl;
+        if (disrupteq  == 0)    writerdoc << "Disruption equation: Tatsuuma & al. 2019" << endl;
+        else                    writerdoc << "Disruption equation: Kimura & al. 2020" << endl;
+    }
+    
+    writerdoc << endl;
     writerdoc << "   -------- Grain final state --------" << endl;
     writerdoc << endl;
 

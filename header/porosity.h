@@ -79,9 +79,9 @@ double FilFacMinMColGasGrav(const double& R, const double& mstar, const double& 
 // Return the minimum filling factor between filfacMGr, FilFacMinMColGasGrav and FilFacMBounce
 double FilFacMFinal(const double& R, const double& mstar, const double& rhog, const double& cg, const double deltav, const double st,// ->
                     const double& massf, const double& massi, const double& filfaci, const double& a0, const double& rhos, const double& eroll,// ->
-                    const double& alpha, const double& ncoll, const int& ifrag, const int& ibounce, const double& vfrag, const double& vrel,// ->
-                    const double& vstick, const double& probabounce, const double& filfaclim, const double& Yd0, const double& Ydpower,
-                    int& porreg);
+                    const double& alpha, const double& ncoll, const int& ifrag, const int& ibounce, const double& vfrag, const int& icomp,// ->
+                    const double& vrel, const double& vstick, const double& probabounce, const double& filfaclim, const double& Yd0,// -> 
+                    const double& Ydpower, int& porreg);
 
 
 /* ------------------------ SIZE MODEL ------------------------ */
