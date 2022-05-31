@@ -9,13 +9,13 @@
 
 #### **DESCRIPTION**:
 
-Pamdeas is a 1D code primarily wrote to study the evolution of grains porosity within protoplanetary disc considering different physical process such as growth, fragmentation, drift, pressure bump, snowline (Vericel & Gonzalez 2020), rotational disruption (Tatsuuma et al. 2021) etc.  
-This code allow you to follow the evolution of a given number of particles from a set of initials conditions chosen by the user in a stationary non self-gravitating gas disc and was mainly developed to understand the behaviour of porous grains, but also to test algorithms for future implementation in 3D Hydrodynamics code.  
+Pamdeas (Porous Aggregate Model and Dust Evolution in protoplAnetary discS) is a 1D code primarily wrote to study the evolution of grain porosity within protoplanetary discs considering different physical processes such as growth, fragmentation, drift, pressure bump, snowline (Vericel & Gonzalez 2020), rotational disruption (Tatsuuma et al. 2021) etc.  
+This code allows you to follow the evolution of a given number of particles from a set of initial conditions chosen by the user in a stationary non self-gravitating gas disc and was mainly developed to understand the behaviour of porous grains, but also to test the porosity algorithms for future implementation in 3D Hydrodynamics code.  
 
 FEW WORDS ON INPUT FILE OPTION (Respect the blank space, or expect unforeseen consequences).  
 2 models can be used to study the evolution of the porosity. 
 One is based on the increase of mass (dm/dt) and use A. Garcia's reformulated algorithms (Garcia 2018),(Garcia & Gonzalez 2020), the other one is based on the increase of size (ds/dt) and use my algorithms.  
-The dmdt model support the bounce process, but not the dsdt model.  
+The dmdt model (use this one by default) support the bounce process, but not the dsdt model.  
 The degeneracy due to the filling factor in the dsdt model is taken into account.  
 
 You are allowed to create artificially a pressure bump, by adding a gaussian profile to the gas surface density. To create the desired pressure bump, the easiest way is to set ngrains to 0, profile to 1 and plot Sigma vs R, Pg vs R and dustfrac vs R in order to visualise your bump. Then, proceed by iteration.
@@ -35,9 +35,9 @@ If the program is not yet built, follow the instruction below:
 > - Once in the directory, build the code with: make
 > - Then, source file will be compiled in "source" folder and the program will be built
 > - The simulation can then be launch. To do this, go inside the "build" folder where the executable is: cd build
-> - First, the input file need to be created. In order to write it, write: ./eden setup
+> - First, the input file need to be created. In order to write it, write: ./pamdeas setup
 > - Then, modify the input file to make your own simulation. Don't forget to save your setup
-> - Finally, run Eden: ./eden  
+> - Finally, run Pamdeas: ./pamdeas (if you have multiple setup files, use ./pamdeas mysetup.in )  
 
 Once the simulation is finished, multiple output files are written into the output folder depending on the option:
 > - Initials_Conditions_*Rref*.txt summarises your setup
@@ -49,7 +49,7 @@ A Notebook is available to analyse your data easily. It is located in the python
 
 #### **HOW THE PROGRAM IS BUILT ?**
 
-The program contains multiple files in the source folder "source" and the header folder "header":
+The program contains multiple files in the source folder "source" and in the header folder "header":
 
 1. Source files (.CPP and .H)
 
@@ -90,7 +90,7 @@ The program contains multiple files in the source folder "source" and the header
 #### **References**
 Arnaud Vericel and Jean-François Gonzalez. Self-induced dust traps around snow lines in protoplanetary discs. MNRAS, 492(1) :210–222, February 2020. doi : 10.1093/mnras/stz3444.
 
-Anthony Garcia. Evolution of grain porosity during growth : a solution to planetary formation barriers? Phd thesis, Université de Lyon, September 2018. URL https://tel. archives-ouvertes.fr/tel-01977317.
+Anthony Garcia. Evolution of grain porosity during growth : a solution to planetary formation barriers? Phd thesis, Université de Lyon, September 2018. URL https://tel.archives-ouvertes.fr/tel-01977317.
 
 Anthony J. L. Garcia and Jean-François Gonzalez. Evolution of porous dust grains in protoplanetary discs - I. Growing grains. MNRAS, 493(2) :1788–1800, April 2020. doi : 10.1093/mnras/staa382.
 

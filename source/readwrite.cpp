@@ -323,7 +323,7 @@ void WriteInputFile()
     writerinput << " dustfrac0 = 0.01       >Dust to gas ratio at Rref" << endl;
     writerinput << "   p index = 1.         " << endl;
     writerinput << "   q index = 0.5        " << endl;
-    writerinput << "     alpha = 1.e-2      >Turbulence Shakura & Sunyaev" << endl;
+    writerinput << "     alpha = 1.e-3      >Turbulence Shakura & Sunyaev" << endl;
     writerinput << "       ibr = 0          >Back-reaction (0=no, 1=yes)" << endl;
     writerinput << "     ibump = 0          >Pressure bump (0=no, 1=yes)" << endl;
     writerinput << endl;
