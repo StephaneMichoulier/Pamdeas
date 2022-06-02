@@ -141,7 +141,7 @@ void Pamdeas(const string& input)
     double filfacbnc;       // Filling factor bounce limit (when ibounce is enabled)
     double maxsize;         // Limit to the max size [m]
     double gammaft;         // Force-to-torque efficiency
-    int disrupteq;          // Disruption equation (0=Tatsuuma2019, 1=Kimura2020)
+    int    disrupteq;       // Disruption equation (0=Tatsuuma2019, 1=Kimura2020)
     double weirmod;         // Weirbull modulus if disrupteq=1 (Kimura et al. 2020)
     int    ngrains;         // Number of grains
     vector <double> Rini;   // Initials radii
