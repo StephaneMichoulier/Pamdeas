@@ -26,6 +26,9 @@ double FilFacBounce(const double& sizei, const double& filfaci, const double& rh
                     const double& vrel, const double& vstick, const double& vyield, const double& ncoll,// ->
                     const double& Yd0, const double& Ydpower);
 
+double FilFacBouncebis(const double& sizei, const double& filfaci, const double& rhos,// ->
+                    const double& vrel, const double& vstick, const double& vyield, const double& ncoll,// ->
+                    const double& eroll,const double& a0);
 
 /* ------------------------ MASS MODEL------------------------ */
 

@@ -3,6 +3,7 @@
 
 #include "../header/constantandconversion.h"
 #include "../header/disc.h"
+#include "../header/dust.h"
 #include "../header/evol.h"
 
 using namespace std;
@@ -14,7 +15,7 @@ double KeplerDt(double& omegakfraction, const double omegak)
     return SecToYear(omegakfraction*2.*M_PI/omegak);
 }
 
-double AdaptativeDt(const double& time, const double& timeend, const int& massorsize, const double& vargrowth,// -> 
+double AdaptativeDt(const double& time, const double& timeend, const int& massorsize, const double& vargrowth,//-> 
                     const double& R, const double& dvargrowthdt, const double& dRdt)
 {
     double dt = 1.;
@@ -59,15 +60,15 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
 
 /* ------------------------ RADIAL DRIFT ------------------------*/
 
-double DRDt(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
-            const double& sigma0, const double& hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
-            const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
+double DRDt(const double& R, const double& Rin, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,//-> 
+            const double& sigma0, const double& hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,//->
+            const int& ismooth, const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
     double dfbr = 1.;   //dust fraction back reaction
     if (ibr == 1)   dfbr += dustfrac;
 
-    double vdrift = VDrift(R,mstar,p,q,rhog,cg,R0,sigma0,hg0,ibump,Rbump,bumpwidth,bumpheight);
-    double vvisc = VVisc(R,mstar,p,q,rhog,cg,R0,sigma0,hg0,alpha,ibump,Rbump,bumpwidth,bumpheight);
+    double vdrift = VDrift(R,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,ismooth,ibump,Rbump,bumpwidth,bumpheight);
+    double vvisc = VVisc(R,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,alpha,ismooth,ibump,Rbump,bumpwidth,bumpheight);
 
     vdrift *= st/(dfbr*dfbr+st*st);
     vvisc *= dfbr/(dfbr*dfbr+st*st);
@@ -78,9 +79,9 @@ double DRDt(const double& R, const double& mstar, double p, double q, const doub
 
 /* ------------------------  GROWTH-FRAG-BOUNCE dm/dt ------------------------ */
 
-double DmDt(const double& size, const double& rhog, const double& dustfrac, const double& vrel, const int& ifrag,// ->
-            const int& ieros, const double& veros, const int& ibounce, const double& vfrag, const double& vstick,// ->
-            const double& probabounce)
+double DmDt(const double& size, const double& rhog, const double rhos, const double& dustfrac, const double& vrel,//->
+            const int& ifrag, const int& ieros, const double& ejectasize, const int& ibounce, const double& vfrag,//-> 
+            const double& vstick, const double deltav, const double& probabounce)
 {
     double dmdt = 4.*M_PI*dustfrac*rhog*size*size*vrel;
 
@@ -129,16 +130,23 @@ double DmDt(const double& size, const double& rhog, const double& dustfrac, cons
             break;
         }
     }
+    if (ieros == 1)
+    {
+        dmdt -= rhog*pow(deltav,3)*size*GrainMass(ejectasize,1,rhos)/0.1/ejectasize;
+    }
     return dmdt;
 }
 
 
-/* ------------------------  GROWTH-FRAG-BOUNCE ds/dt ------------------------ */
+/* ------------------------  GROWTH-FRAG ds/dt ------------------------ */
 
-double DsDt(const double& filfac, const double& rhog, const double& rhos, const double& dustfrac,// ->
-            const double& vrel, const int& ifrag, const double& vfrag, const double& filfacpow)
+double DsDt(const double& size, const double& filfac, const double& rhog, const double& rhos,//-> 
+            const double& dustfrac,const double& vrel, const int& ifrag, const int& ieros,//->
+            const double& ejectasize, const double deltav, const double& vfrag, const double& filfacpow)
 {
-    double dsdt = dustfrac*rhog*vrel/(filfac*rhos*(1.+filfacpow/3.));
+    double dsdt = dustfrac*rhog*vrel/(filfac*rhos);
+    if (filfac != 1) dsdt /= 1.+filfacpow/3.;
+    
 
     if (vrel >= vfrag && ifrag > 0) switch (ifrag)
     {
@@ -153,6 +161,10 @@ double DsDt(const double& filfac, const double& rhog, const double& rhos, const 
             break;
         }
     }
+    if (ieros == 1)
+    {
+        dsdt -= rhog*pow(deltav,3)*ejectasize*ejectasize/3./size/0.1;
+    }
     return dsdt;
 }
 
@@ -165,7 +177,7 @@ double Tdrift(const double& R, const double& drdt)
 double Tgrowth(const double& var, const double& dvardt)
 {   return abs(var/dvardt);  }
 
-double Tcoll(const double& size, const double& rhog, const double& filfac, const double& rhos,// ->
+double Tcoll(const double& size, const double& rhog, const double& filfac, const double& rhos,//->
              const double& dustfrac, const double& vrel)
 {
     return rhos*filfac*size/(3.*dustfrac*rhog*vrel);

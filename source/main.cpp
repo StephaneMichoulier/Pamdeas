@@ -114,6 +114,7 @@ void Pamdeas(const string& input)
     double bumpwidth;       // half width at half maximum (when ibump is enabled) [AU]
     double bumpheight;      // fraction of surface density
     double sizeini;         // Initial size [m]
+    double ejectasize;          // Size of ejecta [m]
     double a0;              // Monomer size [m]
     double rhos;            // Dust monomer density [kg/m³]
     double youngmod0;       // Young Modulus of grains [PA]
@@ -122,6 +123,7 @@ void Pamdeas(const string& input)
     double Ydpower;         // Dynamic compression resistance power law
     int    isetdens;        // Set density profile option
     int    isettemp;        // Set temperature profile option
+    int    ismooth;         // Smooth inner disc
     int    iporosity;       // Porous or compact grain option
     int    idrift;          // Drift option
     int    ibounce;         // Bounce option
@@ -135,7 +137,6 @@ void Pamdeas(const string& input)
     double vfragi;          // Initial fragmentation threshold (when ifrag is enabled) [m/s]
     double vfragin;         // Inward fragmentation threshold (when ifrag & isnow is enabled) [m/s]
     double vfragout;        // Outward fragmentation threshold (when ifrag & isnow is enabled) [m/s]
-    double verosi;          // Initial erosion threshold (when ieros is enabled) [vfrag]
     int    constvfrag;      // Constant vfrag option (when fragmentation is enabled)
     double filfaclim;       // Filling factor dynamic compression resistance limit (when ifrag is enabled)
     double filfacbnc;       // Filling factor bounce limit (when ibounce is enabled)
@@ -159,7 +160,6 @@ void Pamdeas(const string& input)
     double dustfrac;        // dust to gas ratio at R
     double vrel;            // Relative velocity between grains [m/s]
     double vfrag;           // Fragmentation threshold [m/s]
-    double veros;           // Initial erosion threshold [m/s]
     double vstick;          // Sticking velocity [m/s]
     double probabounce;     // Probability for a grain to bounce
     double ncoll;           // number of collision per dt [s⁻¹]
@@ -202,8 +202,8 @@ void Pamdeas(const string& input)
 
     cout << "Reading input file" << endl;
 
-    ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,Rbump,
-             dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,verosi,icomp,maxsize,isnow,
+    ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,Rbump,
+             dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,ejectasize,icomp,maxsize,isnow,
              Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,gammaft,disrupteq,weirmod,ngrains,Rini,istate,input);
 
     cout << "Input file read\n" << endl;
@@ -214,8 +214,8 @@ void Pamdeas(const string& input)
 
     /*------------------------ INITIALIZATION OF PARAMETERS AT R0 ------------------------*/
 
-    if (isetdens == 0)  sigma0 = Sigma0(Rin,Rout,R0,mdisc,p,ibump,Rbump,bumpwidth,bumpheight);
-    else                mdisc = Mdisc(Rin,Rout,R0,sigma0,p,ibump,Rbump,bumpwidth,bumpheight);
+    if (isetdens == 0)  sigma0 = Sigma0(Rin,Rout,R0,mdisc,p,ismooth,ibump,Rbump,bumpwidth,bumpheight);
+    else                mdisc = Mdisc(Rin,Rout,R0,sigma0,p,ismooth,ibump,Rbump,bumpwidth,bumpheight);
 
     if (isettemp == 0)  
     {   
@@ -242,7 +242,7 @@ void Pamdeas(const string& input)
         for (Rprofile = Rin; Rprofile <= Rout; Rprofile += 0.01)
         {   hg = Hg(Rprofile,q,R0,hg0);
             cg = Cg(Rprofile,mstar,hg);
-            sigma = Sigma(Rprofile,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
+            sigma = Sigma(Rprofile,Rin,p,R0,sigma0,ismooth,ibump,Rbump,bumpwidth,bumpheight);
             dustfrac = DustFrac(dustfrac0,dustfracmax,Rprofile,Rbump,bumpwidth,ibump);
             rhog = Rhog(sigma,hg);
             WriteProfileFile(writebump,Rprofile,hg,cg ,sigma,rhog,dustfrac,Pg(rhog,cg),T(cg));
@@ -287,7 +287,7 @@ void Pamdeas(const string& input)
 
         // Compute gas and dust quantities at t=0
         hg = Hg(Ri,q,R0,hg0);
-        sigma = Sigma(Ri,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
+        sigma = Sigma(Ri,Rin,p,R0,sigma0,ismooth,ibump,Rbump,bumpwidth,bumpheight);
         dustfrac = DustFrac(dustfrac0,dustfracmax,Ri,Rbump,bumpwidth,ibump);
         cg = Cg(Ri,mstar,hg);
         rhog = Rhog(sigma,hg);
@@ -303,7 +303,7 @@ void Pamdeas(const string& input)
         massi = GrainMass(sizei,filfaci,rhos);
         massf = GrainMass(sizei,filfaci,rhos);
         st = St(Ri,mstar,rhog,cg,sizei,filfaci,rhos,0.,dragreg); //we assume deltav very small for small grain strongly coupled with gas in the epstein regime
-        deltav = DeltaV(Ri,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
+        deltav = DeltaV(Ri,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ismooth,ibump,idrift,Rbump,bumpwidth,bumpheight);
         vrel = Vrel(cg,st,alpha,deltav);
         //vfrag = vfragi; // need to be initialized for erosion even if ifrag=0
 
@@ -331,10 +331,10 @@ void Pamdeas(const string& input)
 
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
-                    {   drdt = DRDt(Ri,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,Rbump,bumpwidth,bumpheight); }
+                    {   drdt = DRDt(Ri,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ismooth,ibump,Rbump,bumpwidth,bumpheight); }
 
                     // Compute dm/dt
-                    dmdt = DmDt(sizef,rhog,dustfrac,vrel,ifrag,ieros,veros,ibounce,vfrag,vstick,probabounce);
+                    dmdt = DmDt(sizef,rhog,rhos,dustfrac,vrel,ifrag,ieros,ejectasize,ibounce,vfrag,vstick,deltav,probabounce);
 
                     // Compute new dt and new time t
                     switch (stepmethod)
@@ -404,12 +404,12 @@ void Pamdeas(const string& input)
 
                     // Update hydro quantities
                     hg = Hg(Rf,q,R0,hg0);
-                    sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
+                    sigma = Sigma(Rf,Rin,p,R0,sigma0,ismooth,ibump,Rbump,bumpwidth,bumpheight);
                     dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
                     cg = Cg(Rf,mstar,hg);
                     rhog = Rhog(sigma,hg);
                     st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,dragreg);
-                    deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
+                    deltav = DeltaV(Rf,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ismooth,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     vrel = Vrel(cg,st,alpha,deltav);
 
                     // Write in output file quantities at time t
@@ -434,10 +434,10 @@ void Pamdeas(const string& input)
 
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
-                    {   drdt = DRDt(Ri,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,Rbump,bumpwidth,bumpheight);  }
+                    {   drdt = DRDt(Ri,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ismooth,ibump,Rbump,bumpwidth,bumpheight);  }
 
                     // Compute ds/dt
-                    dsdt = DsDt(filfaci,rhog,rhos,dustfrac,vrel,ifrag,vfrag,filfacpow);
+                    dsdt = DsDt(sizef,filfaci,rhog,rhos,dustfrac,vrel,ifrag,ieros,ejectasize,deltav,vfrag,filfacpow);
 
                     // Compute new dt and new time t
                     switch (stepmethod)
@@ -497,12 +497,12 @@ void Pamdeas(const string& input)
 
                     // Update hydro quantities
                     hg = Hg(Rf,q,R0,hg0);
-                    sigma = Sigma(Rf,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight);
+                    sigma = Sigma(Rf,Rin,p,R0,sigma0,ismooth,ibump,Rbump,bumpwidth,bumpheight);
                     dustfrac = DustFrac(dustfrac0,dustfracmax,Rf,Rbump,bumpwidth,ibump);
                     cg = Cg(Rf,mstar,hg);
                     rhog = Rhog(sigma,hg);
                     st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,dragreg);
-                    deltav = DeltaV(Rf,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ibump,idrift,Rbump,bumpwidth,bumpheight);
+                    deltav = DeltaV(Rf,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ismooth,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     vrel = Vrel(cg,st,alpha,deltav);
 
                     // Write in output file quantities at time t, 
@@ -528,8 +528,8 @@ void Pamdeas(const string& input)
     Walltime(wt);
 
     // Write initials conditions
-    WriteInitFile(massorsize,tend,stepmethod,step,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,hg0,T0,dustfrac0,rhog0,cg0,p,q,alpha,ibr,
-                  ibump,Rbump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,verosi,icomp,gammaft,disrupteq,isnow,
+    WriteInitFile(massorsize,tend,stepmethod,step,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0,T0,dustfrac0,rhog0,cg0,p,q,alpha,ibr,
+                  ibump,Rbump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,ejectasize,icomp,gammaft,disrupteq,isnow,
                   vfragin,vfragout,Rsnow,ngrains,Rini,istate,wt);
 
     EndAnim();

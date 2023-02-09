@@ -9,8 +9,8 @@ using namespace std;
 
 /* ------------------------- DISC QUANTITIES ------------------------- */
 
-double Sigma0(const double& Rin, const double& Rout, const double& R0, const double& mdisc, const double& p,
-              const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
+double Sigma0(const double& Rin, const double& Rout, const double& R0, const double& mdisc, const double& p,//->
+              const int& ismooth, const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
     double extractsigma0;
 
@@ -18,6 +18,14 @@ double Sigma0(const double& Rin, const double& Rout, const double& R0, const dou
     {   extractsigma0 = AUtoMeter(R0)*AUtoMeter(R0)/(2.-p)*(pow(Rout/R0,2.-p)-pow(Rin/R0,2.-p));  }
     else
     {   extractsigma0 = AUtoMeter(R0)*AUtoMeter(R0)*log(Rout/Rin);    }
+
+    if (ismooth == 1)
+    {
+        if (p != 1.5)
+        {   extractsigma0 -= sqrt(Rin/R0)*AUtoMeter(R0)*AUtoMeter(R0)/(1.5-p)*(pow(Rout/R0,1.5-p)-pow(Rin/R0,1.5-p));  }
+        else
+        {   extractsigma0 -= sqrt(Rin/R0)*AUtoMeter(R0)*AUtoMeter(R0)*log(Rout/Rin);    }
+    } 
 
     if (ibump == 1)
     {
@@ -31,10 +39,13 @@ double Sigma0(const double& Rin, const double& Rout, const double& R0, const dou
     return (mdisc/2./M_PI)/extractsigma0;
 }
 
-double Sigma(const double& R, const double& p, const double& R0, const double& sigma0,
-             const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
+double Sigma(const double& R, const double& Rin, const double& p, const double& R0, const double& sigma0,//->
+             const int& ismooth, const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
     double sigma = sigma0*pow(R/R0,-p);
+
+    if (ismooth == 1)
+    { sigma *= 1-sqrt(Rin/R);   }
 
     if (ibump == 1)
     {   sigma += bumpheight*sigma0*exp(-(R-Rbump)*(R-Rbump)/(2.*bumpwidth*bumpwidth));    }
@@ -42,8 +53,8 @@ double Sigma(const double& R, const double& p, const double& R0, const double& s
     return sigma;
 }
 
-double Mdisc(const double& Rin, const double& Rout, const double& R0, const double& sigma0, const double& p,
-             const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
+double Mdisc(const double& Rin, const double& Rout, const double& R0, const double& sigma0, const double& p,//->
+             const int& ismooth, const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
     double extractmdisc;
 
@@ -51,6 +62,14 @@ double Mdisc(const double& Rin, const double& Rout, const double& R0, const doub
     {   extractmdisc = AUtoMeter(R0)*AUtoMeter(R0)/(2.-p)*(pow(Rout/R0,2.-p)-pow(Rin/R0,2.-p));  }
     else
     {   extractmdisc = AUtoMeter(R0)*AUtoMeter(R0)*log(Rout/Rin);    }
+
+    if (ismooth == 1)
+    {
+        if (p != 1.5)
+        {   extractmdisc -= sqrt(Rin/R0)*AUtoMeter(R0)*AUtoMeter(R0)/(1.5-p)*(pow(Rout/R0,1.5-p)-pow(Rin/R0,1.5-p));  }
+        else
+        {   extractmdisc -= sqrt(Rin/R0)*AUtoMeter(R0)*AUtoMeter(R0)*log(Rout/Rin);    }
+    }
 
     if (ibump == 1)
     {
@@ -100,21 +119,21 @@ double T(const double& R, const double& mstar, const double& q, const double& R0
 double Rhog(const double& sigma, const double& hg)
 {   return sigma/(AUtoMeter(hg)*M_SQRT2*M_SQRT_PI);    }
 
-double Rhog(const double& R, const double& p, const double& q, const double& sigma0, const double& R0,//->
-            const double& hg0,const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
+double Rhog(const double& R, const double& Rin, const double& p, const double& q, const double& sigma0, const double& R0,//->
+            const double& hg0, const int& ismooth, const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
-    return Sigma(R,p,R0,sigma0,ibump,Rbump,bumpwidth,bumpheight)/(AUtoMeter(Hg(R,q,R0,hg0))*M_SQRT2*M_SQRT_PI);
+    return Sigma(R,Rin,p,R0,sigma0,ismooth,ibump,Rbump,bumpwidth,bumpheight)/(AUtoMeter(Hg(R,q,R0,hg0))*M_SQRT2*M_SQRT_PI);
 }
 
 double Pg(const double& rhog, const double& cg)
 {   return rhog*cg*cg;    }
 
-double Pg(const double& R, const double& mstar, const double& p, const double& q,
-          const double& sigma0, const double& R0, const double& hg0,const int& ibump, const double& Rbump,//->
-          const double& bumpwidth, const double& bumpheight)
+double Pg(const double& R, const double& Rin, const double& mstar, const double& p, const double& q,//->
+          const double& sigma0, const double& R0, const double& hg0, const int& ismooth, const int& ibump,//->
+          const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
     double cg = Cg(R,mstar,q,R0,hg0);
-    return Rhog(R,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight)*cg*cg;
+    return Rhog(R,Rin,p,q,sigma0,R0,hg0,ismooth,ibump,Rbump,bumpwidth,bumpheight)*cg*cg;
 }
 
 double DustFrac(const double& dustfrac0, const double& dustfracmax, const double& R, const double& Rbump,
@@ -148,22 +167,23 @@ double TransRegEpSt(const double& rhog, const double& cg, const double& size)
 
 /* ------------------------  VELOCITIES ------------------------*/
 
-double VDrift(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
-              const double& sigma0, const double& hg0, const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight) 
+double VDrift(const double& R, const double& Rin, const double& mstar, double p, double q, const double& rhog,//-> 
+              const double& cg, const double& R0, const double& sigma0, const double& hg0, const int& ismooth,//->
+              const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight) 
 {
-    double vdrift = Pg(R+deltaR,mstar,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight);
-    vdrift -= Pg(R-deltaR,mstar,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight);
+    double vdrift = Pg(R+deltaR,Rin,mstar,p,q,sigma0,R0,hg0,ismooth,ibump,Rbump,bumpwidth,bumpheight);
+    vdrift -= Pg(R-deltaR,Rin,mstar,p,q,sigma0,R0,hg0,ismooth,ibump,Rbump,bumpwidth,bumpheight);
     vdrift /= 2.*AUtoMeter(deltaR);
     
     return vdrift*cg*cg*AUtoMeter(R)/Pg(rhog,cg)/Vk(R,mstar);
 }
 
-double VVisc(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
-              const double& sigma0, const double& hg0, const double& alpha, const int& ibump, const double& Rbump,// ->
-              const double& bumpwidth, const double& bumpheight) 
+double VVisc(const double& R, const double& Rin, const double& mstar, double p, double q, const double& rhog,//->
+             const double& cg, const double& R0, const double& sigma0, const double& hg0, const double& alpha,//->
+             const int& ismooth, const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight) 
 {
-    double vvisc = NuTurbGas(R+deltaR,mstar,q,R0,hg0,alpha)*AUtoMeter(R+deltaR)*Rhog(R+deltaR,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R+deltaR,mstar);
-    vvisc -= NuTurbGas(R-deltaR,mstar,q,R0,hg0,alpha)*AUtoMeter(R-deltaR)*Rhog(R-deltaR,p,q,sigma0,R0,hg0,ibump,Rbump,bumpwidth,bumpheight)*Vk(R-deltaR,mstar);
+    double vvisc = NuTurbGas(R+deltaR,mstar,q,R0,hg0,alpha)*AUtoMeter(R+deltaR)*Rhog(R+deltaR,Rin,p,q,sigma0,R0,hg0,ismooth,ibump,Rbump,bumpwidth,bumpheight)*Vk(R+deltaR,mstar);
+    vvisc -= NuTurbGas(R-deltaR,mstar,q,R0,hg0,alpha)*AUtoMeter(R-deltaR)*Rhog(R-deltaR,Rin,p,q,sigma0,R0,hg0,ismooth,ibump,Rbump,bumpwidth,bumpheight)*Vk(R-deltaR,mstar);
     vvisc /= 2.*AUtoMeter(deltaR);
 
     return vvisc*3./(rhog*AUtoMeter(R)*Vk(R,mstar));

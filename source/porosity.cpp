@@ -25,11 +25,11 @@ double ProbaBounce(const double& filfac, const double& filfacbnc, const double& 
 {
     if (filfac >= filfacbnc)
     {
-        if (vrel <= vstick) 
+        if (vrel < vstick) 
         {   return 1.;  }
         else
         {
-            if (vrel <= vend)
+            if (vrel < vend)
             {   return (log(vrel)-log(vend))/(log(vstick)-log(vend));   }
             else
             {   return 0.;  }
@@ -60,7 +60,30 @@ double FilFacBounce(const double& sizei, const double& filfaci, const double& rh
     double varvolbounce = VarVolumeBounce(filfaci,filfaclim,coeffrest,ekin,volume,Yd0,Ydpower);
     double filfacbounce = filfaci*pow(1./(1.-0.5*(varvolbounce/volume)),ncoll);
 
-    if (vrel <= vyield)
+    if (vrel < vyield)
+    {   return filfaci; }
+    else
+    {
+        if (filfacbounce <= 1.)
+        {   return filfacbounce;    }
+        else
+        {   return 1.;  }
+    }
+}
+
+double FilFacBouncebis(const double& sizei, const double& filfaci, const double& rhos,// ->
+                    const double& vrel, const double& vstick, const double& vyield, const double& ncoll,// ->
+                    const double& eroll,const double& a0)
+{
+    double coeffrest = CoeffRest(vrel,vstick,vyield);
+    double volume = GrainVolumeSize(sizei,filfaci,rhos);
+    double ekin = Ekin(sizei,filfaci,rhos,vrel);
+    double varvolbounce  = (1.-coeffrest*coeffrest)*ekin/(eroll*pow(filfaci/(maxpacking-filfaci)/a0,3));
+    if (varvolbounce >= volume)   
+    {   varvolbounce = volume;    }
+    double filfacbounce = filfaci*pow(1./(1.-0.5*(varvolbounce/volume)),ncoll);
+
+    if (vrel < vyield)
     {   return filfaci; }
     else
     {
@@ -254,50 +277,7 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
                     break;
                 }
                 else
-                {   //In developement
-
-                    //compaction model during fragmentation
-                    /*double vrelvf = vrel/vfrag;
-                    double vrelvf2 = vrel*vrel/vfrag/vfrag;
-                    double xi = Ekin(massi,vrel)/(0.6*pow(filfaci,1.8)*0.1/a0);     // with Ekin and tensile strenght
-                    //double xi = 0.5*Ekin(massi,vrel)/Yd(filfaci,0,Yd0,Ydpower);   // with Ekin and Dynamical compression resistance
-                    //double xi = 1+pow(vrelvf,3.)/(e^(vrelvf)-1); 
-                    xi /= GrainVolumeMass(massi,filfaci,rhos);
-                        
-                    if (xi >= 1.)   
-                    {   xi = 1.;    }
-
-                    //xi = (filfacmax - filfaci)/(1.-filfaci);                        // empicrical law based on filfac
-                    xi = -1+pow(vrelvf,1.3)/(exp(vrelvf));                           // empirical law based on vrelvf
-                    //xi = 0.74 - (0.74-filfaci)/(exp(vrelvf)+1);
-                    //xi = -0.75+  1/(vrelvf*(1+filfaci)*(1+filfaci))*exp(-pow(log(vrelvf),2) );
-
-                    if (massf != massi)
-                    {   
-                        filfacf = filfaci * pow( massf/massi, -log(1.+xi)/log(1.+vrelvf2) ); }
-                    else
-                    {   
-                        filfacf = filfaci * pow(1.+ xi, ncoll/1.4);   }
-
-                    cout << endl <<
-                    "Ekin/Smax = " << Ekin(massi,vrel)/(0.6*pow(filfaci,1.8)*0.1/a0)/GrainVolumeMass(massi,filfaci,rhos) << endl << 
-                    "Ekin/comp = " << 0.5*Ekin(massi,vrel)/Yd(filfaci,0,Yd0,Ydpower)/GrainVolumeMass(massi,filfaci,rhos) << endl <<
-                    "xi = " << xi << endl <<
-                    endl;*/
-
-                    /*
-                    if  (massf != massi)
-                    {   */
-                        //filfacf = filfaci * pow( massf/massi, -log(1+xi)/log(1+vrelvf2) );
-                     /*}
-                    else
-                    {   */
-                       //filfacf = filfaci * pow( 1+vrelvf2, ncoll*log(1+xi)/log(1+vrelvf2));
-                    /*}  */
-                    //filfacf = filfaci * pow(1.+ xi, ncoll/1.4);
-
-                    // fragmentation at constant filling factor
-
+                { 
                     if (icomp == 1)
                     {   
                         switch (model)
@@ -352,16 +332,10 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
                                 double Ebreak = 1.5*48./302.46*eroll;
                                 //double Ebreak = 6*272.21/302.46*eroll;
                                 double Ecomp = Ekin(massi,vrel) - (2.*massi-massf)*Ebreak/m0;
-                                //double Ecomp = Ekin(massi,vrel) - (massi/2.-massf)*Ebreak/m0;
 
                                 if (Ecomp<0) Ecomp=0;
 
                                 double deltaVol = (Ecomp/(eroll*pow(filfaci/(maxpacking-filfaci)/a0,3)));
-/*
-                                cout <<endl<< "Ekin = "<<Ekin(massi,vrel) << " Ebreak = "<< (massi/m0 - massf/m0)*Ebreak << endl 
-                                <<"comp res = " << eroll*pow(filfaci/(maxpacking-filfaci)/a0,3) << endl
-                                << " DV = "<< deltaVol << " Vi = " << Vi << endl;
-*/
                                 if (deltaVol > Vi)  deltaVol = Vi;
                                    
 
@@ -379,22 +353,35 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
             {
                 if ((vrel < vfrag && ifrag > 0) || (ifrag == 0))
                 {
-                    if (vrel <= vstick)
+                    if (vrel < vstick)
                     {
                         filfacf = filfacgr;
                         break;
                     }
                     else
-                    {
-                        double filfacbounce = FilFacBounce(sizei,filfaci,rhos,filfaclim,vrel,vstick,Vyield(vstick),ncoll,Yd0,Ydpower);
+                    {   
+                        int bouncemod = 1;
+                        double filfacbounce = 0;
+
+                        if (bouncemod == 0)
+                        {
+                            filfacbounce = FilFacBounce(sizei,filfaci,rhos,filfaclim,vrel,vstick,Vyield(vstick),ncoll,Yd0,Ydpower);
+                        }
+                        else
+                        {
+                            filfacbounce = FilFacBouncebis(sizei,filfaci,rhos,vrel,vstick,Vyield(vstick),ncoll,eroll,a0);
+                        }
 
                         if (vrel < Vend(vstick))
-                        {
+                        {   
                             if (filfacgr < filfacmincollgasgrav)
-                            {   filfacf = filfacmincollgasgrav;   }
+                            {   
+                                filfacf = filfacmincollgasgrav;   
+                            }
                             else
-                            {   filfacf = filfacgr;   }
-
+                            {   
+                                filfacf = filfacgr;  
+                            }
                             filfacf = filfacf*probabounce+(1.-probabounce)*filfacbounce;
                             break;
                         }
@@ -458,10 +445,16 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
                             case (5): // Garcia + mod compressive strenght kataoka
                             {    
                                 double Vi = GrainVolumeSize(sizei,filfaci,rhos);
-                                double deltaVol = abs(Ekin(massi,vrel)/(eroll*pow(filfaci/(maxpacking-filfaci)/a0,3)) );
+                                double Ebreak = 1.5*48./302.46*eroll;
+                                double Ecomp = Ekin(massi,vrel) - (2.*massi-massf)*Ebreak/m0;
+
+                                if (Ecomp<0) Ecomp=0;
+
+                                double deltaVol = (Ecomp/(eroll*pow(filfaci/(maxpacking-filfaci)/a0,3)));
                                 if (deltaVol > Vi)  deltaVol = Vi;
-                                filfacf = filfaci*pow(1./(1.-0.5*(deltaVol/Vi)),ncoll);
-                                cout << "ratio = " << filfacf/filfaci << endl;
+                                   
+
+                                filfacf = filfaci*pow( 1./ (1. - 0.5*exp(1-pow(vrel/vfrag,2))*(deltaVol/Vi) ),ncoll);
                                 break;
                             }
                         }

@@ -31,7 +31,7 @@ double GrainVolumeSize(const double& size, const double& filfac, const double& r
 
 /* ------------------------- AERODYNAMICAL PARAMETERS ------------------------- */
 
-double St(const double& R, const double& mstar, const double& rhog, const double& cg, const double& size,// ->
+double St(const double& R, const double& mstar, const double& rhog, const double& cg, const double& size,//->
           const double& filfac, const double& rhos, const double& deltav, int& dragreg)
 {
     double st;
@@ -63,15 +63,15 @@ double St(const double& R, const double& mstar, const double& rhog, const double
     return st*Omegak(R,mstar);
 }
 
-double DeltaV(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
-              const double& sigma0, const double& hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
-              const int& ibump, const int& idrift, const double& Rbump, const double& bumpwidth, const double& bumpheight)
+double DeltaV(const double& R, const double& Rin, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,//-> 
+              const double& sigma0, const double& hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,//->
+              const int& ismooth, const int& ibump, const int& idrift, const double& Rbump, const double& bumpwidth, const double& bumpheight)
 {
     double dfbr = 1.;
     if (ibr == 1)   dfbr += dustfrac; 
 
-    double vdrift = VDrift(R,mstar,p,q,rhog,cg,R0,sigma0,hg0,ibump,Rbump,bumpwidth,bumpheight);
-    double vvisc = VVisc(R,mstar,p,q,rhog,cg,R0,sigma0,hg0,alpha,ibump,Rbump,bumpwidth,bumpheight);
+    double vdrift = VDrift(R,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,ismooth,ibump,Rbump,bumpwidth,bumpheight);
+    double vvisc = VVisc(R,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,alpha,ismooth,ibump,Rbump,bumpwidth,bumpheight);
     double deltavradial = 0.;
 
     double deltavorbital = -0.5*st*(st*vdrift + dfbr*vvisc)/(dfbr*dfbr+st*st);
@@ -109,7 +109,7 @@ double YoungMod(const double& filfac, const double& youngmod0)
     if (filfac >= 0.4)
     {   return youngmod0*pow(filfac,2.41);    }
     else
-    {   return youngmod0*pow(0.4,2.41);    }
+    {   return youngmod0*pow(0.4,2.41);    }    //give a factor 2 to Vstick
 }
 
 double Eroll(const double& a0, const double& esurf, const double& youngmod0)
@@ -129,6 +129,7 @@ double Vstick(const double& size, const double& filfac, const double& rhos, cons
 {
     double mass = GrainMass(size,filfac,rhos);
     return 4.23*pow(pow(esurf,5.)*pow(size,4.)/(mass*mass*mass*YoungMod(filfac,youngmod0)*YoungMod(filfac,youngmod0)),1./6.);
+    //return 8.76*pow(pow(esurf,5.)*pow(size,4.)/(mass*mass*mass*youngmod0*youngmod0),1./6.);     //we use 8.76 and not 4.23 to use youngmod0 instead of Youngmod
 }
 
 double Vyield(const double& size, const double& filfac, const double& rhos, const double& esurf, const double& youngmod0)
@@ -182,20 +183,10 @@ double Vfrag(const double& R, const int& isnow, const double& Rsnow, const doubl
 
 double CoeffRest(const double& vrel, const double& vstick, const double& vyield)
 {
-    if (vrel <= vstick)
-    {   return 0.;    }
-    else
-    {
-        if (vrel <= vyield)
-        {   return sqrt(1.-(vstick*vstick/(vrel*vrel)));  }
-        else
-        {
-            double vyieldonvrel=vyield/vrel;
-            double vstickonvrel=vstick/vrel;
-            return sqrt(1.2*sqrt(3.)*(1.-(vyieldonvrel*vyieldonvrel/6.))*
-                   sqrt(1./(1.+2.*sqrt((1.2/(vyieldonvrel*vyieldonvrel))-0.2)))-(vstickonvrel*vstickonvrel));
-        }
-    }
+     double vyieldonvrel=vyield/vrel;
+     double vstickonvrel=vstick/vrel;
+     return sqrt(1.2*sqrt(3.)*(1.-(vyieldonvrel*vyieldonvrel/6.))*
+            sqrt(1./(1.+2.*sqrt((1.2/(vyieldonvrel*vyieldonvrel))-0.2)))-(vstickonvrel*vstickonvrel));
 }
 
 

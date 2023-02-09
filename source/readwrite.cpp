@@ -14,11 +14,11 @@ using namespace std;
 
 /* ------------------------ READING ------------------------*/
 
-void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, int& isetdens, int& isettemp,// ->
+void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, int& isetdens, int& isettemp, int& ismooth,// ->
               double& Rin, double& Rout, double& R0, double& mstar, double& mdisc, double& sigma0, double& h0R0, double& T0,// ->
               double& dustfrac0, double& p, double& q, double& alpha, int& ibr, int& ibump, double& Rbump, double& dustfracmax,// ->
               double& bumpwidth, double& bumpheight, int& iporosity, double& sizeini, double& a0, double& rhos, int& idrift,// ->
-              int& ibounce, int& idisrupt, int& ifrag, double& vfragi, int& ieros, double& verosi, int& icomp, double& maxsize,// ->
+              int& ibounce, int& idisrupt, int& ifrag, double& vfragi, int& ieros, double& ejectasize, int& icomp, double& maxsize,// ->
               int& isnow, double& Rsnow, double& vfragin, double& vfragout, double& youngmod0, double& esurf, double& Yd0,// ->
               double& Ydpower, int& constvfrag, double& filfaclim, double& filfacbnc, double& gammaft, int& disrupteq, double& weirmod,// ->
               int& ngrains, vector <double>& Rini, vector <int>& istate, const string& input)
@@ -38,8 +38,9 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
 
     ReadVoid(Reader, 7);     CheckType(Reader, isetdens, "isetdens");
     ReadVoid(Reader, 8);     CheckType(Reader, isettemp, "isettemp");
+    ReadVoid(Reader, 8);     CheckType(Reader, ismooth, "ismooth");
 
-    ReadVoid(Reader,11);     CheckType(Reader, Rin, "Rin");
+    ReadVoid(Reader,13);     CheckType(Reader, Rin, "Rin");
     ReadVoid(Reader, 5);     CheckType(Reader, Rout, "Rout");
     ReadVoid(Reader, 5);     CheckType(Reader, R0, "R0");
     ReadVoid(Reader, 5);     CheckType(Reader, mstar, "mstar");
@@ -70,8 +71,8 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader, 6);     CheckType(Reader, ifrag, "ifrag");
     ReadVoid(Reader, 6);     CheckType(Reader, vfragi, "vfragi");
     ReadVoid(Reader, 7);     CheckType(Reader, ieros, "ieros");
-    ReadVoid(Reader, 7);     CheckType(Reader, verosi, "verosi");
-    ReadVoid(Reader, 8);     CheckType(Reader, icomp, "icomp");
+    ReadVoid(Reader, 5);     CheckType(Reader, ejectasize,"ejectasize");
+    ReadVoid(Reader, 9);     CheckType(Reader, icomp, "icomp");
     ReadVoid(Reader, 7);     CheckType(Reader, maxsize, "maxsize");
 
     ReadVoid(Reader, 24);    CheckType(Reader, isnow, "isnow");
@@ -104,8 +105,8 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
         }
     }
 
-    CheckData(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,Rin,Rout,R0,mstar,mdisc,sigma0,h0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,
-              Rbump,dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,verosi,icomp,maxsize,
+    CheckData(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,h0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,
+              Rbump,dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,ejectasize,icomp,maxsize,
               isnow,Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,gammaft,disrupteq,weirmod,ngrains,Rini,istate);
     
     // Initialize some parameters depending on option
@@ -121,12 +122,12 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
 }
 
 void CheckData(const int& massorsize, const double& tend, const int& stepmethod, const double& step, const int& profile,// ->
-               const int& isetdens, const int& isettemp, const double& Rin, const double& Rout, const double& R0, const double& mstar,// ->
-               const double& mdisc, const double& sigma0, const double& h0R0, const double& T0, const double& dustfrac0,// ->
+               const int& isetdens, const int& isettemp, const int& ismooth, const double& Rin, const double& Rout, const double& R0,// ->
+               const double& mstar, const double& mdisc, const double& sigma0, const double& h0R0, const double& T0, const double& dustfrac0,// ->
                const double& p, const double& q, const double& alpha, const int& ibr, const int& ibump, const double& Rbump,// ->
                const double& dustfracmax, const double& bumpwidth, const double& bumpheight, const int& iporosity, const double& sizeini,// ->
                const double& a0, const double& rhos, const int& idrift, const int& ibounce, const int& idisrupt, const int& ifrag,// ->
-               const double& vfragi, const int& ieros, const double& verosi, const int& icomp, const double& maxsize, const int& isnow,// ->
+               const double& vfragi, const int& ieros, const double& ejectasize, const int& icomp, const double& maxsize, const int& isnow,// ->
                const double& Rsnow, const double& vfragin, const double& vfragout, const double& youngmod0, const double& esurf,// ->
                const double& Yd0, const double& Ydpower, const int& constvfrag, const double& filfaclim, const double& filfacbnc,// ->
                const double& gammaft, const int& disrupteq, const double& weirmod, const int& ngrains, const vector <double>& Rini,// ->
@@ -145,8 +146,9 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
     }
 
     if (profile != 0 && profile != 1)           ErrorValue(error, "Error", "profile != 0 & != 1");
-    if (isetdens!= 0 && isetdens != 1)          ErrorValue(error, "Error", "isetdens!= 0 & != 1");
-    if (isettemp!= 0 && isettemp != 1)          ErrorValue(error, "Error", "isettemp!= 0 & != 1");
+    if (isetdens != 0 && isetdens != 1)         ErrorValue(error, "Error", "isetdens != 0 & != 1");
+    if (isettemp != 0 && isettemp != 1)         ErrorValue(error, "Error", "isettemp != 0 & != 1");
+    if (ismooth != 0 && ismooth != 1)           ErrorValue(error, "Error", "ismooth !=0 & != 1");
 
     if (Rin <= 0)                               ErrorValue(error, "Error", "Rin <= 0");
     if (Rout <= 0)                              ErrorValue(error, "Error", "Rout <= 0");
@@ -204,20 +206,22 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 
     if (idrift != 0 && idrift != 1)             ErrorValue(error, "Error", "idrift != 0 & != 1");
     if (ibounce != 0 && ibounce != 1)           ErrorValue(error, "Error", "ibounce != 0 & != 1");
+    if (ibounce == 1 && iporosity == 0)         ErrorValue(error, "Error", "ibounce == 1 & iporosity == 0 not compatible");
     if (idisrupt != 0 && idisrupt != 1)         ErrorValue(error, "Error", "idisrupt != 0 & != 1");
+    if (idisrupt == 1 && iporosity == 0)        ErrorValue(error, "Error", "idisrupt == 1 & iporosity == 0 not compatible");
     if (ifrag != 0 && ifrag != 1 && ifrag != 2) ErrorValue(error, "Error", "ifrag != 0 & != 1 & != 2");
     if (vfragi < 0 && isnow == 0)               ErrorValue(error, "Error", "vfragi < 0");
 
     if (ieros != 0 && ieros != 1)               ErrorValue(error, "Error", "ieros != 0 & != 1");
-    if (verosi < 0 || verosi > 1)
-    {
-        if(verosi > 1)                          ErrorValue(error, "Error", "veros/vfrag > 1");
-        else                                    ErrorValue(error, "Error", "verosi < 0");                 
-    }
 
+    if (ejectasize <= 0)                        ErrorValue(error, "Error", "ejectasize <= 0");
+    
     if (icomp != 0 && icomp != 1)               ErrorValue(error, "Error", "icomp != 0 & != 1");
+    if (icomp ==1 && iporosity == 0)            ErrorValue(error, "Error", "icomp == 1 & iporosity == 0 not compatible");
+    if (ieros ==1 && iporosity == 1)            ErrorValue(error, "Error", "ieros == 1 & iporosity == 1 not compatible");
 
-    if (maxsize <= sizeini && maxsize != -1)     ErrorValue(error, "Error", "maxsize <= sizeini");
+
+    if (maxsize <= sizeini && maxsize != -1)    ErrorValue(error, "Error", "maxsize <= sizeini");
 
     if (isnow != 0 && isnow != 1)               ErrorValue(error, "Error", "isnow != 0 & != 1");
     if (isnow == 1)
@@ -275,7 +279,8 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
 
     // Incompatible option
 
-    if (ibounce == 1 && massorsize == 1)        ErrorValue(error, "Incompatible", "bounce is not included with ds/dt model");
+    if (ibounce == 1 && massorsize == 1)        ErrorValue(error, "Incompatible", "bounce is not included in ds/dt model");
+    if (icomp == 1 && massorsize == 1)          ErrorValue(error, "Incompatible", "compaction is not included in ds/dt model");
 
 
     // Stop programm if error
@@ -307,8 +312,9 @@ void WriteInputFile()
     writerinput << "  profile  = 0          >(0=no, 1=yes)" << endl;
     writerinput << endl;
     writerinput << "#-Set disc profiles" << endl;
-    writerinput << "  isetdens = 0          >Set Density profile with (0=mdisc, 1=sigma0)" << endl;
+    writerinput << "  isetdens = 0          >Set density profile with (0=mdisc, 1=sigma0)" << endl;
     writerinput << "  isettemp = 0          >Set temperature profile with (0=H0/R0, 1=T0)" << endl;
+    writerinput << "  ismooth = 0           >Smooth inner disc surface density profile (0=no, 1=yes)" << endl;
     writerinput << endl;
     writerinput << "#-Gas disc properties" << endl;
     writerinput << endl;
@@ -348,8 +354,8 @@ void WriteInputFile()
     writerinput << "  idisrupt = 0          >Rotationnal disruption (0=no, 1=yes)" << endl;
     writerinput << "     ifrag = 0          >Fragmentation (0=no, 1=hardfrag, 2=smoothfrag)" << endl;
     writerinput << "     vfrag = 15         >Fragmentation threshold (m/s), if isnow=0" << endl;
-    writerinput << "     ieros = 0          >Erosion (0=no, 1=yes) [NOT IMPLEMENTED]" << endl;
-    writerinput << "     veros = 0.7        >Erosion threshold (in vfrag) [NOT IMPLEMENTED]" << endl;
+    writerinput << "     ieros = 0          >Erosion (0=no, 1=yes)" << endl;
+    writerinput << "ejectasize = 1.0e-3     >Size of ejected grains during erosion (m)" << endl;
     writerinput << "     icomp = 0          >Compaction during fragmentation (0=no, 1=yes)" << endl;
     writerinput << "   maxsize = 1.0e3      >Max size to stop the simulation (=-1 to stop after first disruption if idisrupt=1)" << endl;
     writerinput << endl;
@@ -503,12 +509,12 @@ void WriteDisruptFile(ofstream& outputfile, const double& R, const double& massf
     outputfile << "\n";
 }
 
-void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const int& isetdens,// ->
-                   const int& isettemp, const double& Rin, const double& Rout, const double& R0, const double& mstar, const double& mdisc,// ->
+void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const int& isetdens, const int& isettemp,//-> 
+                   const int& ismooth, const double& Rin, const double& Rout, const double& R0, const double& mstar, const double& mdisc,// ->
                    const double& sigma0, const double& h0, const double& T0, const double& dustfrac0, const double& rhog0, const double& cg0,// ->
                    const double& p, const double& q, const double& alpha, const int& ibr, const int& ibump, const double& Rbump,// ->
                    const int& iporosity, const double& sizeini, const double& a0, const double& rhos, const int& idrift, const int& ibounce,// ->
-                   const int& idisrupt, const int& ifrag, const double& vfragi, const int& ieros, const double& verosi, const int& icomp,// ->
+                   const int& idisrupt, const int& ifrag, const double& vfragi, const int& ieros, const double& ejectasize, const int& icomp,// ->
                    const double& gammaft, const int& disrupteq, const int& isnow, const double& vfragin, const double& vfragout,// ->
                    const double& Rsnow, const int& ngrains, const vector <double>& Rini, const  vector <int>& istate, const double& walltime)
 {
@@ -590,6 +596,9 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     {   writerdoc << "H/R at reference radius: " << h0/R0 << endl;  }
     else
     {   writerdoc << "      Temperature at R0: " << T0 << " K" << endl; }
+    writerdoc << "     Smooth inner disc : ";
+    if (ismooth == 0)   writerdoc << "no" << endl;
+    else                writerdoc << "yes" <<endl;
     writerdoc << "  Dust/gas ratio (Rref): " << dustfrac0 << endl;
     writerdoc << "                p index: " << p << endl;
     writerdoc << "                q index: " << q << endl;
@@ -629,7 +638,7 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     else                 writerdoc << "porous" << endl;
 
     writerdoc << "     Initial grain size: " << sizeini << " m" << endl;
-    writerdoc << "           Monomer size: " << a0 << " m" << endl;
+    if (iporosity == 1) writerdoc << "           Monomer size: " << a0 << " m" << endl;
     writerdoc << " Dust intrinsic density: " << rhos << " kg/m³" << endl;
 
     writerdoc << endl;
@@ -639,7 +648,18 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     if (idrift == 0)    writerdoc << "no" << endl;
     else                writerdoc << "yes" << endl;
 
-    if (massorsize == 0)
+    if (iporosity == 0)
+    {
+        writerdoc << "                Erosion: ";
+        if (ieros == 0)     writerdoc << "no" << endl;
+        else                
+        {   writerdoc << "yes" << endl;
+            writerdoc << "            Ejecta size: " << ejectasize << " m" << endl;
+        }
+
+    }
+
+    if (massorsize == 0 && iporosity == 1)
     {   
         writerdoc << "                 Bounce: ";
 
@@ -673,12 +693,13 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
         }
     }
 
-    writerdoc << "             Compaction during fragmentation: ";
+    if (iporosity == 1)
+    {   writerdoc << "             Compaction during fragmentation: ";
 
-    if (icomp  == 0)    writerdoc << "no" << endl;
-    else                writerdoc << "yes" << endl;
+        if (icomp  == 0)    writerdoc << "no" << endl;
+        else                writerdoc << "yes" << endl;
+    }
 
-    if (ieros !=0)      writerdoc << "Erosion threshold: " << verosi << " vfrag" << endl;
     if (ifrag !=0)
     {   
         if (isnow == 0) writerdoc << "Fragmentation threshold: " << vfragi << " m/s" << endl;
@@ -688,7 +709,7 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
             writerdoc << "Outer fragmentation threshold: " << vfragout << " m/s" << endl;
         }
     }
-    if (idisrupt == 1)  
+    if (idisrupt == 1 && iporosity == 1)  
     {   
         writerdoc << "    Force-to-torque eff: " << gammaft << endl;
         if (disrupteq  == 0)    writerdoc << "Disruption equation: Tatsuuma & al. 2019" << endl;

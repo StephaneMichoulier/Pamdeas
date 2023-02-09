@@ -27,13 +27,13 @@ double GrainVolumeSize(const double& size, const double& filfac, const double& r
 /* ------------------------- AERODYNAMICAL PARAMETERS ------------------------- */
 
 // Compute the stokes number, return also in which regime you are: Ep-St<1 = 1, St-St<1 = 2, Ep-St>1 = 3, St-St>1 = 4
-double St(const double& R, const double& mstar, const double& rhog, const double& cg, const double& size,// ->
+double St(const double& R, const double& mstar, const double& rhog, const double& cg, const double& size,//->
           const double& filfac, const double& rhos, const double& deltav, int& dragreg);
 
 // Accurate velocity difference between gas and dust [m/s]
-double DeltaV(const double& R, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,// -> 
-              const double& sigma0, const double& hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,// ->
-              const int& ibump, const int& idrift, const double& Rbump, const double& bumpwidth, const double& bumpheight);
+double DeltaV(const double& R, const double& Rin, const double& mstar, double p, double q, const double& rhog, const double& cg, const double& R0,//-> 
+              const double& sigma0, const double& hg0, const double& dustfrac, const double& st, const double& alpha, const int& ibr,//->
+              const int& ismooth, const int& ibump, const int& idrift, const double& Rbump, const double& bumpwidth, const double& bumpheight);
 
 /* ------------------------ ENERGIES & VELOCITIES ------------------------ */
 
@@ -65,7 +65,7 @@ double Vend(const double& size, const double& filfac, const double& rhos, const 
 double Vend(const double& vstick);
 
 // Fragmentation threshold velocity [m/s]
-double Vfrag(const double& R, const int& isnow, const double& Rsnow, const double& filfac, const double& filfaclim,// ->
+double Vfrag(const double& R, const int& isnow, const double& Rsnow, const double& filfac, const double& filfaclim,//->
              const double& vfragi, const double& vfragin, const double& vfragout, const int& constvfrag);
 
 // Restitution coefficient e

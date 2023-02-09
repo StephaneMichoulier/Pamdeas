@@ -12,23 +12,23 @@ using namespace std;
 /* ------------------------ READING ------------------------*/
 
 // Read the input file
-void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, int& isetdens, int& isettemp,// ->
+void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, int& isetdens, int& isettemp, int& ismooth,// ->
               double& Rin, double& Rout, double& R0, double& mstar, double& mdisc, double& sigma0, double& h0R0, double& T0,// ->
               double& dustfrac0, double& p, double& q, double& alpha, int& ibr, int& ibump, double& Rbump, double& dustfracmax,// ->
               double& bumpwidth, double& bumpheight, int& iporosity, double& sizeini, double& a0, double& rhos, int& idrift,// ->
-              int& ibounce, int& idisrupt, int& ifrag, double& vfragi, int& ieros, double& verosi, int& icomp, double& maxsize,// ->
+              int& ibounce, int& idisrupt, int& ifrag, double& vfragi, int& ieros, double& ejectasize, int& icomp, double& maxsize,// ->
               int& isnow, double& Rsnow, double& vfragin, double& vfragout, double& youngmod0, double& esurf, double& Yd0,// ->
               double& Ydpower, int& constvfrag, double& filfaclim, double& filfacbnc, double& gammaft, int& disrupteq, double& weirmod,// ->
               int& ngrains, vector <double>& Rini, vector <int>& istate, const string& input);
 
 // Check data from the input file
 void CheckData(const int& massorsize, const double& tend, const int& stepmethod, const double& step, const int& profile,// ->
-               const int& isetdens, const int& isettemp, const double& Rin, const double& Rout, const double& R0, const double& mstar,// ->
-               const double& mdisc, const double& sigma0, const double& h0R0, const double& T0, const double& dustfrac0,// ->
+               const int& isetdens, const int& isettemp, const int& ismooth, const double& Rin, const double& Rout, const double& R0,// ->
+               const double& mstar, const double& mdisc, const double& sigma0, const double& h0R0, const double& T0, const double& dustfrac0,// ->
                const double& p, const double& q, const double& alpha, const int& ibr, const int& ibump, const double& Rbump,// ->
                const double& dustfracmax, const double& bumpwidth, const double& bumpheight, const int& iporosity, const double& sizeini,// ->
                const double& a0, const double& rhos, const int& idrift, const int& ibounce, const int& idisrupt, const int& ifrag,// ->
-               const double& vfragi, const int& ieros, const double& verosi, const int& icomp, const double& maxsize, const int& isnow,// ->
+               const double& vfragi, const int& ieros, const double& ejectasize, const int& icomp, const double& maxsize, const int& isnow,// ->
                const double& Rsnow, const double& vfragin, const double& vfragout, const double& youngmod0, const double& esurf,// ->
                const double& Yd0, const double& Ydpower, const int& constvfrag, const double& filfaclim, const double& filfacbnc,// ->
                const double& gammaft, const int& disrupteq, const double& weirmod, const int& ngrains, const vector <double>& Rini,// ->
@@ -67,12 +67,12 @@ void WriteDisruptFile(ofstream& outputfile, const double& R, const double& massf
 
 
 // Write the initials conditions
-void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const int& isetdens,// ->
-                   const int& isettemp, const double& Rin, const double& Rout, const double& R0, const double& mstar, const double& mdisc,// ->
+void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const int& isetdens, const int& isettemp,// ->
+                   const int& ismooth, const double& Rin, const double& Rout, const double& R0, const double& mstar, const double& mdisc,// ->
                    const double& sigma0, const double& h0, const double& T0, const double& dustfrac0, const double& rhog0, const double& cg0,// ->
                    const double& p, const double& q, const double& alpha, const int& ibr, const int& ibump, const double& Rbump,// ->
                    const int& iporosity, const double& sizeini, const double& a0, const double& rhos, const int& idrift, const int& ibounce,// ->
-                   const int& idisrupt, const int& ifrag, const double& vfragi, const int& ieros, const double& verosi, const int& icomp,// ->
+                   const int& idisrupt, const int& ifrag, const double& vfragi, const int& ieros, const double& ejectasize, const int& icomp,// ->
                    const double& gammaft, const int& disrupteq, const int& isnow, const double& vfragin, const double& vfragout,// ->
                    const double& Rsnow, const int& ngrains, const vector <double>& Rini, const  vector <int>& istate, const double& walltime);              
 
