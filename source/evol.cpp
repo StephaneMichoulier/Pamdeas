@@ -38,6 +38,7 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
         exit(1);
     }
 
+    // Adjust cfl for growth when using size instead of mass to match
     if (massorsize == 1)
     {   limup /= 3.;   limdown /= 3.;   }
 
@@ -50,6 +51,10 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
         if (dt < limdown)   dt *= 2.;
 
     } while (limup < dt || limdown >  dt);
+
+    //Prevent problem with large grains with large dt but small tend to get some data
+    if (dt > timeend/100.)
+    {   dt = timeend/100.;   }
 
     if (time+dt > timeend)
     {   dt = timeend - time;   }
@@ -80,8 +85,8 @@ double DRDt(const double& R, const double& Rin, const double& mstar, double p, d
 /* ------------------------  GROWTH-FRAG-BOUNCE dm/dt ------------------------ */
 
 double DmDt(const double& size, const double& rhog, const double rhos, const double& dustfrac, const double& vrel,//->
-            const int& ifrag, const int& ieros, const double& ejectasize, const int& ibounce, const double& vfrag,//-> 
-            const double& vstick, const double deltav, const double& probabounce)
+            const int& ifrag, const int& ieros, const double& ejectasize, const double& cohacc, const int& ibounce,//->
+            const double& vfrag, const double& vstick, const double deltav, const double& probabounce)
 {
     double dmdt = 4.*M_PI*dustfrac*rhog*size*size*vrel;
 
@@ -131,8 +136,7 @@ double DmDt(const double& size, const double& rhog, const double rhos, const dou
         }
     }
     if (ieros == 1)
-    {
-        dmdt -= rhog*pow(deltav,3)*size*GrainMass(ejectasize,1,rhos)/0.1/ejectasize;
+    {   if (deltav > 0.00142460/sqrt(rhog*ejectasize))dmdt -= rhog*pow(deltav,3)*size*GrainMass(ejectasize,1,rhos)/cohacc/ejectasize;
     }
     return dmdt;
 }
@@ -141,8 +145,8 @@ double DmDt(const double& size, const double& rhog, const double rhos, const dou
 /* ------------------------  GROWTH-FRAG ds/dt ------------------------ */
 
 double DsDt(const double& size, const double& filfac, const double& rhog, const double& rhos,//-> 
-            const double& dustfrac,const double& vrel, const int& ifrag, const int& ieros,//->
-            const double& ejectasize, const double deltav, const double& vfrag, const double& filfacpow)
+            const double& dustfrac,const double& vrel, const int& ifrag, const int& ieros, const double& ejectasize,//->
+            const double& cohacc, const double deltav, const double& vfrag, const double& filfacpow)
 {
     double dsdt = dustfrac*rhog*vrel/(filfac*rhos);
     if (filfac != 1) dsdt /= 1.+filfacpow/3.;
@@ -163,7 +167,7 @@ double DsDt(const double& size, const double& filfac, const double& rhog, const 
     }
     if (ieros == 1)
     {
-        dsdt -= rhog*pow(deltav,3)*ejectasize*ejectasize/3./size/0.1;
+        if (deltav > 0.00142461/sqrt(rhog*ejectasize))   dsdt -= rhog*pow(deltav,3)*ejectasize*ejectasize/3./size/cohacc;
     }
     return dsdt;
 }

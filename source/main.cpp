@@ -114,7 +114,8 @@ void Pamdeas(const string& input)
     double bumpwidth;       // half width at half maximum (when ibump is enabled) [AU]
     double bumpheight;      // fraction of surface density
     double sizeini;         // Initial size [m]
-    double ejectasize;          // Size of ejecta [m]
+    double ejectasize;      // Size of ejecta [m]
+    double cohacc;          // Strength of the cohesive acceleration in kg/s^2
     double a0;              // Monomer size [m]
     double rhos;            // Dust monomer density [kg/m³]
     double youngmod0;       // Young Modulus of grains [PA]
@@ -203,7 +204,7 @@ void Pamdeas(const string& input)
     cout << "Reading input file" << endl;
 
     ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,Rbump,
-             dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,ejectasize,icomp,maxsize,isnow,
+             dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,ejectasize,cohacc,icomp,maxsize,isnow,
              Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,gammaft,disrupteq,weirmod,ngrains,Rini,istate,input);
 
     cout << "Input file read\n" << endl;
@@ -309,7 +310,7 @@ void Pamdeas(const string& input)
 
         // Write in output file quantities at t=0
         WriteOutputHeader(writer,massorsize);
-        WriteOutputFile(writer,t,Ri,massi,filfaci,sizei,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Ri,mstar),0.,0.,dragreg,porreg);
+        WriteOutputFile(writer,t,Ri,massi,filfaci,sizei,st,cg,sigma,rhog,dustfrac,vrel,deltav,Omegak(Ri,mstar),0.,0.,dragreg,porreg);
 
         // This is where the loop begin
         switch (massorsize)
@@ -334,7 +335,7 @@ void Pamdeas(const string& input)
                     {   drdt = DRDt(Ri,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ismooth,ibump,Rbump,bumpwidth,bumpheight); }
 
                     // Compute dm/dt
-                    dmdt = DmDt(sizef,rhog,rhos,dustfrac,vrel,ifrag,ieros,ejectasize,ibounce,vfrag,vstick,deltav,probabounce);
+                    dmdt = DmDt(sizef,rhog,rhos,dustfrac,vrel,ifrag,ieros,ejectasize,cohacc,ibounce,vfrag,vstick,deltav,probabounce);
 
                     // Compute new dt and new time t
                     switch (stepmethod)
@@ -415,7 +416,7 @@ void Pamdeas(const string& input)
                     // Write in output file quantities at time t
                     if ( t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 ))
                     {   
-                        WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dmdt,dragreg,porreg);
+                        WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,deltav,Omegak(Rf,mstar),drdt,dmdt,dragreg,porreg);
                         tlastwrite = t;
                     }
 
@@ -437,7 +438,7 @@ void Pamdeas(const string& input)
                     {   drdt = DRDt(Ri,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ismooth,ibump,Rbump,bumpwidth,bumpheight);  }
 
                     // Compute ds/dt
-                    dsdt = DsDt(sizef,filfaci,rhog,rhos,dustfrac,vrel,ifrag,ieros,ejectasize,deltav,vfrag,filfacpow);
+                    dsdt = DsDt(sizef,filfaci,rhog,rhos,dustfrac,vrel,ifrag,ieros,ejectasize,cohacc,deltav,vfrag,filfacpow);
 
                     // Compute new dt and new time t
                     switch (stepmethod)
@@ -508,7 +509,7 @@ void Pamdeas(const string& input)
                     // Write in output file quantities at time t, 
                     if ( t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 ))
                     {   
-                        WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,Omegak(Rf,mstar),drdt,dsdt,dragreg,porreg);
+                        WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,deltav,Omegak(Rf,mstar),drdt,dsdt,dragreg,porreg);
                         tlastwrite = t;
                     }
 

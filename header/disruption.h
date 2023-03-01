@@ -22,12 +22,12 @@ double TensileStess(const double& size, const double& filfac, const double& rhos
 double TensileStess(const double& size, const double& filfac, const double& rhos, const double& deltav, const double& gammaft);
 
 // Compare tensile stress and tensile strength 
-bool Disruptlim(const double& size, const double& filfac, const double& rhos, const double& deltav, const double& gammaft,// -> 
+bool Disruptlim(const double& size, const double& filfac, const double& rhos, const double& deltav, const double& gammaft,//->
                 const double& weirmod, const double& esurf, const double& a0, const int& disrupteq);
 
 // Compute the mass & filling factor of the disrupted grain
-void Disrupt(double& mass, double& filfac, const double& sizeini, const double& rhos,const double& R, const double& mstar, // ->
-             const double& rhog, const double cg, const double& deltav, const double st, const double& eroll, // ->
+void Disrupt(double& mass, double& filfac, const double& sizeini, const double& rhos,const double& R, const double& mstar, //->
+             const double& rhog, const double cg, const double& deltav, const double st, const double& eroll, //->
              const double& a0, const double& alpha, int& porreg);
              
 #endif // DISRUPTION_H_INCLUDED

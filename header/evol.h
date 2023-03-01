@@ -27,16 +27,16 @@ double DRDt(const double& R, const double& Rin, const double& mstar, double p, d
 
 // Compute the final dm/dt between growth, frag, bounce [kg/s]
 double DmDt(const double& size, const double& rhog, const double rhos, const double& dustfrac, const double& vrel,//->
-            const int& ifrag, const int& ieros, const double& ejectasize, const int& ibounce, const double& vfrag,//->
-            const double& vstick, const double deltav, const double& probabounce);
+            const int& ifrag, const int& ieros, const double& ejectasize, const double& cohacc, const int& ibounce,//->
+            const double& vfrag, const double& vstick, const double deltav, const double& probabounce);
 
 
 /* ------------------------  GROWTH-FRAG ds/dt ------------------------ */
 
 // Compute the final ds/dt between growth, frag [kg/s], Bounce not included !
 double DsDt(const double& size, const double& filfac, const double& rhog, const double& rhos,//-> 
-            const double& dustfrac,const double& vrel, const int& ifrag, const int& ieros,//->
-            const double& ejectasize, const double deltav, const double& vfrag, const double& filfacpow);
+            const double& dustfrac,const double& vrel, const int& ifrag, const int& ieros, const double& ejectasize,//->
+            const double& cohacc, const double deltav, const double& vfrag, const double& filfacpow);
 
 
 /* ------------------------ CHARACTERISTIC TIMES ------------------------*/

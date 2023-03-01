@@ -36,7 +36,7 @@ double TensileStess(const double& size, const double& filfac, const double& rhos
     return rhos*filfac*size*size*freqspin*freqspin/4.;
 }
 
-bool Disruptlim(const double& size, const double& filfac, const double& rhos, const double& deltav, const double& gammaft,// -> 
+bool Disruptlim(const double& size, const double& filfac, const double& rhos, const double& deltav, const double& gammaft,//->
                 const double& weirmod, const double& esurf, const double& a0, const int& disrupteq)
 {
     double freqspin = FreqSpin(size,deltav,gammaft);
@@ -61,8 +61,8 @@ bool Disruptlim(const double& size, const double& filfac, const double& rhos, co
     else return false;
 }
 
-void Disrupt(double& mass, double& filfac, const double& sizeini, const double& rhos,const double& R, const double& mstar, // ->
-             const double& rhog, const double cg, const double& deltav, const double st, const double& eroll, // ->
+void Disrupt(double& mass, double& filfac, const double& sizeini, const double& rhos,const double& R, const double& mstar, //->
+             const double& rhog, const double cg, const double& deltav, const double st, const double& eroll, //->
              const double& a0, const double& alpha, int& porreg)
 {
     double maxmass = log10(mass/2.);
