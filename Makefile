@@ -6,7 +6,7 @@ CXXFLAGS = -Wall -std=c++11
 $(info $(shell mkdir -p build))
 
 EXEC = build/pamdeas
-SRCS = source/main.cpp source/disc.cpp source/dust.cpp source/porosity.cpp source/evol.cpp source/readwrite.cpp source/disruption.cpp
+SRCS = source/main.cpp source/disc.cpp source/dust.cpp source/porosity.cpp source/evol.cpp source/readwrite.cpp source/simulation.cpp source/tests.cpp source/disruption.cpp
 
 DEPEND_FILE = .depend
 OBJS = $(SRCS:%.cpp=%.o)

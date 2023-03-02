@@ -53,17 +53,17 @@ The program contains multiple files in the source folder "source" and in the hea
 
 1. Source files (.CPP and .H)
 
-- a. main.cpp
+- a. simulation.cpp & simulation.h
 
-	main.cpp contains all variables declarations and time loop
+	Contains all variables declarations and time loop to run a simulation.
 
 - b. constantandconversion.h
 
-	Contains the declaration of physical constants and conversion functions between some useful  units
+	Contains the declaration of physical constants and conversion functions between some useful units.
 
 - c. readwrite.cpp & readwrite.h
    
-	Contain reading and writing functions
+	Contain reading and writing functions.
 
 - d. disc.cpp & disc.h
 	
@@ -73,11 +73,11 @@ The program contains multiple files in the source folder "source" and in the hea
 - e. dust.cpp & dust.h
 	
 	Contain general functions describing properties of dust grains as kinetic energy, relative velocity or Stokes number.
-    The full list is given in the .h file
+    The full list is given in the .h file.
 
 - f. porosity.cpp & porosity.h
 
-    Contain all the algorithms driving the evolution of the filling factor depending on the mass/size and the different processes: growth, frag, compression by collision/gravity etc 
+    Contain all the algorithms driving the evolution of the filling factor depending on the mass/size and the different processes: growth, frag, compression by collision/gravity etc.
 
 - g. evol.cpp & evol.h
 
@@ -86,6 +86,10 @@ The program contains multiple files in the source folder "source" and in the hea
 - h. disruption.cpp & disruption.h
 
     Contain all the algorithms to compute disruption of grains.
+
+- i. tests.cpp & tests.h
+
+    Contains algorithm to test Pamdeas.
 
 #### **References**
 Arnaud Vericel and Jean-François Gonzalez. Self-induced dust traps around snow lines in protoplanetary discs. MNRAS, 492(1) :210–222, February 2020. doi : 10.1093/mnras/stz3444.

@@ -136,7 +136,7 @@ double DmDt(const double& size, const double& rhog, const double rhos, const dou
         }
     }
     if (ieros == 1)
-    {   if (deltav > 0.00142460/sqrt(rhog*ejectasize))dmdt -= rhog*pow(deltav,3)*size*GrainMass(ejectasize,1,rhos)/cohacc/ejectasize;
+    {   if (deltav > 0.00142460/sqrt(rhog*ejectasize))  dmdt -= rhog*pow(deltav,3)*size*GrainMass(ejectasize,1,rhos)/cohacc/ejectasize;
     }
     return dmdt;
 }
