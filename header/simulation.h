@@ -28,5 +28,5 @@ void EndAnim();
 /* -------------------- MAIN ROUTINE --------------------*/
 /* ------------------------------------------------------*/
     
-void Pamdeas(const string& input);
+void Pamdeas(const string& input, const string& tests);
 

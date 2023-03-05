@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 {   
     if (argc == 1)
     {   
-        Pamdeas("input.in");    
+        Pamdeas("input.in","No");
     }
     else if (argc == 2)
     {
@@ -22,8 +22,21 @@ int main(int argc, char* argv[])
             WriteInputFile();
             cout << "Input file has been written: input.in" << endl;
         }
+        else if (strcmp(argv[1], "test") == 0)
+        {   
+            cout << "Starting Pamdeas test suite:" << endl;
+            cout << "Running GrowthFragMass test" << endl;
+            Pamdeas("","TestGrowthFragMass");
+            cout << "GrowthFragMass test complete" << endl;
+            cout << "Running GrowthFragSize test" << endl;
+            Pamdeas("","TestGrowthFragSize");
+            cout << "GrowthFragSize test complete" << endl;
+            cout << "Running Drift test" << endl;
+            Pamdeas("","TestDrift");
+            cout << "Drift test complete" << endl;
+        }
         else
-        {   Pamdeas(string(argv[1]));   }
+        {   Pamdeas(string(argv[1]),"No");   }
     }
     else
     {   cerr << "Error: to many arguments passed" << endl;  }

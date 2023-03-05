@@ -13,7 +13,7 @@ using namespace std;
 
 // Read the input file
 void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, int& isetdens, int& isettemp, int& ismooth,//->
-              double& Rin, double& Rout, double& R0, double& mstar, double& mdisc, double& sigma0, double& h0R0, double& T0,//->
+              double& Rin, double& Rout, double& R0, double& mstar, double& mdisc, double& sigma0, double& hg0R0, double& T0,//->
               double& dustfrac0, double& p, double& q, double& alpha, int& ibr, int& ibump, double& Rbump, double& dustfracmax,//->
               double& bumpwidth, double& bumpheight, int& iporosity, double& sizeini, double& a0, double& rhos, int& idrift,//->
               int& ibounce, int& idisrupt, int& ifrag, double& vfragi, int& ieros, double& ejectasize, double & cohacc, int& icomp,//->
@@ -24,7 +24,7 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
 // Check data from the input file
 void CheckData(const int& massorsize, const double& tend, const int& stepmethod, const double& step, const int& profile,//->
                const int& isetdens, const int& isettemp, const int& ismooth, const double& Rin, const double& Rout, const double& R0,//->
-               const double& mstar, const double& mdisc, const double& sigma0, const double& h0R0, const double& T0, const double& dustfrac0,//->
+               const double& mstar, const double& mdisc, const double& sigma0, const double& hg0R0, const double& T0, const double& dustfrac0,//->
                const double& p, const double& q, const double& alpha, const int& ibr, const int& ibump, const double& Rbump,//->
                const double& dustfracmax, const double& bumpwidth, const double& bumpheight, const int& iporosity, const double& sizeini,//->
                const double& a0, const double& rhos, const int& idrift, const int& ibounce, const int& idisrupt, const int& ifrag,//->
@@ -67,9 +67,9 @@ void WriteDisruptFile(ofstream& outputfile, const double& R, const double& massf
 
 
 // Write the initials conditions
-void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const int& isetdens, const int& isettemp,//->
+void WriteResultsFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const int& isetdens, const int& isettemp,//->
                    const int& ismooth, const double& Rin, const double& Rout, const double& R0, const double& mstar, const double& mdisc,//->
-                   const double& sigma0, const double& h0, const double& T0, const double& dustfrac0, const double& rhog0, const double& cg0,//->
+                   const double& sigma0, const double& hg0, const double& T0, const double& dustfrac0, const double& rhog0, const double& cg0,//->
                    const double& p, const double& q, const double& alpha, const int& ibr, const int& ibump, const double& Rbump,//->
                    const int& iporosity, const double& sizeini, const double& a0, const double& rhos, const int& idrift, const int& ibounce,//->
                    const int& idisrupt, const int& ifrag, const double& vfragi, const int& ieros, const double& ejectasize, const int& icomp,//->

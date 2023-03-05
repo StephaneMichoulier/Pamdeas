@@ -15,7 +15,7 @@ using namespace std;
 /* ------------------------ READING ------------------------*/
 
 void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, int& isetdens, int& isettemp, int& ismooth,//->
-              double& Rin, double& Rout, double& R0, double& mstar, double& mdisc, double& sigma0, double& h0R0, double& T0,//->
+              double& Rin, double& Rout, double& R0, double& mstar, double& mdisc, double& sigma0, double& hg0R0, double& T0,//->
               double& dustfrac0, double& p, double& q, double& alpha, int& ibr, int& ibump, double& Rbump, double& dustfracmax,//->
               double& bumpwidth, double& bumpheight, int& iporosity, double& sizeini, double& a0, double& rhos, int& idrift,//->
               int& ibounce, int& idisrupt, int& ifrag, double& vfragi, int& ieros, double& ejectasize, double & cohacc, int& icomp,//-> 
@@ -46,7 +46,7 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader, 5);     CheckType(Reader, mstar, "mstar");
     ReadVoid(Reader, 6);     CheckType(Reader, mdisc, "mdisc");
     ReadVoid(Reader, 5);     CheckType(Reader, sigma0, "sigma0");
-    ReadVoid(Reader, 7);     CheckType(Reader, h0R0, "h0R0");
+    ReadVoid(Reader, 7);     CheckType(Reader, hg0R0, "hg0R0");
     ReadVoid(Reader, 6);     CheckType(Reader, T0, "T0");
     ReadVoid(Reader, 5);     CheckType(Reader, dustfrac0, "dustfrac0");
     ReadVoid(Reader, 9);     CheckType(Reader, p, "p");
@@ -106,7 +106,7 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
         }
     }
 
-    CheckData(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,h0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,
+    CheckData(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,
               Rbump,dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,ejectasize,cohacc,icomp,maxsize,
               isnow,Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,gammaft,disrupteq,weirmod,ngrains,Rini,istate);
     
@@ -124,7 +124,7 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
 
 void CheckData(const int& massorsize, const double& tend, const int& stepmethod, const double& step, const int& profile,//->
                const int& isetdens, const int& isettemp, const int& ismooth, const double& Rin, const double& Rout, const double& R0,//->
-               const double& mstar, const double& mdisc, const double& sigma0, const double& h0R0, const double& T0, const double& dustfrac0,//->
+               const double& mstar, const double& mdisc, const double& sigma0, const double& hg0R0, const double& T0, const double& dustfrac0,//->
                const double& p, const double& q, const double& alpha, const int& ibr, const int& ibump, const double& Rbump,//->
                const double& dustfracmax, const double& bumpwidth, const double& bumpheight, const int& iporosity, const double& sizeini,//->
                const double& a0, const double& rhos, const int& idrift, const int& ibounce, const int& idisrupt, const int& ifrag,//->
@@ -163,7 +163,7 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
     {   if (sigma0 <= 0)                        ErrorValue(error, "Error", "sigma0 <= 0");    }
 
     if (isettemp == 0)
-    {   if (h0R0 <= 0)                          ErrorValue(error, "Error", "H0R0 <= 0");    }
+    {   if (hg0R0 <= 0)                          ErrorValue(error, "Error", "hg0R0 <= 0");    }
     else
     {   if (T0 <= 0)                            ErrorValue(error, "Error", "T0 <= 0");    }
 
@@ -315,7 +315,7 @@ void WriteInputFile()
     writerinput << endl;
     writerinput << "#-Set disc profiles" << endl;
     writerinput << "  isetdens = 0          >Set density profile with (0=mdisc, 1=sigma0)" << endl;
-    writerinput << "  isettemp = 0          >Set temperature profile with (0=H0/R0, 1=T0)" << endl;
+    writerinput << "  isettemp = 0          >Set temperature profile with (0=hg0/R0, 1=T0)" << endl;
     writerinput << "  ismooth = 0           >Smooth inner disc surface density profile (0=no, 1=yes)" << endl;
     writerinput << endl;
     writerinput << "#-Gas disc properties" << endl;
@@ -326,7 +326,7 @@ void WriteInputFile()
     writerinput << "     mstar = 1.         >Star mass (Msol)" << endl;
     writerinput << "   / mdisc = 0.01       >Disc mass (Msol)" << endl;
     writerinput << "   \\sigma0 = 487.63     >Surface density at Rref (kg/m²)" << endl;
-    writerinput << "    /H0/R0 = 0.0283     >H/R at Rref" << endl;
+    writerinput << "    /hg0/R0 = 0.0283     >H/R at Rref" << endl;
     writerinput << "    \\   T0 = 198.3      >Temperature at Rref" << endl;
     writerinput << " dustfrac0 = 0.01       >Dust to gas ratio at Rref" << endl;
     writerinput << "   p index = 1.         " << endl;
@@ -514,9 +514,9 @@ void WriteDisruptFile(ofstream& outputfile, const double& R, const double& massf
     outputfile << "\n";
 }
 
-void WriteInitFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const int& isetdens, const int& isettemp,//-> 
+void WriteResultsFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const int& isetdens, const int& isettemp,//-> 
                    const int& ismooth, const double& Rin, const double& Rout, const double& R0, const double& mstar, const double& mdisc,//->
-                   const double& sigma0, const double& h0, const double& T0, const double& dustfrac0, const double& rhog0, const double& cg0,//->
+                   const double& sigma0, const double& hg0, const double& T0, const double& dustfrac0, const double& rhog0, const double& cg0,//->
                    const double& p, const double& q, const double& alpha, const int& ibr, const int& ibump, const double& Rbump,//->
                    const int& iporosity, const double& sizeini, const double& a0, const double& rhos, const int& idrift, const int& ibounce,//->
                    const int& idisrupt, const int& ifrag, const double& vfragi, const int& ieros, const double& ejectasize, const int& icomp,//->
@@ -545,7 +545,7 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     writerdoc << "------------------------------------------------------" << dash << endl;
     writerdoc << endl;
 	writerdoc << "    Gas surface density: " << sigma0 << " kg/m²" << endl;
-	writerdoc << "           Scale height: " << h0 << " AU" << endl;
+	writerdoc << "           Scale height: " << hg0/R0 << endl;
 	writerdoc << "        Gas sound speed: " << cg0 << " m/s" << endl;
 	writerdoc << "            Gas density: " << rhog0 << " kg/m³" << endl;
 	writerdoc << "        Gas temperature: " << T0 << " K" << endl;
@@ -595,12 +595,7 @@ void WriteInitFile(const int& massorsize, const double& tend, const int& stepmet
     writerdoc << "       Reference radius: " << R0 << " AU" << endl;
     writerdoc << "              Star mass: " << KgToMsol(mstar) << " Msol" << endl;
     writerdoc << "              Disc mass: " << KgToMsol(mdisc) << " Msol" << endl;
-    if (isetdens == 1)
-    {   writerdoc << "  Surface density at R0: " << sigma0 << " kg/m²" << endl; }
-    if (isettemp == 0)
-    {   writerdoc << "H/R at reference radius: " << h0/R0 << endl;  }
-    else
-    {   writerdoc << "      Temperature at R0: " << T0 << " K" << endl; }
+
     writerdoc << "     Smooth inner disc : ";
     if (ismooth == 0)   writerdoc << "no" << endl;
     else                writerdoc << "yes" <<endl;

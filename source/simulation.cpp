@@ -16,6 +16,7 @@
 #include "../header/disruption.h"
 #include "../header/readwrite.h"
 #include "../header/simulation.h"
+#include "../header/tests.h"
 
 using namespace std;
 
@@ -88,7 +89,7 @@ void EndAnim()
 /* -------------------- MAIN ROUTINE --------------------*/
 /* ------------------------------------------------------*/
     
-void Pamdeas(const string& input)
+void Pamdeas(const string& input, const string& tests)
 {
     /*------------------------ INITIALS PARAMETERS FROM THE USER ------------------------*/
 
@@ -116,7 +117,7 @@ void Pamdeas(const string& input)
     double bumpheight;      // fraction of surface density
     double sizeini;         // Initial size [m]
     double ejectasize;      // Size of ejecta [m]
-    double cohacc;          // Strength of the cohesive acceleration in kg/s^2
+    double cohacc;          // Strength of the cohesive acceleration in kg/s²
     double a0;              // Monomer size [m]
     double rhos;            // Dust monomer density [kg/m³]
     double youngmod0;       // Young Modulus of grains [PA]
@@ -190,6 +191,27 @@ void Pamdeas(const string& input)
     double filfacpow;       // Power of the dominante filling factor to remove dsdt degeneracy
     bool   disrupted;       // Is grain disrupted by spinning motion
     vector <int> istate;    // State of the grain: 0=alive, 1=maxsize, 2=accreted, 3=disrupted 
+    
+
+    /*------------------------ TEST PARAMETERS ------------------------*/
+    int whichtest;          // Which test: 0=No, 1=TestGrowthFragMass, 2=TestGrowthFragMass, 3=TestDrift
+    bool ifailinit = false;
+    bool ifailtest = false;
+    double hgtest;          // Disc height at Rtest [AU]
+    double sigmatest;       // Gas surface density at Rtest [kg/m²]
+    double rhogtest;        // Gas density at Rtest [kg/m³]
+    double cgtest;          // Gas sound speed at Rtest [m/s]
+    double tgtest;          // Gas temperature at Rtest [K]
+    double pgtest;          // Gas pressure at Rtest [Pa]
+    double vktest;          // Orbital velocity at Rtest[m/s]
+    double numoltest;       // Gas molecular kinematic viscosity [m²/s]
+    double nuturbtest;      // Gas turbulent kinematic viscosity [m²/s]
+    double gaspathtest;     // Mean free path λ of the gas [m]
+
+    if(tests == "TestGrowthFragMass")  whichtest = 1;
+    else if(tests == "TestGrowthFragSize") whichtest = 2;
+    else if (tests == "TestDrift")  whichtest = 3;
+    else whichtest = 0;
 
     double Rprofile;        // Radius to compute disc profiles
 
@@ -199,20 +221,43 @@ void Pamdeas(const string& input)
 
     PresentationAnim();
 
-
     /*------------------------ READ INPUT FILE ------------------------*/
 
-    cout << "Reading input file" << endl;
+    switch (whichtest)
+    {
+    case (0):
+    {   cout << "Reading input file" << endl;
 
-    ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,Rbump,
-             dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,ejectasize,cohacc,icomp,maxsize,isnow,
-             Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,gammaft,disrupteq,weirmod,ngrains,Rini,istate,input);
+        ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,Rbump,
+                dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,ejectasize,cohacc,icomp,maxsize,isnow,
+                Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,gammaft,disrupteq,weirmod,ngrains,Rini,istate,input);
 
-    cout << "Input file read\n" << endl;
+        cout << "Input file read\n" << endl;
 
-    if (ngrains == 0 && profile == 0)
-    {   cout << "Too bad, nothing to compute" << endl;  }
+        if (ngrains == 0 && profile == 0)
+        {   cout << "Too bad, nothing to compute" << endl;  }
 
+        break;
+    }
+    case (1):
+    {
+        TestGrowthFragMassParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
+                                ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
+        break;
+    }
+    case (2):
+    {
+        TestGrowthFragSizeParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
+                                ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
+        break;
+    }
+    case (3):
+    {
+        TestDriftParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
+                                ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
+        break;
+    }
+    }
 
     /*------------------------ INITIALIZATION OF PARAMETERS AT R0 ------------------------*/
 
@@ -232,9 +277,18 @@ void Pamdeas(const string& input)
     eroll = Eroll(a0,esurf,youngmod0);
 
 
+    /*------------------------ TESTING DIFFERENT CONFIGURATION FOR INIT DISC ------------------------*/
+    if(whichtest != 0)
+    {
+        TestAllDiscConfig(Rin,mstar,mdisc,p,q,sigma0,R0,hg0,alpha,ismooth,ibump,Rbump,bumpwidth,bumpheight,hgtest,sigmatest,
+        rhogtest,cgtest,tgtest,pgtest,vktest,numoltest,nuturbtest,gaspathtest,ifailinit);
+        ngrains = 0;
+    }
+
+
     /*------------------------ COMPUTE DISK QUANTITIES PROFILES ------------------------*/
 
-    if (profile == 1)
+    if (profile == 1 && whichtest == 0)
     {
         cout << "Compute disc profiles" << endl;
         ofstream writebump;
@@ -258,11 +312,10 @@ void Pamdeas(const string& input)
 
     ofstream writerdisruption;
     if (idisrupt == 1 && ngrains > 0)  
-    {   
+    {
         writerdisruption.open(DisruptFileName(massorsize).c_str());
         WriteDisruptHeader(writerdisruption);
     }
-
 
     /*------------------------ TIME LOOP FOR SIMULATION ------------------------*/
    
@@ -273,8 +326,11 @@ void Pamdeas(const string& input)
     {
         // Set output file name
         ofstream writer;
-        outputfile = OutputFileName(massorsize,Rini[j],iporosity);
-        writer.open(outputfile.c_str());
+        if (whichtest == 0)
+        {
+            outputfile = OutputFileName(massorsize,Rini[j],iporosity);
+            writer.open(outputfile.c_str());
+        }
 
         // Initialize loop parameters
         if (stepmethod == 0) dt = step;
@@ -307,11 +363,13 @@ void Pamdeas(const string& input)
         st = St(Ri,mstar,rhog,cg,sizei,filfaci,rhos,0.,dragreg); //we assume deltav very small for small grain strongly coupled with gas in the epstein regime
         deltav = DeltaV(Ri,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ismooth,ibump,idrift,Rbump,bumpwidth,bumpheight);
         vrel = Vrel(cg,st,alpha,deltav);
-        //vfrag = vfragi; // need to be initialized for erosion even if ifrag=0
 
         // Write in output file quantities at t=0
-        WriteOutputHeader(writer,massorsize);
-        WriteOutputFile(writer,t,Ri,massi,filfaci,sizei,st,cg,sigma,rhog,dustfrac,vrel,deltav,Omegak(Ri,mstar),0.,0.,dragreg,porreg);
+        if (whichtest == 0)
+        {   
+            WriteOutputHeader(writer,massorsize);
+            WriteOutputFile(writer,t,Ri,massi,filfaci,sizei,st,cg,sigma,rhog,dustfrac,vrel,deltav,Omegak(Ri,mstar),0.,0.,dragreg,porreg);
+        }
 
         // This is where the loop begin
         switch (massorsize)
@@ -358,7 +416,7 @@ void Pamdeas(const string& input)
                     if (idrift == 1)    Rf += drdt*YearToSec(dt);
 
                     // Compute new mass after dt
-                    massf += dmdt*YearToSec(dt);
+                    if (whichtest != 3) massf += dmdt*YearToSec(dt);
 
                     // Check if new mass < monomer mass
                     if (massf < GrainMass(a0,1.,rhos))
@@ -415,8 +473,8 @@ void Pamdeas(const string& input)
                     vrel = Vrel(cg,st,alpha,deltav);
 
                     // Write in output file quantities at time t
-                    if ( t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 ))
-                    {   
+                    if ((t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 )) && whichtest == 0)
+                    {
                         WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,deltav,Omegak(Rf,mstar),drdt,dmdt,dragreg,porreg);
                         tlastwrite = t;
                     }
@@ -508,7 +566,7 @@ void Pamdeas(const string& input)
                     vrel = Vrel(cg,st,alpha,deltav);
 
                     // Write in output file quantities at time t, 
-                    if ( t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 ))
+                    if ((t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 )) && whichtest == 0)
                     {   
                         WriteOutputFile(writer,t,Rf,massf,filfacf,sizef,st,cg,sigma,rhog,dustfrac,vrel,deltav,Omegak(Rf,mstar),drdt,dsdt,dragreg,porreg);
                         tlastwrite = t;
@@ -529,10 +587,16 @@ void Pamdeas(const string& input)
     double wt = (chrono::duration_cast<chrono::nanoseconds>(wtend-wtbegin)).count()* 1e-9;
     Walltime(wt);
 
-    // Write initials conditions
-    WriteInitFile(massorsize,tend,stepmethod,step,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0,T0,dustfrac0,rhog0,cg0,p,q,alpha,ibr,
-                  ibump,Rbump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,ejectasize,icomp,gammaft,disrupteq,isnow,
-                  vfragin,vfragout,Rsnow,ngrains,Rini,istate,wt);
+    if (whichtest == 0)
+    {   // Write initials conditions
+        WriteResultsFile(massorsize,tend,stepmethod,step,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0,T0,dustfrac0,rhog0,cg0,p,q,alpha,ibr,
+                    ibump,Rbump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,ejectasize,icomp,gammaft,disrupteq,isnow,
+                    vfragin,vfragout,Rsnow,ngrains,Rini,istate,wt);
+    }
+    else
+    {
+        WriteTestsResultsFiles(massorsize,tend,R0,mdisc,sigmatest,hgtest,tgtest,pgtest,rhogtest,cgtest,vktest,numoltest,nuturbtest,gaspathtest,p,q,alpha,sizeini,a0,rhos,idrift,ifrag,vfragi,wt,tests,ifailinit,ifailtest);
+    }
 
     EndAnim();
 
