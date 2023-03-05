@@ -89,7 +89,7 @@ void EndAnim()
 /* -------------------- MAIN ROUTINE --------------------*/
 /* ------------------------------------------------------*/
     
-void Pamdeas(const string& input, const string& tests)
+void Pamdeas(const string& input, const string& folder, const string& tests)
 {
     /*------------------------ INITIALS PARAMETERS FROM THE USER ------------------------*/
 
@@ -216,7 +216,6 @@ void Pamdeas(const string& input, const string& tests)
 
     double Rprofile;        // Radius to compute disc profiles
 
-    string inputfolder = "../input/";     // Name of the input folder
     string outputfile;      // Variable for the name of the output file
 
     auto wtbegin = chrono::high_resolution_clock::now(); // start counter for walltime
@@ -233,7 +232,7 @@ void Pamdeas(const string& input, const string& tests)
 
         ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,Rbump,
                 dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,ejectasize,cohacc,icomp,maxsize,isnow,
-                Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,gammaft,disrupteq,weirmod,ngrains,Rini,istate,inputfolder+input);
+                Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,gammaft,disrupteq,weirmod,ngrains,Rini,istate,folder+input);
 
         cout << "Input file read\n" << endl;
 
