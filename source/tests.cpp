@@ -243,7 +243,7 @@ void TestGrowthCompare(const double& dt, const double& size, const double& St)
 
 
 
-void WriteTestsResultsFiles(const int& massorsize, const double& tend, const double& Rtest, const double& mdisc, const double& sigmatest,//->
+void WriteTestsResultsFiles(const double& tend, const double& Rtest, const double& mdisc, const double& sigmatest,//->
                     const double& hgtest, const double& tgtest, const double& pgtest, const double& rhogtest,const double& cgtest,//->
                     double& vktest, double& numoltest, double& nuturbtest, double& gaspathtest,//->
                     const double& p, const double& q, const double& alpha, const double& sizeini, const double& a0,const double& rhos,//->
@@ -267,10 +267,7 @@ void WriteTestsResultsFiles(const int& massorsize, const double& tend, const dou
     double nuturbexp = 3.5226e+10;
     double gaspathexp = 7.0022;
 
-    if (massorsize == 0)    mod = "M";
-    else                    mod = "S";
-    
-    writerdoc.open(test+"_"+mod+".txt");
+    writerdoc.open(test+".txt");
 
 	writerdoc << endl<< "     Wall Time : " << walltime << " s" << endl;
     writerdoc << endl;
@@ -279,7 +276,7 @@ void WriteTestsResultsFiles(const int& massorsize, const double& tend, const dou
     else if (Rtest >= 10)  dash = "-";
     else if (Rtest >= 100) dash = "--";
     else                dash = "---";
-    writerdoc << setprecision(10);
+    writerdoc << setprecision(3);
     writerdoc << "------------------------------------------------------" << dash << endl;
 	writerdoc << "! ---------- Initials Conditions at " << Rtest << " AU ---------- !" << endl;
     writerdoc << "------------------------------------------------------" << dash << endl;
@@ -309,56 +306,55 @@ void WriteTestsResultsFiles(const int& massorsize, const double& tend, const dou
     writerdoc << "! ---------- Input Parameters ---------- !" << endl;
     writerdoc << "------------------------------------------" << endl;
     writerdoc << endl;
-    writerdoc << "             Model used: ";
-
-    if (massorsize == 0)     writerdoc << "dm/dt" << endl;
-    else                     writerdoc << "ds/dt" << endl;
-
-    writerdoc << "         Simulated time: " << tend << " yrs" << endl;
 
     writerdoc << "                p index: " << p << endl;
     writerdoc << "                q index: " << q << endl;
     writerdoc << "       Alpha turbulence: " << alpha << endl;
     writerdoc << endl;
 
-    writerdoc << "   -------- Dust properties --------" << endl;
-    writerdoc << endl;
-    writerdoc << "                  Grain: ";
-
-    writerdoc << "     Initial grain size: " << sizeini << " m" << endl;
-    writerdoc << " Dust intrinsic density: " << rhos << " kg/m³" << endl;
-
-    writerdoc << endl;
-    writerdoc << "   -------- Grain options --------" << endl<< endl;
-    writerdoc << "           Radial drift: ";
-
-    if (idrift == 0)    writerdoc << "no" << endl;
-    else                writerdoc << "yes" << endl;
-
-    switch (ifrag)
+    if (test != "TestDiscinit")
     {
-        case (0):
-        {
-            writerdoc << "no" << endl;
-            break;
-        }
-        case (1):
-        {
-            writerdoc << "Hard model" << endl;
-            break;
-        }
-        case (2):
-        {
-            writerdoc << "Smooth model" << endl;
-            break;
-        }
-    }
+        writerdoc << "         Simulated time: " << tend << " yrs" << endl;
 
-    if (ifrag !=0)
-    {   
-        writerdoc << "Fragmentation threshold: " << vfragi << " m/s" << endl;
-    }
+        writerdoc << "   -------- Dust properties --------" << endl;
+        writerdoc << endl;
+        writerdoc << "                  Grain: "<< endl;
 
-    writerdoc.close();
-    if (ifailinit == true) exit(1);
+        writerdoc << "     Initial grain size: " << sizeini << " m" << endl;
+        writerdoc << " Dust intrinsic density: " << rhos << " kg/m³" << endl;
+
+        writerdoc << endl;
+        writerdoc << "   -------- Grain options --------" << endl<< endl;
+        writerdoc << "           Radial drift: ";
+
+        if (idrift == 0)    writerdoc << "no" << endl;
+        else                writerdoc << "yes" << endl;
+
+        switch (ifrag)
+        {
+            case (0):
+            {
+                writerdoc << "no" << endl;
+                break;
+            }
+            case (1):
+            {
+                writerdoc << "Hard model" << endl;
+                break;
+            }
+            case (2):
+            {
+                writerdoc << "Smooth model" << endl;
+                break;
+            }
+        }
+
+        if (ifrag !=0)
+        {
+            writerdoc << "Fragmentation threshold: " << vfragi << " m/s" << endl;
+        }
+
+        writerdoc.close();
+        if (ifailinit == true) exit(1);
+    }
 }

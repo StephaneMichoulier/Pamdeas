@@ -299,7 +299,7 @@ void WriteInputFile()
 {
     ofstream writerinput;
 
-	writerinput.open("input.in");
+	writerinput.open("../input/input.in");
 
     writerinput << endl;
     writerinput << "#-Use dm/dt or ds/dt" << endl;

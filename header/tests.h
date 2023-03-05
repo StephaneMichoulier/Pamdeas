@@ -53,7 +53,7 @@ void TestAllDiscConfig(const double& Rin, const double& mstar, const double& mdi
 void TestGrowthCompare();
 
 // Write summary of the test
-void WriteTestsResultsFiles(const int& massorsize, const double& tend, const double& Rtest, const double& mdisc, const double& sigmatest,//->
+void WriteTestsResultsFiles(const double& tend, const double& Rtest, const double& mdisc, const double& sigmatest,//->
                     const double& hgtest, const double& tgtest, const double& pgtest, const double& rhogtest,const double& cgtest,//->
                     double& vktest, double& numoltest, double& nuturbtest, double& gaspathtest,//->
                     const double& p, const double& q, const double& alpha, const double& sizeini, const double& a0,const double& rhos,//->

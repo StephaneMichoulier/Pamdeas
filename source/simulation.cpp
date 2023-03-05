@@ -194,7 +194,7 @@ void Pamdeas(const string& input, const string& tests)
     
 
     /*------------------------ TEST PARAMETERS ------------------------*/
-    int whichtest;          // Which test: 0=No, 1=TestGrowthFragMass, 2=TestGrowthFragMass, 3=TestDrift
+    int whichtest;          // Which test: 0=No, 1=Testdiscinit 2=TestGrowthFragMass, 3=TestGrowthFragMass, 4=TestDrift
     bool ifailinit = false;
     bool ifailtest = false;
     double hgtest;          // Disc height at Rtest [AU]
@@ -208,29 +208,32 @@ void Pamdeas(const string& input, const string& tests)
     double nuturbtest;      // Gas turbulent kinematic viscosity [m²/s]
     double gaspathtest;     // Mean free path λ of the gas [m]
 
-    if(tests == "TestGrowthFragMass")  whichtest = 1;
-    else if(tests == "TestGrowthFragSize") whichtest = 2;
-    else if (tests == "TestDrift")  whichtest = 3;
+    if (tests == "TestDiscinit")   whichtest = 1;
+    else if(tests == "TestGrowthFragMass")  whichtest = 2;
+    else if(tests == "TestGrowthFragSize") whichtest = 3;
+    else if (tests == "TestDrift")  whichtest = 4;
     else whichtest = 0;
 
     double Rprofile;        // Radius to compute disc profiles
 
+    string inputfolder = "../input/";     // Name of the input folder
     string outputfile;      // Variable for the name of the output file
 
     auto wtbegin = chrono::high_resolution_clock::now(); // start counter for walltime
 
-    if (whichtest ==0) PresentationAnim();
+    if (whichtest == 0) PresentationAnim();
 
     /*------------------------ READ INPUT FILE ------------------------*/
 
     switch (whichtest)
     {
     case (0):
-    {   cout << "Reading input file" << endl;
+    {   
+        cout << "Reading input file" << endl;
 
         ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,Rbump,
                 dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,ejectasize,cohacc,icomp,maxsize,isnow,
-                Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,gammaft,disrupteq,weirmod,ngrains,Rini,istate,input);
+                Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,gammaft,disrupteq,weirmod,ngrains,Rini,istate,inputfolder+input);
 
         cout << "Input file read\n" << endl;
 
@@ -243,15 +246,22 @@ void Pamdeas(const string& input, const string& tests)
     {
         TestGrowthFragMassParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
                                 ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
+        tend = 0;
         break;
     }
     case (2):
+    {
+        TestGrowthFragMassParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
+                                ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
+        break;
+    }
+    case (3):
     {
         TestGrowthFragSizeParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
                                 ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
         break;
     }
-    case (3):
+    case (4):
     {
         TestDriftParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
                                 ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
@@ -282,7 +292,7 @@ void Pamdeas(const string& input, const string& tests)
     {
         TestAllDiscConfig(Rin,mstar,mdisc,p,q,sigma0,R0,hg0,alpha,ismooth,ibump,Rbump,bumpwidth,bumpheight,hgtest,sigmatest,
         rhogtest,cgtest,tgtest,pgtest,vktest,numoltest,nuturbtest,gaspathtest,ifailinit);
-        ngrains = 0;
+        if (whichtest == 1) ngrains = 0;
     }
 
 
@@ -319,7 +329,7 @@ void Pamdeas(const string& input, const string& tests)
 
     /*------------------------ TIME LOOP FOR SIMULATION ------------------------*/
    
-    if (ngrains > 0)
+    if (ngrains > 0 && whichtest == 0)
     {   cout << "\n\e[1m" << "Simulation starting:" << "\e[0m\n" << endl;   }
 
     for (int j = 0; j < ngrains; j++)
@@ -480,7 +490,7 @@ void Pamdeas(const string& input, const string& tests)
                     }
 
                     // Waiting animation
-                    ProgressionAnim(t,tend,istate[j],outputfile);
+                    if (whichtest == 0) ProgressionAnim(t,tend,istate[j],outputfile);
                 }
                 break;
             }
@@ -573,7 +583,7 @@ void Pamdeas(const string& input, const string& tests)
                     }
 
                     // Waiting animation
-                    ProgressionAnim(t,tend,istate[j],outputfile);
+                    if (whichtest == 0) ProgressionAnim(t,tend,istate[j],outputfile);
                 }
             break;
             }
@@ -595,7 +605,7 @@ void Pamdeas(const string& input, const string& tests)
     }
     else
     {
-        WriteTestsResultsFiles(massorsize,tend,R0,mdisc,sigmatest,hgtest,tgtest,pgtest,rhogtest,cgtest,vktest,numoltest,nuturbtest,gaspathtest,p,q,alpha,sizeini,a0,rhos,idrift,ifrag,vfragi,wt,tests,ifailinit,ifailtest);
+        WriteTestsResultsFiles(tend,R0,mdisc,sigmatest,hgtest,tgtest,pgtest,rhogtest,cgtest,vktest,numoltest,nuturbtest,gaspathtest,p,q,alpha,sizeini,a0,rhos,idrift,ifrag,vfragi,wt,tests,ifailinit,ifailtest);
     }
 
     if (whichtest == 0) EndAnim();
