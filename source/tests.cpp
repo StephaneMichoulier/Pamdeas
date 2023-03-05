@@ -233,7 +233,7 @@ void TestAllDiscConfig(const double& Rin, const double& mstar, const double& mdi
 
 }
 
-void TestGrowthCompare()
+void TestGrowthCompare(const double& dt, const double& size, const double& St)
 {
 
 

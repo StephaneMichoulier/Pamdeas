@@ -219,7 +219,7 @@ void Pamdeas(const string& input, const string& tests)
 
     auto wtbegin = chrono::high_resolution_clock::now(); // start counter for walltime
 
-    PresentationAnim();
+    if (whichtest ==0) PresentationAnim();
 
     /*------------------------ READ INPUT FILE ------------------------*/
 
@@ -585,7 +585,7 @@ void Pamdeas(const string& input, const string& tests)
     // Compute wall time
     auto wtend = std::chrono::high_resolution_clock::now();
     double wt = (chrono::duration_cast<chrono::nanoseconds>(wtend-wtbegin)).count()* 1e-9;
-    Walltime(wt);
+    if (whichtest == 0) Walltime(wt);
 
     if (whichtest == 0)
     {   // Write initials conditions
@@ -598,6 +598,6 @@ void Pamdeas(const string& input, const string& tests)
         WriteTestsResultsFiles(massorsize,tend,R0,mdisc,sigmatest,hgtest,tgtest,pgtest,rhogtest,cgtest,vktest,numoltest,nuturbtest,gaspathtest,p,q,alpha,sizeini,a0,rhos,idrift,ifrag,vfragi,wt,tests,ifailinit,ifailtest);
     }
 
-    EndAnim();
+    if (whichtest == 0) EndAnim();
 
 }
