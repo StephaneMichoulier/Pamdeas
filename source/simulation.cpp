@@ -288,10 +288,10 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
 
 
     /*------------------------ TESTING DIFFERENT CONFIGURATION FOR INIT DISC ------------------------*/
-    if(whichtest == 1)
+    if(whichtest != 0)
     {
         TestAllDiscConfig(Rin,mstar,mdisc,p,q,sigma0,R0,hg0,alpha,ismooth,ibump,Rbump,bumpwidth,bumpheight,hgtest,sigmatest,
-        rhogtest,cgtest,tgtest,pgtest,vktest,numoltest,nuturbtest,gaspathtest,ifailinit);
+        rhogtest,cgtest,tgtest,pgtest,vktest,numoltest,nuturbtest,gaspathtest,whichtest,ifailinit);
     }
 
 
@@ -378,7 +378,6 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
             WriteOutputHeader(writer,massorsize);
             WriteOutputFile(writer,t,Ri,massi,filfaci,sizei,st,cg,sigma,rhog,dustfrac,vrel,deltav,Omegak(Ri,mstar),0.,0.,dragreg,porreg);
         }
-        if (whichtest == 2 || whichtest == 3)   deltav = 0;
 
         if (verbosetest == true)
         {   
@@ -428,7 +427,10 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
 
                     // Compute additionnal quantities for idrift = 1: vdrift=drdt
                     if (idrift == 1)
-                    {   drdt = DRDt(Ri,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ismooth,ibump,Rbump,bumpwidth,bumpheight); }
+                    {
+                        drdt = DRDt(Ri,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ismooth,ibump,Rbump,bumpwidth,bumpheight);
+                        if (whichtest == 4) TestDriftCompare(t,Ri,p,q,cg,Vk(Ri,mstar),st,AUtoMeter(drdt),deltav,ifailtest,verbosetest,writer);
+                    }
 
                     // Compute dm/dt
                     dmdt = DmDt(sizef,rhog,rhos,dustfrac,vrel,ifrag,ieros,ejectasize,cohacc,ibounce,vfrag,vstick,deltav,probabounce);
@@ -510,7 +512,6 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
                     vrel = Vrel(cg,st,alpha,deltav);
 
                     if (whichtest == 2 || whichtest == 3) TestGrowthCompare(t,sizef,st,st0,rhog,cg,dustfrac,alpha,rhos,Omegak(Ri,mstar),ifailtest,verbosetest,writer);
-                    if (whichtest == 4) TestDriftCompare(t,Rf,p,q,hg/Rf,Vk(Rf,mstar),st,AUtoMeter(drdt),deltav,ifailtest,verbosetest,writer);
 
                     // Write in output file quantities at time t
                     if ((t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 )) && whichtest == 0)

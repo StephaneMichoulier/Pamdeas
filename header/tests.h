@@ -50,14 +50,14 @@ void TestDriftParam(int& massorsize, double& tend, int& stepmethod, double& step
 // Test the initialisation of a given disc by comparing computed values with reference values at a given radius != Ref
 void TestInitDisc(const double& R, const double& sigma, const double& hg, const double& cg, const double& rhog,//->
                   const double& T, const double& P, const double& mdisc, const double& vk, const double& numol,//->
-                  const double& nuturb, const double& gaspath, bool& ifailinit);
+                  const double& nuturb, const double& gaspath, const int& whichtest, bool& ifailinit);
 
 // Test the initialisation of a given disc by using all possible equations available
 void TestAllDiscConfig(const double& Rin, const double& mstar, const double& mdisc, const double& p, const double& q,//->
                        const double& sigma0, const double& R0, const double& hg0, const double& alpha, const int& ismooth,//-> 
                        const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight,//->
                        double& hgtest, double& sigmatest, double& rhogtest, double& cgtest, double& tgtest, double& pgtest,//->
-                       double& vktest, double& numoltest, double& nuturbtest, double& gaspathtest, bool& ifailinit);
+                       double& vktest, double& numoltest, double& nuturbtest, double& gaspathtest, const int& whichtest, bool& ifailinit);
 
 // Test the evalutation of the growth rate with courant condition with respect to the analytic solution
 void TestGrowthCompare(const double& time, const double& size, const double& st, const double& st0, const double& rhog,//->
@@ -65,7 +65,7 @@ void TestGrowthCompare(const double& time, const double& size, const double& st,
                        bool& ifailtest, const bool& verbosetest, ofstream& outputfile);
 
 // Test the evalutation of the drift rate with courant condition with respect to the analytic solution
-void TestDriftCompare(const double& time, const double& R, const int& p, const int& q, const double& hgR, const double& vk, const double& st, const double drdt,//->
+void TestDriftCompare(const double& time, const double& R, const double& p, const double& q, const double& cg, const double& vk, const double& st, const double drdt,//->
                       const double& deltav, bool& ifailtest, const bool& verbosetest, ofstream& outputfile);
 
 // Write summary of the test
