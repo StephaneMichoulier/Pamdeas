@@ -514,6 +514,52 @@ void WriteDisruptFile(ofstream& outputfile, const double& R, const double& massf
     outputfile << "\n";
 }
 
+
+void TestGrowthHeader(ofstream& outputfile)
+{
+    WriteValue(outputfile, 12, 0, "t_(yr)");
+    WriteValue(outputfile, 14, 0, "St");
+    WriteValue(outputfile, 14, 0, "Stcomp");
+    WriteValue(outputfile, 14, 0, "size_(m)");
+    WriteValue(outputfile, 14, 0, "sizecomp_(m)");
+    outputfile << "\n";
+
+}
+
+void TestDriftHeader(ofstream& outputfile)
+{
+    WriteValue(outputfile, 12, 0, "t_(yr)");
+    WriteValue(outputfile, 12, 0, "r_(au)");
+    WriteValue(outputfile, 14, 0, "-drdt_(m/s)");
+    WriteValue(outputfile, 14, 0, "-drdtcomp_(m/s)");
+    WriteValue(outputfile, 14, 0, "deltav_(m/s)");
+    WriteValue(outputfile, 14, 0, "deltavcomp_(m/s)");
+    outputfile << "\n";
+
+}
+
+void TestGrowthOutputfile(ofstream& outputfile, const double& time, const double& st, const double& stcomp, const double& size, const double& sizecomp)
+{
+    WriteValue(outputfile, 12, 6, time);
+    WriteValue(outputfile, 14, 6, st);
+    WriteValue(outputfile, 14, 6, stcomp);
+    WriteValue(outputfile, 14, 6, size);
+    WriteValue(outputfile, 14, 6, sizecomp);
+    outputfile << "\n";
+}
+
+void TestDriftOutputfile(ofstream& outputfile, const double& time, const double& R, const double& drdt, const double& drdtcomp, const double& deltav, const double& deltavcomp)
+{
+    WriteValue(outputfile, 12, 6, time);
+    WriteValue(outputfile, 12, 6, R);
+    WriteValue(outputfile, 14, 6, -drdt);
+    WriteValue(outputfile, 14, 6, -drdtcomp);
+    WriteValue(outputfile, 14, 6, deltav);
+    WriteValue(outputfile, 14, 6, deltavcomp);
+    outputfile << "\n";
+}
+
+
 void WriteResultsFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const int& isetdens, const int& isettemp,//-> 
                    const int& ismooth, const double& Rin, const double& Rout, const double& R0, const double& mstar, const double& mdisc,//->
                    const double& sigma0, const double& hg0, const double& T0, const double& dustfrac0, const double& rhog0, const double& cg0,//->

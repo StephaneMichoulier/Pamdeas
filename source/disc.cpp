@@ -183,7 +183,7 @@ double VVisc(const double& R, const double& Rin, const double& mstar, double p, 
              const int& ismooth, const int& ibump, const double& Rbump, const double& bumpwidth, const double& bumpheight) 
 {
     double vvisc = NuTurbGas(R+deltaR,mstar,q,R0,hg0,alpha)*AUtoMeter(R+deltaR)*Rhog(R+deltaR,Rin,p,q,sigma0,R0,hg0,ismooth,ibump,Rbump,bumpwidth,bumpheight)*Vk(R+deltaR,mstar);
-    vvisc -= NuTurbGas(R-deltaR,mstar,q,R0,hg0,alpha)*AUtoMeter(R-deltaR)*Rhog(R-deltaR,Rin,p,q,sigma0,R0,hg0,ismooth,ibump,Rbump,bumpwidth,bumpheight)*Vk(R-deltaR,mstar);
+    vvisc -= NuTurbGas(R-deltaR,mstar,q,R0,hg0,alpha)*AUtoMeter(R+deltaR)*Rhog(R-deltaR,Rin,p,q,sigma0,R0,hg0,ismooth,ibump,Rbump,bumpwidth,bumpheight)*Vk(R-deltaR,mstar);
     vvisc /= 2.*AUtoMeter(deltaR);
 
     return vvisc*3./(rhog*AUtoMeter(R)*Vk(R,mstar));

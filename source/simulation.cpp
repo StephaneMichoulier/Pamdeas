@@ -207,6 +207,8 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
     double numoltest;       // Gas molecular kinematic viscosity [m²/s]
     double nuturbtest;      // Gas turbulent kinematic viscosity [m²/s]
     double gaspathtest;     // Mean free path λ of the gas [m]
+    double st0;             // Needed to test growth
+    bool verbosetest;       // produce output file for test
 
     if (tests == "TestDiscinit")   whichtest = 1;
     else if(tests == "TestGrowthFragMass")  whichtest = 2;
@@ -226,47 +228,46 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
 
     switch (whichtest)
     {
-    case (0):
-    {   
-        cout << "Reading input file" << endl;
+        case (0):
+        {   
+            cout << "Reading input file" << endl;
 
-        ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,Rbump,
-                dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,ejectasize,cohacc,icomp,maxsize,isnow,
-                Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,gammaft,disrupteq,weirmod,ngrains,Rini,istate,folder+input);
+            ReadFile(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,Rbump,
+                    dustfracmax,bumpwidth,bumpheight,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,ejectasize,cohacc,icomp,maxsize,isnow,
+                    Rsnow,vfragin,vfragout,youngmod0,esurf,Yd0,Ydpower,constvfrag,filfaclim,filfacbnc,gammaft,disrupteq,weirmod,ngrains,Rini,istate,folder+input);
 
-        cout << "Input file read\n" << endl;
+            cout << "Input file read\n" << endl;
 
-        if (ngrains == 0 && profile == 0)
-        {   cout << "Too bad, nothing to compute" << endl;  }
+            if (ngrains == 0 && profile == 0)
+            {   cout << "Too bad, nothing to compute" << endl;  }
 
-        break;
+            break;
+        }
+        case (1):
+        {
+            TestDiscInitParam(tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,ibr,ibump,ngrains);
+            break;
+        }
+        case (2):
+        {
+            TestGrowthFragMassParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
+                                    ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
+            break;
+        }
+        case (3):
+        {
+            TestGrowthFragSizeParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
+                                    ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
+            break;
+        }
+        case (4):
+        {
+            TestDriftParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
+                                    ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
+            break;
+        }
     }
-    case (1):
-    {
-        TestGrowthFragMassParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
-                                ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
-        tend = 0;
-        break;
-    }
-    case (2):
-    {
-        TestGrowthFragMassParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
-                                ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
-        break;
-    }
-    case (3):
-    {
-        TestGrowthFragSizeParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
-                                ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
-        break;
-    }
-    case (4):
-    {
-        TestDriftParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
-                                ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
-        break;
-    }
-    }
+    if (whichtest != 0 && whichtest != 1)   VerboseTest(verbosetest);
 
     /*------------------------ INITIALIZATION OF PARAMETERS AT R0 ------------------------*/
 
@@ -287,11 +288,10 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
 
 
     /*------------------------ TESTING DIFFERENT CONFIGURATION FOR INIT DISC ------------------------*/
-    if(whichtest != 0)
+    if(whichtest == 1)
     {
         TestAllDiscConfig(Rin,mstar,mdisc,p,q,sigma0,R0,hg0,alpha,ismooth,ibump,Rbump,bumpwidth,bumpheight,hgtest,sigmatest,
         rhogtest,cgtest,tgtest,pgtest,vktest,numoltest,nuturbtest,gaspathtest,ifailinit);
-        if (whichtest == 1) ngrains = 0;
     }
 
 
@@ -340,7 +340,6 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
             outputfile = OutputFileName(massorsize,Rini[j],iporosity);
             writer.open(outputfile.c_str());
         }
-
         // Initialize loop parameters
         if (stepmethod == 0) dt = step;
         t = 0;
@@ -378,6 +377,35 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
         {   
             WriteOutputHeader(writer,massorsize);
             WriteOutputFile(writer,t,Ri,massi,filfaci,sizei,st,cg,sigma,rhog,dustfrac,vrel,deltav,Omegak(Ri,mstar),0.,0.,dragreg,porreg);
+        }
+        if (whichtest == 2 || whichtest == 3)   deltav = 0;
+
+        if (verbosetest == true)
+        {   
+            switch (whichtest)
+            {
+            case (2):
+            {
+                writer.open("ResultstestgrowthMass.txt");
+                TestGrowthHeader(writer);
+                st0 = st;
+                break;
+            }
+            case (3):
+            {
+                writer.open("ResultstestgrowthSize.txt");
+                TestGrowthHeader(writer);
+                break;
+            }
+            case (4):
+            {
+                writer.open("ResultstestDrift.txt");
+                TestDriftHeader(writer);
+                break;
+            }
+            default:
+                break;
+            }
         }
 
         // This is where the loop begin
@@ -425,7 +453,7 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
                     if (idrift == 1)    Rf += drdt*YearToSec(dt);
 
                     // Compute new mass after dt
-                    if (whichtest != 3) massf += dmdt*YearToSec(dt);
+                    if (whichtest != 4) massf += dmdt*YearToSec(dt);
 
                     // Check if new mass < monomer mass
                     if (massf < GrainMass(a0,1.,rhos))
@@ -480,6 +508,9 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
                     st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,dragreg);
                     deltav = DeltaV(Rf,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ismooth,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     vrel = Vrel(cg,st,alpha,deltav);
+
+                    if (whichtest == 2 || whichtest == 3) TestGrowthCompare(t,sizef,st,st0,rhog,cg,dustfrac,alpha,rhos,Omegak(Ri,mstar),ifailtest,verbosetest,writer);
+                    if (whichtest == 4) TestDriftCompare(t,Rf,p,q,hg/Rf,Vk(Rf,mstar),st,AUtoMeter(drdt),deltav,ifailtest,verbosetest,writer);
 
                     // Write in output file quantities at time t
                     if ((t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 )) && whichtest == 0)
@@ -573,6 +604,8 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
                     st = St(Rf,mstar,rhog,cg,sizef,filfacf,rhos,deltav,dragreg);
                     deltav = DeltaV(Rf,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ismooth,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     vrel = Vrel(cg,st,alpha,deltav);
+
+                    if (whichtest == 2 || whichtest == 3) TestGrowthCompare(t,sizef,st,st0,rhog,cg,dustfrac,alpha,rhos,Omegak(Ri,mstar),ifailtest,verbosetest,writer);
 
                     // Write in output file quantities at time t, 
                     if ((t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 )) && whichtest == 0)

@@ -4,12 +4,14 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <cmath>
 
 
 #include "../header/constantandconversion.h"
 #include "../header/disc.h"
 #include "../header/dust.h"
 #include "../header/evol.h"
+#include "../header/readwrite.h"
 
 using namespace std;
 
@@ -21,9 +23,24 @@ using namespace std;
 
 bool CompTol(const double& x, const double& y, float tolerance = 0.01)
 {
-   if(abs(x - y) < tolerance)
-      return true; //they are same
-      return false; //they are not same
+    // compare 2 values within tolerance
+    if(abs(x - y) < tolerance)  return true; //they are same
+    else                        return false;//they are not same
+}
+
+void TestDiscInitParam(double& tend, int& stepmethod, double& step, int& profile, int& isetdens, int& isettemp, int& ismooth,//->
+                double& Rin, double& Rout, double& R0, double& mstar, double& mdisc, double& sigma0, double& hg0R0, double& T0,//->
+                double& dustfrac0, double& p, double& q, double& alpha, int& ibr, int& ibump, int& ngrains)
+{
+    tend = 0;       stepmethod = 0;       step = 0.01;
+    profile = 0;    isetdens = 1;       isettemp = 1;       ismooth = 0;
+    Rin = 1;        Rout = 100;         R0 = 1;
+    mstar = 1;      sigma0 = 1428.41;   T0 = 618.861;       dustfrac0 = 0.01; hg0R0 = 0.05;
+    p = 1;          q = 0.5;
+    alpha = 1e-3;
+    ibr = 0;        ibump = 0;
+    ngrains = 0;
+    mstar = MsolToKg(mstar);
 }
 
 void TestGrowthFragMassParam(int& massorsize, double& tend, int& stepmethod, double& step, int& profile, int& isetdens, int& isettemp, int& ismooth,//->
@@ -33,15 +50,15 @@ void TestGrowthFragMassParam(int& massorsize, double& tend, int& stepmethod, dou
                 double& maxsize, int& isnow, int& constvfrag, int& ngrains, vector <double>& Rini, vector <int>& istate)
 {
     massorsize = 0;     
-    tend = 1e3;     stepmethod = 0;     step = 1;
-    profile = 0;    isetdens = 1;       isettemp = 0;       ismooth = 0;
+    tend = 1e4;     stepmethod = 2;     step = 0.1;
+    profile = 0;    isetdens = 1;       isettemp = 1;       ismooth = 0;
     Rin = 1;        Rout = 100;         R0 = 1;
     mstar = 1;      sigma0 = 1428.41;   T0 = 618.861;       dustfrac0 = 0.01; hg0R0 = 0.05;
-    p = 1;          q = 1;
+    p = 1;          q = 0.5;
     alpha = 1e-3;
     ibr = 0;        ibump = 0;          iporosity = 0;
-    sizeini = 1e2;  a0 = 1e-6;          rhos = 300;
-    idrift = 0;     ibounce = 0;        idisrupt = 0;       ifrag = 1;          vfragi = 1000;
+    sizeini = 1e-6; a0 = 1e-6;          rhos = 1000;
+    idrift = 0;     ibounce = 0;        idisrupt = 0;       ifrag = 0;          vfragi = 0;
     ieros = 0;      icomp = 0;
     maxsize = -1;
     isnow = 0;      constvfrag = 1;
@@ -60,15 +77,15 @@ void TestGrowthFragSizeParam(int& massorsize, double& tend, int& stepmethod, dou
                 double& maxsize, int& isnow, int& constvfrag, int& ngrains, vector <double>& Rini, vector <int>& istate)
 {
     massorsize = 1;     
-    tend = 1e3;     stepmethod = 0;     step = 1;
+    tend = 1e4;     stepmethod = 2;     step = 0.1;
     profile = 0;    isetdens = 1;       isettemp = 1;       ismooth = 0;
     Rin = 1;        Rout = 100;         R0 = 1;
-    mstar = 1;      sigma0 = 1428.41;   T0 = 618.861;       dustfrac0 = 0.01;
-    p = 1;          q = 1;
+    mstar = 1;      sigma0 = 1428.41;   T0 = 618.861;       dustfrac0 = 0.01; hg0R0 = 0.05;
+    p = 1;          q = 0.5;
     alpha = 1e-3;
     ibr = 0;        ibump = 0;          iporosity = 0;
-    sizeini = 1e2;  a0 = 1e-6;          rhos = 300;
-    idrift = 0;     ibounce = 0;        idisrupt = 0;       ifrag = 1;          vfragi = 1000;
+    sizeini = 1e-6; a0 = 1e-6;          rhos = 1000;
+    idrift = 0;     ibounce = 0;        idisrupt = 0;       ifrag = 0;          vfragi = 0;
     ieros = 0;      icomp = 0;
     maxsize = -1;
     isnow = 0;      constvfrag = 1;
@@ -86,23 +103,23 @@ void TestDriftParam(int& massorsize, double& tend, int& stepmethod, double& step
                 int& idrift, int& ibounce, int& idisrupt, int& ifrag, double& vfragi, int& ieros, int& icomp,//-> 
                 double& maxsize, int& isnow, int& constvfrag, int& ngrains, vector <double>& Rini, vector <int>& istate)
 {
-    massorsize = 1;     
-    tend = 1e3;     stepmethod = 0;     step = 1;
+    massorsize = 0;
+    tend = 1e6;     stepmethod = 2;     step = 0.01;
     profile = 0;    isetdens = 1;       isettemp = 1;       ismooth = 0;
     Rin = 1;        Rout = 100;         R0 = 1;
-    mstar = 1;      sigma0 = 1428.41;   T0 = 618.861;       dustfrac0 = 0.01;
-    p = 1;          q = 1;
+    mstar = 1;      sigma0 = 1428.41;   T0 = 618.861;       dustfrac0 = 0.01; hg0R0 = 0.05;
+    p = 1;          q = 0.5;
     alpha = 1e-3;
     ibr = 0;        ibump = 0;          iporosity = 0;
-    sizeini = 1e-1; a0 = 1e-6;          rhos = 300;
-    idrift = 1;     ibounce = 0;        idisrupt = 0;       ifrag = 1;          vfragi = 1000;
+    sizeini = 1;   a0 = 1e-6;          rhos = 1000;
+    idrift = 1;     ibounce = 0;        idisrupt = 0;       ifrag = 0;          vfragi = 0;
     ieros = 0;      icomp = 0;
     maxsize = -1;
     isnow = 0;      constvfrag = 1;
     ngrains = 1;
     Rini.resize(ngrains);
     istate.resize(ngrains);
-    Rini[0] = 10.; 
+    Rini[0] = 100.;
     istate[0] = 0;
     mstar = MsolToKg(mstar);
 }
@@ -112,75 +129,75 @@ void TestInitDisc(const double& R, const double& sigma, const double& hg, const 
                   const double& T, const double& P, const double& mdisc, const double& vk, const double& numol,//->
                   const double& nuturb, const double& gaspath, bool& ifailinit)
 {
-    //At 10 au
-    double hgRexp = 0.05;
-    double cgexp = 470.944;
+    //At 10 au, value expected
+    double hgRexp = 0.088914;
+    double cgexp =  837.4708;
     double sigmaexp = 142.841;
-    double rhogexp = 7.61847e-10;
-    double Texp = 61.8861; 
-    double Pexp = 0.00016897;
+    double rhogexp = 4.28418e-10;
+    double Texp = 195.701;
+    double Pexp = 0.00030047397;
     double mdiscexp = 0.01;
     double vkexp = 9418.889;
-    double numolexp = 1648.8235;
-    double nuturbexp = 3.5226e+10;
-    double gaspathexp = 7.0022;
+    double numolexp = 5214.03681;
+    double nuturbexp = 1.1139483e+11;
+    double gaspathexp = 12.451866;
 
-    if (CompTol(sigma,sigmaexp,1e-3) == false)
+    // Compute with computed values
+    if (CompTol(sigma,sigmaexp,1e-4) == false)
     {
         ifailinit = true;
         cout  << "Gas surface density: " << sigma << ", expected: " << sigmaexp << " kg/m²" << endl;
     }
-    if (CompTol(hg/R,hgRexp,1e-3) == false)
+    if (CompTol(hg/R,hgRexp,1e-4) == false)
     {
         ifailinit = true;
         cout << "Scale height: " << hg/R << ", expected: " << hgRexp << endl;
     }
-    if (CompTol(cg,cgexp,1e-3) == false)
+    if (CompTol(cg,cgexp,1e-4) == false)
     {
         ifailinit = true;
         cout << "Gas sound speed: " << cg << ", expected: " << cgexp << " m/s" << endl;
     }
-    if (CompTol(rhog,rhogexp,1e-3) == false)
+    if (CompTol(rhog,rhogexp,1e-4) == false)
     {
         ifailinit = true;
         cout << "Gas density: " << rhog << ", expected: " << rhogexp <<" kg/m³" << endl;
     } 
-    if (CompTol(T,Texp,1e-3) == false)
+    if (CompTol(T,Texp,1e-4) == false)
     {
         ifailinit = true;
         cout << "Gas temperature: " << T << ", expected: " << Texp << " K" << endl;
     }
-    if (CompTol(P,Pexp,1e-3) == false)
+    if (CompTol(P,Pexp,1e-4) == false)
     {
         ifailinit = true;
         cout << "Gas Pressure: " << P << ", expected: " << Pexp << " Pa" << endl;
     }
-    if (CompTol(vk,vkexp,1e-3) == false)
+    if (CompTol(vk,vkexp,1e-4) == false)
     {
         ifailinit = true;
         cout << "Orbital velocity: " << vk << ", expected: " << vkexp << " m/s" << endl;
     }
-    if (CompTol(numol,numolexp,1e-3) == false)
+    if (CompTol(numol,numolexp,1e-4) == false)
     {
         ifailinit = true;
         cout << "Gas molecular viscosity: " << numol << ", expected: " << numolexp <<" m²/s" << endl;
     }
-    if (CompTol(nuturb/1e10,nuturbexp/1e10,1e-3) == false)
+    if (CompTol(nuturb/1e10,nuturbexp/1e10,1e-4) == false)
     {
         ifailinit = true;
         cout << "Gas turbulent viscosity: " << nuturb << ", expected: " << nuturbexp << " m²/s" << endl;
     }
-    if (CompTol(gaspath,gaspathexp,1e-3) == false)
+    if (CompTol(gaspath,gaspathexp,1e-4) == false)
     {
         ifailinit = true;
         cout << "Mean free path λ of gas: " << gaspath << ", expected: " << gaspathexp << " m" << endl;
     }
-    if (CompTol(KgToMsol(mdisc),mdiscexp,1e-3) == false)
+    if (CompTol(KgToMsol(mdisc),mdiscexp,1e-4) == false)
     {
         ifailinit = true;
         cout << "Disc mass: " << KgToMsol(mdisc) << ", expected: " << mdiscexp << " Msol" << endl;
     }
-
 }
 
 void TestAllDiscConfig(const double& Rin, const double& mstar, const double& mdisc, const double& p, const double& q,//->
@@ -189,8 +206,10 @@ void TestAllDiscConfig(const double& Rin, const double& mstar, const double& mdi
                        double& hgtest, double& sigmatest, double& rhogtest, double& cgtest, double& tgtest, double& pgtest,//->
                        double& vktest, double& numoltest, double& nuturbtest, double& gaspathtest, bool& ifailinit)
 {   
+    //compute sigma once (1 equ)
     sigmatest   = Sigma(10,Rin,p,R0,sigma0,ismooth,ibump,Rbump,bumpwidth,bumpheight);
 
+    // test first set of equations to initialise a disc
     hgtest      = Hg(10,q,R0,hg0);
     cgtest      = Cg(10,mstar,hgtest);
     tgtest      = T(cgtest);
@@ -205,6 +224,7 @@ void TestAllDiscConfig(const double& Rin, const double& mstar, const double& mdi
     if (ifailinit == true)  cout << "!!!  Disc config 1 initialisation failed, check test output !!!" << endl;
     else
     {
+        // test second set of equations to initialise a disc
         hgtest      = Hg(10,mstar,cgtest);
         tgtest      = T(10,mstar,q,R0,hg0);
         cgtest      = Cg(tgtest);
@@ -218,6 +238,7 @@ void TestAllDiscConfig(const double& Rin, const double& mstar, const double& mdi
     }
     if (ifailinit == true) cout << "!!!  Disc config 2 initialisation failed, check test output !!!" << endl;
     else{
+        // test third set of equations to initialise a disc
         hgtest      = Hg(10,q,R0,hg0);
         cgtest      = Cg(10,mstar,q,R0,hg0); 
         tgtest      = T(cgtest);
@@ -233,15 +254,57 @@ void TestAllDiscConfig(const double& Rin, const double& mstar, const double& mdi
 
 }
 
-void TestGrowthCompare(const double& dt, const double& size, const double& St)
+
+void TestGrowthCompare(const double& time, const double& size, const double& st, const double& st0, const double& rhog,//->
+                       const double& cg, const double& dustfrac, const double& alpha, const double& rhos, const double& omegak,//->
+                       bool& ifailtest, const bool& verbosetest, ofstream& outputfile)
 {
+    // Compute parameters for analytic solution for a stationnary disc
+    double tau = (1.+dustfrac)/(sqrt(2*M_SQRT2*alpha*rossby)*omegak*dustfrac);
+    double Time = YearToSec(time)/tau + 2*sqrt(st0)*(1+st0/3.);
+    double sigma = pow(8 + 9*Time*Time + 3*Time*sqrt(16+9*Time*Time),1./3.);
+    double stcomp = (sigma/2. + 2./sigma -2);
+    double sizecomp = rhog*cg/rhos/omegak*(sigma*sigma - 4*sigma + 4)/(2.*sigma);
 
-
+    // Compute with computed values
+    if (CompTol(st,stcomp,2e-2) == false)       // 1e-4 if stepmethod==2
+    {
+        ifailtest = true;
+        cout  << "Stoke number: " << st << ", expected: " << stcomp << endl;
+    }
+    if (CompTol(size,sizecomp,1e-3) == false)// 1e-5 if stepmethod==2
+    {
+        ifailtest = true;
+        cout  << "Size: " << size << ", expected: " << sizecomp << " m" << endl;
+    }
+    // Write in file if asked
+    if (verbosetest)    TestGrowthOutputfile(outputfile,time,st,stcomp,size,sizecomp);
 }
 
+void TestDriftCompare(const double& time, const double& R, const int& p, const int& q, const double& hgR, const double& vk, const double& st, const double drdt,//->
+                      const double& deltav, bool& ifailtest, const bool& verbosetest, ofstream& outputfile)
+{
+    // Compute parameters for analytic solution for a stationnary disc
+    double etavk = 0.5*(p + 0.5*q + 1.5)*hgR*hgR*vk; //eta*vk
+    double drdtcomp = -2*st*etavk/(1+st*st);
+    double dvorb = st*st*etavk/(1+st*st);
+    double deltavcomp = sqrt(drdtcomp*drdtcomp + dvorb*dvorb);
 
+    // Compute with computed values
+    if (CompTol(drdt,drdtcomp,1e-2) == false)
+    {
+        ifailtest = true;
+        cout  << "vdrift: " << drdt << ", expected: " << drdtcomp << " m/s"<< endl;
+    }
+    if (CompTol(deltav,deltavcomp,1e-3) == false)
+    {
+        ifailtest = true;
+        cout  << "Deltav: " << deltav << ", expected: " << deltavcomp << " m/s" << endl;
+    }
+    // Write in file if asked
+    if (verbosetest)    TestDriftOutputfile(outputfile,time,R,drdt,drdtcomp,deltav,deltavcomp);
 
-
+}
 
 void WriteTestsResultsFiles(const double& tend, const double& Rtest, const double& mdisc, const double& sigmatest,//->
                     const double& hgtest, const double& tgtest, const double& pgtest, const double& rhogtest,const double& cgtest,//->
@@ -255,17 +318,17 @@ void WriteTestsResultsFiles(const double& tend, const double& Rtest, const doubl
     string mod;
 
     //At 10 au
-    double hgRexp = 0.05;
-    double cgexp = 470.944;
+    double hgRexp = 0.088914;
+    double cgexp =  837.4708;
     double sigmaexp = 142.841;
-    double rhogexp = 7.61847e-10;
-    double Texp = 61.8861; 
-    double Pexp = 0.00016897;
+    double rhogexp = 4.28418e-10;
+    double Texp = 195.701;
+    double Pexp = 0.00030047397;
     double mdiscexp = 0.01;
     double vkexp = 9418.889;
-    double numolexp = 1648.8235;
-    double nuturbexp = 3.5226e+10;
-    double gaspathexp = 7.0022;
+    double numolexp = 5214.03681;
+    double nuturbexp = 1.1139483e+11;
+    double gaspathexp = 12.451866;
 
     writerdoc.open(test+".txt");
 
@@ -276,7 +339,7 @@ void WriteTestsResultsFiles(const double& tend, const double& Rtest, const doubl
     else if (Rtest >= 10)  dash = "-";
     else if (Rtest >= 100) dash = "--";
     else                dash = "---";
-    writerdoc << setprecision(3);
+    writerdoc << setprecision(4);
     writerdoc << "------------------------------------------------------" << dash << endl;
 	writerdoc << "! ---------- Initials Conditions at " << Rtest << " AU ---------- !" << endl;
     writerdoc << "------------------------------------------------------" << dash << endl;
@@ -286,7 +349,7 @@ void WriteTestsResultsFiles(const double& tend, const double& Rtest, const doubl
 	writerdoc << "        Gas sound speed: " << cgtest << ", expected: " << cgexp << " m/s" << endl;
 	writerdoc << "            Gas density: " << rhogtest << ", expected: " << rhogexp <<" kg/m³" << endl;
 	writerdoc << "        Gas temperature: " << tgtest << ", expected: " << Texp << " K" << endl;
-    writerdoc << "           Gas Pressure: " << pgtest << ", expected: " << Pexp << " K" << endl;
+    writerdoc << "           Gas Pressure: " << pgtest << ", expected: " << Pexp << " Pa" << endl;
     writerdoc << "       Orbital velocity: " << vktest << ", expected: " << vkexp << " m/s" << endl;
 	writerdoc << "Gas molecular viscosity: " << numoltest << ", expected: " << numolexp <<" m²/s" << endl;
 	writerdoc << "Gas turbulent viscosity: " << nuturbtest << ", expected: " << nuturbexp << " m²/s" << endl;
@@ -357,4 +420,20 @@ void WriteTestsResultsFiles(const double& tend, const double& Rtest, const doubl
         writerdoc.close();
         if (ifailinit == true) exit(1);
     }
+}
+
+void VerboseTest(bool& verbosetest)
+{
+	char answer='n'; //To verify what is entered
+    //display message
+    do{
+    cout<<"Verbose test (y,n)? : ";
+    cin >> answer;
+    if (cin.fail()){    answer = 'n';   }
+    cin.clear();
+    cin.ignore(100,'\n');
+    }while (answer!='Y' && answer!='y' && answer!='N' && answer!='n');
+
+    if (answer=='Y' || answer=='y') verbosetest = true;
+    else    verbosetest = false;
 }

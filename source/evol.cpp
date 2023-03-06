@@ -19,8 +19,8 @@ double AdaptativeDt(const double& time, const double& timeend, const int& massor
                     const double& R, const double& dvargrowthdt, const double& dRdt)
 {
     double dt = 1.;
-    double limup = 0.15;
-    double limdown = 0.075;
+    double limup = 0.10;
+    double limdown = 0.05;
     double CFLcdt;
     double Cgrowth = abs(vargrowth/dvargrowthdt);    // CFL from growth rate
     double Cdrift = abs(R/dRdt);                     // CFL from radial drift rate
@@ -169,6 +169,7 @@ double DsDt(const double& size, const double& filfac, const double& rhog, const 
     {
         if (deltav > 0.00142461/sqrt(rhog*ejectasize))   dsdt -= rhog*pow(deltav,3)*ejectasize*ejectasize/3./size/cohacc;
     }
+
     return dsdt;
 }
 

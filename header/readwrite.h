@@ -47,7 +47,6 @@ void WriteProfileHeader(ofstream& outputprofile);
 void WriteProfileFile(ofstream& outputprofile, const double& Rprofile, const double& hg, const double& cg, const double& sigma,//->
                       const double& rhog, const double& dustfrac, const double& pg, const double& T);
 
-
 // Write output columns
 void WriteOutputHeader(ofstream& outputfile, const double& massorsize);
 
@@ -65,6 +64,17 @@ void WriteDisruptFile(ofstream& outputfile, const double& R, const double& massf
                       const double& st, const double& vrel, const double& freqspin, const double& tensilestress,
                       const double& gammaft, const double& alpha, const double& a0);
 
+// Write output columns for Growth tests
+void TestGrowthHeader(ofstream& outputfile);
+
+// Write output columns for Drift test
+void TestDriftHeader(ofstream& outputfile);
+
+// Write data in the output growth test file
+void TestGrowthOutputfile(ofstream& outputfile, const double& time, const double& st, const double& stcomp, const double& size, const double& sizecomp);
+
+// Write data in the output drift test file
+void TestDriftOutputfile(ofstream& outputfile, const double& time, const double& R, const double& drdt, const double& drdtcomp, const double& deltav, const double& deltavcomp);
 
 // Write the initials conditions
 void WriteResultsFile(const int& massorsize, const double& tend, const int& stepmethod, const double& dt, const int& isetdens, const int& isettemp,//->
