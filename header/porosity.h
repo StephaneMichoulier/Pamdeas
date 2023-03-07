@@ -22,11 +22,7 @@ double VarVolumeBounce(const double& filfac, const double& filfaclim, const doub
                        const double& volume, const double& Yd0, const double& Ydpower);
 
 // Compute the filling factor after bouncing
-double FilFacBounce(const double& sizei, const double& filfaci, const double& rhos, const double& filfaclim,//->
-                    const double& vrel, const double& vstick, const double& vyield, const double& ncoll,//->
-                    const double& Yd0, const double& Ydpower);
-
-double FilFacBouncebis(const double& sizei, const double& filfaci, const double& rhos,//->
+double FilFacBounce(const double& sizei, const double& filfaci, const double& rhos,//->
                     const double& vrel, const double& vstick, const double& vyield, const double& ncoll,//->
                     const double& eroll,const double& a0);
 

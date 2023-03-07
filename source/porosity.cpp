@@ -50,28 +50,7 @@ double VarVolumeBounce(const double& filfac, const double& filfaclim, const doub
     return compactvol;
 }
 
-double FilFacBounce(const double& sizei, const double& filfaci, const double& rhos, const double& filfaclim,//->
-                    const double& vrel, const double& vstick, const double& vyield, const double& ncoll,//->
-                    const double& Yd0, const double& Ydpower)
-{
-    double coeffrest = CoeffRest(vrel,vstick,vyield);
-    double volume = GrainVolumeSize(sizei,filfaci,rhos);
-    double ekin = Ekin(sizei,filfaci,rhos,vrel);
-    double varvolbounce = VarVolumeBounce(filfaci,filfaclim,coeffrest,ekin,volume,Yd0,Ydpower);
-    double filfacbounce = filfaci*pow(1./(1.-0.5*(varvolbounce/volume)),ncoll);
-
-    if (vrel < vyield)
-    {   return filfaci; }
-    else
-    {
-        if (filfacbounce <= 1.)
-        {   return filfacbounce;    }
-        else
-        {   return 1.;  }
-    }
-}
-
-double FilFacBouncebis(const double& sizei, const double& filfaci, const double& rhos,//->
+double FilFacBounce(const double& sizei, const double& filfaci, const double& rhos,//->
                     const double& vrel, const double& vstick, const double& vyield, const double& ncoll,//->
                     const double& eroll,const double& a0)
 {
@@ -252,7 +231,6 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
     double filfacmincollgasgrav = FilFacMinMColGasGrav(R,mstar,rhog,cg,deltav,st,massf,rhos,eroll,a0,m0,alpha,porreg);
     double filfacgr = FilFacMGr(massf,massi,filfaci,rhos,eroll,vrel);
     double filfacmax = maxpacking + (1.-maxpacking)*(m0/massf);
-    int model = 5;
 
     if (massf > m0)
     {
@@ -262,88 +240,21 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
                 if ((vrel < vfrag && ifrag > 0) || (ifrag == 0))
                 {
                     filfacf = filfacgr;
-                
-                    //In developement
-                    
-                    /*if (icomp == 1)
-                    {   double vrelvf = vrel/vfrag;
-                        if (vrelvf < 0.1)
-                        {   filfacf = filfacgr;  }
-                        else if (vrelvf <= 0.3)
-                        {   filfacf = filfaci * (2.9*vrelvf*pow(filfacf,-0.2) +1); }
-                        else    
-                        {   filfacf = filfaci * (2.9*0.3*pow(filfacgr,-0.2)*exp(1.5*(0.3-vrelvf)) + 1);  }
-                    }*/
                     break;
                 }
                 else
                 { 
                     if (icomp == 1)
-                    {   
-                        switch (model)
-                        {
-                            case (0): // Fit1ncoll
-                            {
-                                double vrelvf = vrel/vfrag;
-                                double xi =(3*0.3*pow(filfaci,-0.2)*exp(1.5*(0.3-vrelvf))+1);
-                                filfacf = filfaci*pow(xi,ncoll);
-                                break;
-                            }
-                            case (1):// fit2ncoll
-                            {
-                                double vrelvf = vrel/vfrag;
-                                double xi2 = 27.*pow(filfaci,-0.2)*pow(vrelvf,1.5)/(2.*exp(4.*vrelvf)-1) +1;
-                                filfacf = filfaci*pow(xi2,ncoll);
-                                break;
-                            }
-                            case (2): // Garcia 
-                            {    
-                                double Vi = GrainVolumeSize(sizei,filfaci,rhos);
-                                double deltaVol = VarVolumeBounce(filfaci,filfaclim,0,Ekin(massi,vrel),Vi,Yd0,Ydpower);
-                                filfacf = filfaci*pow(1/(1-0.5*(deltaVol/Vi)),ncoll);
-                                break;
-                            }
-                            case (3):// Fit1 + ms
-                            {
-                                double vrelvf = vrel/vfrag;
-                                double xi =(3*0.3*pow(filfaci,-0.2)*exp(1.5*(0.3-vrelvf))+1);
-                                if (massf != massi)
-                                {   
-                                filfacf = filfaci * pow( massf/massi, -log(xi)/log(1.+vrelvf*vrelvf) ); 
-                                }
-                                else
-                                {   
-                                    filfacf = filfaci * pow(xi, ncoll/1.4);   
-                                }
-                                break;
-                            }
-                            case (4):// Fit1 + garcia
-                            {
-                                double vrelvf = vrel/vfrag;
-                                double Vi = GrainVolumeSize(sizei,filfaci,rhos);
-                                double xi =(3*0.3*pow(filfaci,-0.2)*exp(1.5*(0.3-vrelvf))+1);
-                                double deltaVol = Vi - massf/massi*Vi/xi;
-                                filfacf = filfaci*pow(1./(1.-(deltaVol/Vi)),ncoll);
-                                break;
-                            }
-                            case (5): // Garcia + mod compressive strenght kataoka
-                            {    
-                                double Vi = GrainVolumeSize(sizei,filfaci,rhos);
-                                double Ebreak = 1.5*48./302.46*eroll;
-                                //double Ebreak = 6*272.21/302.46*eroll;
-                                double Ecomp = Ekin(massi,vrel) - (2.*massi-massf)*Ebreak/m0;
+                    {
+                        double Vi = GrainVolumeSize(sizei,filfaci,rhos);
+                        double Ebreak = 1.5*48./302.46*eroll;
+                        double Ecomp = Ekin(massi,vrel) - (2.*massi-massf)*Ebreak/m0;
+                        if (Ecomp<0) Ecomp=0;
 
-                                if (Ecomp<0) Ecomp=0;
+                        double deltaVol = (Ecomp/(eroll*pow(filfaci/(maxpacking-filfaci)/a0,3)));
+                        if (deltaVol > Vi)  deltaVol = Vi;
 
-                                double deltaVol = (Ecomp/(eroll*pow(filfaci/(maxpacking-filfaci)/a0,3)));
-                                if (deltaVol > Vi)  deltaVol = Vi;
-                                   
-
-                                filfacf = filfaci*pow( 1./ (1. - 0.5*exp(1-pow(vrel/vfrag,2))*(deltaVol/Vi) ),ncoll);
-                               // cout << "ratiofil = " << filfacf/filfaci << endl;
-                                break;
-                            }
-                        }
+                        filfacf = filfaci*pow( 1./ (1. - 0.5*exp(1-pow(vrel/vfrag,2))*(deltaVol/Vi) ),ncoll);
                     }
                     else    filfacf = filfaci;
                     break;
@@ -360,17 +271,8 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
                     }
                     else
                     {   
-                        int bouncemod = 1;
                         double filfacbounce = 0;
-
-                        if (bouncemod == 0)
-                        {
-                            filfacbounce = FilFacBounce(sizei,filfaci,rhos,filfaclim,vrel,vstick,Vyield(vstick),ncoll,Yd0,Ydpower);
-                        }
-                        else
-                        {
-                            filfacbounce = FilFacBouncebis(sizei,filfaci,rhos,vrel,vstick,Vyield(vstick),ncoll,eroll,a0);
-                        }
+                        filfacbounce = FilFacBounce(sizei,filfaci,rhos,vrel,vstick,Vyield(vstick),ncoll,eroll,a0);
 
                         if (vrel < Vend(vstick))
                         {   
@@ -395,69 +297,16 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
                 else
                 {
                     if (icomp == 1)
-                    {   
-                        switch (model)
-                        {
-                            case (0): // Fit1ncoll
-                            {
-                                double vrelvf = vrel/vfrag;
-                                double xi =(3*0.3*pow(filfaci,-0.2)*exp(1.5*(0.3-vrelvf))+1);
-                                filfacf = filfaci*pow(xi,ncoll);
-                                break;
-                            }
-                            case (1):// fit2ncoll
-                            {
-                                double vrelvf = vrel/vfrag;
-                                double xi2 = 27.*pow(filfaci,-0.2)*pow(vrelvf,1.5)/(2.*exp(4.*vrelvf)-1) +1;
-                                filfacf = filfaci*pow(xi2,ncoll);
-                                break;
-                            }
-                            case (2): // Garcia 
-                            {    
-                                double Vi = GrainVolumeSize(sizei,filfaci,rhos);
-                                double deltaVol = VarVolumeBounce(filfaci,filfaclim,0,Ekin(massi,vrel),Vi,Yd0,Ydpower);
-                                filfacf = filfaci*pow(1/(1-0.5*(deltaVol/Vi)),ncoll);
-                                break;
-                            }
-                            case (3):// Fit1 + ms
-                            {
-                                double vrelvf = vrel/vfrag;
-                                double xi =(3*0.3*pow(filfaci,-0.2)*exp(1.5*(0.3-vrelvf))+1);
-                                if (massf != massi)
-                                {   
-                                filfacf = filfaci * pow( massf/massi, -log(xi)/log(1.+vrelvf*vrelvf) ); 
-                                }
-                                else
-                                {   
-                                    filfacf = filfaci * pow(xi, ncoll/1.4);   
-                                }
-                                break;
-                            }
-                            case (4):// Fit1 + garcia
-                            {
-                                double vrelvf = vrel/vfrag;
-                                double Vi = GrainVolumeSize(sizei,filfaci,rhos);
-                                double xi =(3*0.3*pow(filfaci,-0.2)*exp(1.5*(0.3-vrelvf))+1);
-                                double deltaVol = Vi - massf/massi*Vi/xi;
-                                filfacf = filfaci*pow(1./(1.-(deltaVol/Vi)),ncoll);
-                                break;
-                            }
-                            case (5): // Garcia + mod compressive strenght kataoka
-                            {    
-                                double Vi = GrainVolumeSize(sizei,filfaci,rhos);
-                                double Ebreak = 1.5*48./302.46*eroll;
-                                double Ecomp = Ekin(massi,vrel) - (2.*massi-massf)*Ebreak/m0;
+                    {
+                        double Vi = GrainVolumeSize(sizei,filfaci,rhos);
+                        double Ebreak = 1.5*48./302.46*eroll;
+                        double Ecomp = Ekin(massi,vrel) - (2.*massi-massf)*Ebreak/m0;
+                        if (Ecomp<0) Ecomp=0;
 
-                                if (Ecomp<0) Ecomp=0;
+                        double deltaVol = (Ecomp/(eroll*pow(filfaci/(maxpacking-filfaci)/a0,3)));
+                        if (deltaVol > Vi)  deltaVol = Vi;
 
-                                double deltaVol = (Ecomp/(eroll*pow(filfaci/(maxpacking-filfaci)/a0,3)));
-                                if (deltaVol > Vi)  deltaVol = Vi;
-                                   
-
-                                filfacf = filfaci*pow( 1./ (1. - 0.5*exp(1-pow(vrel/vfrag,2))*(deltaVol/Vi) ),ncoll);
-                                break;
-                            }
-                        }
+                        filfacf = filfaci*pow( 1./ (1. - 0.5*exp(1-pow(vrel/vfrag,2))*(deltaVol/Vi) ),ncoll);
                     }
                     else    filfacf = filfaci;
                     break;
@@ -664,10 +513,7 @@ double FilFacSFinal(const double& R, const double& mstar, const double& rhog, co
         if ((vrel < vfrag && ifrag > 0) || (ifrag == 0))
         {   filfacf = filfacgr; }
         else
-        {   filfacf = filfaci;  
-        
-        // modify for grain compaction
-        }
+        {   filfacf = filfaci;          }
 
         if (filfacf <= filfacmincollgasgrav)
         {   filfacf = filfacmincollgasgrav;     }

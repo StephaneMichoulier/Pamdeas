@@ -105,7 +105,7 @@ double Ekin(const double& size, const double& filfac, const double& rhos, const 
 {   return M_PI*rhos*filfac*size*size*size*vrel*vrel/3.;   }
 
 double YoungMod(const double& filfac, const double& youngmod0)
-{
+{   // No used anymore, see Vstick
     if (filfac >= 0.4)
     {   return youngmod0*pow(filfac,2.41);    }
     else
@@ -114,7 +114,7 @@ double YoungMod(const double& filfac, const double& youngmod0)
 
 double Eroll(const double& a0, const double& esurf, const double& youngmod0)
 {   //return 6.*M_PI*M_PI*esurf*a0*8.*1e-10;
-    return 302.455974078*pow(pow(esurf,5.)*pow(a0,4.)/(youngmod0*youngmod0),1./3.);   
+    return 302.455974078*pow(pow(esurf,5.)*pow(a0,4.)/(youngmod0*youngmod0),1./3.);   // Garcia's formula
 }
 
 double Yd(const double& filfac, const double& filfaclim, const double& Yd0, const double& Ydpower)
@@ -128,8 +128,8 @@ double Yd(const double& filfac, const double& filfaclim, const double& Yd0, cons
 double Vstick(const double& size, const double& filfac, const double& rhos, const double& esurf, const double& youngmod0)
 {
     double mass = GrainMass(size,filfac,rhos);
-    return 4.23*pow(pow(esurf,5.)*pow(size,4.)/(mass*mass*mass*YoungMod(filfac,youngmod0)*YoungMod(filfac,youngmod0)),1./6.);
-    //return 8.76*pow(pow(esurf,5.)*pow(size,4.)/(mass*mass*mass*youngmod0*youngmod0),1./6.);     //we use 8.76 and not 4.23 to use youngmod0 instead of Youngmod
+    //return 4.23*pow(pow(esurf,5.)*pow(size,4.)/(mass*mass*mass*YoungMod(filfac,youngmod0)*YoungMod(filfac,youngmod0)),1./6.);
+    return 8.76*pow(pow(esurf,5.)*pow(size,4.)/(mass*mass*mass*youngmod0*youngmod0),1./6.);     //we use 8.76 and not 4.23 to use youngmod0 instead of Youngmod
 }
 
 double Vyield(const double& size, const double& filfac, const double& rhos, const double& esurf, const double& youngmod0)
