@@ -5,7 +5,7 @@
 *Author:* Stéphane Michoulier  
 *Email:* <stephane.michoulier@gmail.com>
 
-*Pamdeas:* version 1.4
+*Pamdeas:* version 1.5
 
 #### **DESCRIPTION**:
 
@@ -43,13 +43,13 @@ If the program is not yet built, follow the instruction below:
 > - Run Pamdeas: ./pamdeas (if you have multiple setup files, use ./pamdeas mysetup.in )
 > - if your input is in a different folder, use ./pamdeas mysetup.in folder (if your input is stored in Pamdeas/myfoldermyinput.in)
 
-Once the simulation is finished, multiple output files are written into the output folder depending on the option:
+Once the simulation is finished, multiple output files are written into the build folder depending on the option:
 > - Initials_Conditions_*Rref*.txt summarises your setup
 > - output_*setup name*.out: one output file for each particle. The file name depends on the model used (dmdt/dsdt and porous/compact grains) 
-> - disk_profiles.out contains different profiles (surface density, pressure, etc).
+> - disc_profiles.out contains different profiles (surface density, pressure, etc).
 > - disrupt_param_*model*.out contains parameters of disrupted grains.
 
-A test suite is also available to test different module.
+A test suite is also available to test different modules.
 > - ./pamdeas test runs all the tests
 > - ./pamdeas testdisc test the initialisation of the disc
 > - ./pamdeas tesgrowth test the growth rate of a grain

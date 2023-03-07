@@ -210,10 +210,15 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
     double st0;             // Needed to test growth
     bool verbosetest;       // produce output file for test
 
+    // Different test that can be performed and called by main
     if (tests == "TestDiscinit")   whichtest = 1;
-    else if(tests == "TestGrowthFragMass")  whichtest = 2;
-    else if(tests == "TestGrowthFragSize") whichtest = 3;
+    else if(tests == "TestGrowthMass")  whichtest = 2;
+    else if(tests == "TestGrowthSize") whichtest = 3;
     else if (tests == "TestDrift")  whichtest = 4;
+    else if (tests == "TestPorosityGrowthMass")  whichtest = 5;
+    else if (tests == "TestPorosityGrowthSize")  whichtest = 6;
+    else if (tests == "TestPorosityAllMass")  whichtest = 7;
+    else if (tests == "TestDisrupt")  whichtest = 8;
     else whichtest = 0;
 
     double Rprofile;        // Radius to compute disc profiles
@@ -250,13 +255,13 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
         }
         case (2):
         {
-            TestGrowthFragMassParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
+            TestGrowthMassParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
                                     ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
             break;
         }
         case (3):
         {
-            TestGrowthFragSizeParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
+            TestGrowthSizeParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
                                     ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
             break;
         }
@@ -266,8 +271,33 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
                                     ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,maxsize,isnow,constvfrag,ngrains,Rini,istate);
             break;
         }
+        case (5):
+        {
+            TestPorosityGrowthMassParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
+                                    ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,youngmod0,esurf,maxsize,isnow,constvfrag,ngrains,Rini,istate);
+            break;
+        }
+        case (6):
+        {
+            TestPorosityGrowthSizeParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
+                                    ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,youngmod0,esurf,maxsize,isnow,constvfrag,ngrains,Rini,istate);
+            break;
+        }
+        case (7):
+        {
+            TestPorosityAllMassParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
+                                    ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,youngmod0,esurf,filfaclim,maxsize,isnow,constvfrag,ngrains,Rini,istate);
+            break;
+        }
+        case (8):
+        {
+            TestDisruptParam(massorsize,tend,stepmethod,step,profile,isetdens,isettemp,ismooth,Rin,Rout,R0,mstar,mdisc,sigma0,hg0R0,T0,dustfrac0,p,q,alpha,
+                                    ibr,ibump,iporosity,sizeini,a0,rhos,idrift,ibounce,idisrupt,ifrag,vfragi,ieros,icomp,youngmod0,esurf,gammaft,disrupteq,maxsize,isnow,constvfrag,ngrains,Rini,istate);
+            break;
+        }
     }
-    if (whichtest != 0 && whichtest != 1)   VerboseTest(verbosetest);
+    // Write output for growth and drift tests
+    if (whichtest > 1 && whichtest < 5)   VerboseTest(verbosetest);
 
     /*------------------------ INITIALIZATION OF PARAMETERS AT R0 ------------------------*/
 
@@ -371,6 +401,7 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
         st = St(Ri,mstar,rhog,cg,sizei,filfaci,rhos,0.,dragreg); //we assume deltav very small for small grain strongly coupled with gas in the epstein regime
         deltav = DeltaV(Ri,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ismooth,ibump,idrift,Rbump,bumpwidth,bumpheight);
         vrel = Vrel(cg,st,alpha,deltav);
+        if (whichtest == 2 || whichtest == 3)   st0 = st;
 
         // Write in output file quantities at t=0
         if (whichtest == 0)
@@ -379,31 +410,29 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
             WriteOutputFile(writer,t,Ri,massi,filfaci,sizei,st,cg,sigma,rhog,dustfrac,vrel,deltav,Omegak(Ri,mstar),0.,0.,dragreg,porreg);
         }
 
+        // Initialise the output files for growth and drift tests
         if (verbosetest == true)
         {   
             switch (whichtest)
             {
-            case (2):
-            {
-                writer.open("ResultstestgrowthMass.txt");
-                TestGrowthHeader(writer);
-                st0 = st;
-                break;
-            }
-            case (3):
-            {
-                writer.open("ResultstestgrowthSize.txt");
-                TestGrowthHeader(writer);
-                break;
-            }
-            case (4):
-            {
-                writer.open("ResultstestDrift.txt");
-                TestDriftHeader(writer);
-                break;
-            }
-            default:
-                break;
+                case (2):
+                {
+                    writer.open("ResultstestgrowthMass.txt");
+                    TestGrowthHeader(writer);
+                    break;
+                }
+                case (3):
+                {
+                    writer.open("ResultstestgrowthSize.txt");
+                    TestGrowthHeader(writer);
+                    break;
+                }
+                case (4):
+                {
+                    writer.open("ResultstestDrift.txt");
+                    TestDriftHeader(writer);
+                    break;
+                }
             }
         }
 
@@ -489,6 +518,7 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
                     {   
                         WriteDisruptFile(writerdisruption,Rf,massf,filfacf,sizef,st,vrel,FreqSpin(sizef,deltav,gammaft),
                         TensileStess(sizef,filfacf,rhos,deltav,gammaft),gammaft,alpha,a0);
+                        if (whichtest == 8) TestDisruptCompare(FreqSpin(sizef,deltav,gammaft),TensileStess(sizef,filfacf,rhos,deltav,gammaft),ifailtest);
 
                         //If disruption do not stop simulation
                         if (maxsize != -1)
@@ -511,7 +541,7 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
                     deltav = DeltaV(Rf,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ismooth,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     vrel = Vrel(cg,st,alpha,deltav);
 
-                    if (whichtest == 2 || whichtest == 3) TestGrowthCompare(t,sizef,st,st0,rhog,cg,dustfrac,alpha,rhos,Omegak(Ri,mstar),ifailtest,verbosetest,writer);
+                    if (whichtest == 2) TestGrowthCompare(t,sizef,st,st0,rhog,cg,dustfrac,alpha,rhos,Omegak(Ri,mstar),ifailtest,verbosetest,writer);
 
                     // Write in output file quantities at time t
                     if ((t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 )) && whichtest == 0)
@@ -606,8 +636,7 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
                     deltav = DeltaV(Rf,Rin,mstar,p,q,rhog,cg,R0,sigma0,hg0,dustfrac,st,alpha,ibr,ismooth,ibump,idrift,Rbump,bumpwidth,bumpheight);
                     vrel = Vrel(cg,st,alpha,deltav);
 
-                    if (whichtest == 2 || whichtest == 3) TestGrowthCompare(t,sizef,st,st0,rhog,cg,dustfrac,alpha,rhos,Omegak(Ri,mstar),ifailtest,verbosetest,writer);
-
+                    if (whichtest == 3) TestGrowthCompare(t,sizef,st,st0,rhog,cg,dustfrac,alpha,rhos,Omegak(Ri,mstar),ifailtest,verbosetest,writer);
                     // Write in output file quantities at time t, 
                     if ((t-tlastwrite > 0.01 || (t == tend && istate[j] == 0 )) && whichtest == 0)
                     {   
@@ -625,6 +654,21 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
     }
     writerdisruption.close();
 
+    // Porosity and Disrupt test (can only compare to some values)
+    switch (whichtest)
+    {
+        case (5): case (6):
+        {
+            TestPorosityCompare(sizef,filfacf,ifailtest);
+            break;
+        }
+        case (7):
+        {
+            TestPorosityAllCompare(sizef,filfacf,ifailtest);
+            break;
+        }
+    }
+
     // Compute wall time
     auto wtend = std::chrono::high_resolution_clock::now();
     double wt = (chrono::duration_cast<chrono::nanoseconds>(wtend-wtbegin)).count()* 1e-9;
@@ -638,7 +682,7 @@ void Pamdeas(const string& input, const string& folder, const string& tests)
     }
     else
     {
-        WriteTestsResultsFiles(tend,R0,mdisc,sigmatest,hgtest,tgtest,pgtest,rhogtest,cgtest,vktest,numoltest,nuturbtest,gaspathtest,p,q,alpha,sizeini,a0,rhos,idrift,ifrag,vfragi,wt,tests,ifailinit,ifailtest);
+        WriteTestsResultsFiles(tend,10.,mdisc,sigmatest,hgtest,tgtest,pgtest,rhogtest,cgtest,vktest,numoltest,nuturbtest,gaspathtest,p,q,alpha,sizeini,a0,rhos,idrift,icomp,ifrag,vfragi,iporosity,ibounce,idisrupt,gammaft,disrupted,wt,tests,ifailinit,ifailtest);
     }
 
     if (whichtest == 0) EndAnim();

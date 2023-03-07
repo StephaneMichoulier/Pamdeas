@@ -25,18 +25,34 @@ int main(int argc, char* argv[])
         else if (strcmp(argv[1], "test") == 0)
         {   
             cout << "\e[1mStarting Pamdeas test suite:\e[0m" << endl << endl;
+
             cout << "->Running Discinit test" << endl;
             Pamdeas("","","TestDiscinit");
             cout << "Discinit test complete" << endl << endl;
-            cout << "->Running GrowthFragMass test" << endl;
-            Pamdeas("","","TestGrowthFragMass");
-            cout << "GrowthFragMass test complete" << endl << endl;
-            cout << "->Running GrowthFragSize test" << endl;
-            Pamdeas("","","TestGrowthFragSize");
-            cout << "GrowthFragSize test complete" << endl << endl;
+
+            cout << "->Running GrowthSize test" << endl;
+            Pamdeas("","","TestGrowthSize");
+            cout << "GrowthSize test complete" << endl << endl;
+
+            cout << "->Running GrowthMass test" << endl;
+            Pamdeas("","","TestGrowthMass");
+            cout << "GrowthMass test complete" << endl << endl;
+
             cout << "->Running Drift test" << endl;
             Pamdeas("","","TestDrift");
-            cout << "Drift test complete" << endl;
+            cout << "Drift test complete" << endl << endl;
+
+            cout << "->Running PorosityGrowthSize test" << endl;
+            Pamdeas("","","TestPorosityGrowthSize");
+            cout << "PorosityGrowthSize test complete" << endl << endl;
+
+            cout << "->Running PorosityGrowthMass test" << endl;
+            Pamdeas("","","TestPorosityGrowthMass");
+            cout << "PorosityGrowthMass test complete" << endl << endl;
+
+            cout << "->Running Disrupt test" << endl;
+            Pamdeas("","","TestDisrupt");
+            cout << "Disrupt test complete" << endl;
         }
         else if (strcmp(argv[1], "testdisc") == 0)
         {
@@ -48,12 +64,13 @@ int main(int argc, char* argv[])
         else if (strcmp(argv[1], "testgrowth") == 0)
         {
             cout << "\e[1mStarting Pamdeas test suite:\e[0m" << endl << endl;
-            cout << "->Running GrowthFragMass test" << endl;
-            Pamdeas("","","TestGrowthFragMass");
-            cout << "GrowthFragMass test complete" << endl << endl;
-            cout << "->Running GrowthFragSize test" << endl;
-            Pamdeas("","","TestGrowthFragSize");
-            cout << "GrowthFragSize test complete" << endl << endl;
+            cout << "->Running GrowthSize test" << endl;
+            Pamdeas("","","TestGrowthSize");
+            cout << "GrowthSize test complete" << endl << endl;
+
+            cout << "->Running GrowthMass test" << endl;
+            Pamdeas("","","TestGrowthMass");
+            cout << "GrowthMass test complete" << endl << endl;
         }
         else if (strcmp(argv[1], "testdrift") == 0)
         {
@@ -62,8 +79,31 @@ int main(int argc, char* argv[])
             Pamdeas("","","TestDrift");
             cout << "Drift test complete" << endl;
         }
+        else if (strcmp(argv[1], "testporosity") == 0)
+        {
+            cout << "\e[1mStarting Pamdeas test suite:\e[0m" << endl << endl;
+            cout << "->Running PorosityGrowthSize test" << endl;
+            Pamdeas("","","TestPorosityGrowthSize");
+            cout << "PorosityGrowthSize test complete" << endl << endl;
+
+            cout << "->Running PorosityGrowthMass test" << endl;
+            Pamdeas("","","TestPorosityGrowthMass");
+            cout << "PorosityGrowthMass test complete" << endl << endl;
+
+            cout << "->Running TestPorosityAllMass test" << endl;
+            Pamdeas("","","TestPorosityAllMass");
+            cout << "TestPorosityAllMass test complete" << endl << endl;
+        }
+        else if (strcmp(argv[1], "testdisrupt") == 0)
+        {
+            cout << "\e[1mStarting Pamdeas test suite:\e[0m" << endl << endl;
+            cout << "->Running Disrupt test" << endl;
+            Pamdeas("","","TestDisrupt");
+            cout << "Disrupt test complete" << endl;
+        }
         else
-        {   Pamdeas(string(argv[1]),"../input/","No");   }
+        {   Pamdeas(string(argv[1]),"../input/","No");
+        }
     }
     else if (argc == 3)
     {
