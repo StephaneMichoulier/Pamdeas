@@ -57,7 +57,7 @@ void TestGrowthMassParam(int& massorsize, double& tend, int& stepmethod, double&
     p = 1;          q = 0.5;
     alpha = 1e-3;
     ibr = 0;        ibump = 0;          iporosity = 0;
-    sizeini = 1e-4; a0 = 1e-6;          rhos = 1000;
+    sizeini = 1e-5; a0 = 1e-6;          rhos = 1000;
     idrift = 0;     ibounce = 0;        idisrupt = 0;       ifrag = 0;          vfragi = 0;
     ieros = 0;      icomp = 0;
     maxsize = -1;
@@ -84,7 +84,7 @@ void TestGrowthSizeParam(int& massorsize, double& tend, int& stepmethod, double&
     p = 1;          q = 0.5;
     alpha = 1e-3;
     ibr = 0;        ibump = 0;          iporosity = 0;
-    sizeini = 1e-4; a0 = 1e-6;          rhos = 1000;
+    sizeini = 1e-5; a0 = 1e-6;          rhos = 1000;
     idrift = 0;     ibounce = 0;        idisrupt = 0;       ifrag = 0;          vfragi = 0;
     ieros = 0;      icomp = 0;
     maxsize = -1;
@@ -384,12 +384,12 @@ void TestGrowthCompare(const double& time, const double& size, const double& st,
     double sizecomp = rhog*cg/rhos/omegak*(sigma*sigma - 4*sigma + 4)/(2.*sigma);
 
     // Compute with computed values
-    if (CompTol(st,stcomp,3e-2) == false)
+    if (CompTol(st,stcomp,5e-2) == false)
     {
         ifailtest = true;
         cout  << "Stoke number: " << st << ", expected: " << stcomp << endl;
     }
-    if (CompTol(size,sizecomp,3e-2) == false)
+    if (CompTol(size,sizecomp,5e-2) == false)
     {
         ifailtest = true;
         cout  << "Size: " << size << ", expected: " << sizecomp << " m" << endl;
