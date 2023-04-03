@@ -18,39 +18,26 @@ double KeplerDt(double& omegakfraction, const double omegak)
 double AdaptativeDt(const double& time, const double& timeend, const int& massorsize, const double& vargrowth,//-> 
                     const double& R, const double& dvargrowthdt, const double& dRdt)
 {
-    double dt = 1.;
-    double limup = 0.10;
-    double limdown = 0.05;
-    double CFLcdt;
-    double Cgrowth = abs(vargrowth/dvargrowthdt);    // CFL from growth rate
-    double Cdrift = abs(R/dRdt);                     // CFL from radial drift rate
+    double dt;
+    double dtgrowth = 0.05*abs(vargrowth/dvargrowthdt);    // dt from growth rate
+    double dtdrift =  0.3*abs(R/dRdt);                     // dt from radial drift rate
 
-    if (Cgrowth != 0 && Cdrift != 0)
+    if (massorsize == 1)    dtgrowth /= 4.;
+
+    if (dtgrowth != 0 && dtdrift != 0)
     {
-        if (Cgrowth < Cdrift)       CFLcdt = Cgrowth;
-        else                        CFLcdt = Cdrift;
+        if (dtgrowth < dtdrift)     dt = dtgrowth;
+        else                        dt = dtdrift;
     }
-    else if (Cgrowth != 0 && Cdrift == 0)       CFLcdt = Cgrowth;
-    else if (Cgrowth == 0 && Cdrift != 0)       CFLcdt = Cdrift;
+    else if (dtgrowth != 0 && dtdrift == 0)       dt = dtgrowth;
+    else if (dtgrowth == 0 && dtdrift != 0)       dt = dtdrift;
     else
     {
         cerr << "Error: time step iteration impossible" << endl;
         exit(1);
     }
 
-    // Adjust cfl for growth when using size instead of mass to match
-    if (massorsize == 1)
-    {   limup /= 3.;   limdown /= 3.;   }
-
-    CFLcdt = SecToYear(CFLcdt);
-    limup *= CFLcdt;
-    limdown *= CFLcdt;
-    do
-    {
-        if (dt > limup)     dt /= 2.;
-        if (dt < limdown)   dt *= 2.;
-
-    } while (limup < dt || limdown >  dt);
+    dt = SecToYear(dt);
 
     //Prevent problem with large grains with large dt but small tend to get some data
     if (dt > timeend/100.)

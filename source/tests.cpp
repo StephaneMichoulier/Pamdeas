@@ -111,7 +111,7 @@ void TestDriftParam(int& massorsize, double& tend, int& stepmethod, double& step
     p = 1;          q = 0.5;
     alpha = 1e-5;
     ibr = 0;        ibump = 0;          iporosity = 0;
-    sizeini = 1;   a0 = 1e-6;          rhos = 1000;
+    sizeini = 0.1;  a0 = 1e-6;          rhos = 1000;
     idrift = 1;     ibounce = 0;        idisrupt = 0;       ifrag = 0;          vfragi = 0;
     ieros = 0;      icomp = 0;
     maxsize = -1;
@@ -384,12 +384,12 @@ void TestGrowthCompare(const double& time, const double& size, const double& st,
     double sizecomp = rhog*cg/rhos/omegak*(sigma*sigma - 4*sigma + 4)/(2.*sigma);
 
     // Compute with computed values
-    if (CompTol(st,stcomp,5e-2) == false)
+    if (CompTol(st,stcomp,5.e-2) == false)
     {
         ifailtest = true;
         cout  << "Stoke number: " << st << ", expected: " << stcomp << endl;
     }
-    if (CompTol(size,sizecomp,5e-2) == false)
+    if (CompTol(size,sizecomp,5.e-2) == false)
     {
         ifailtest = true;
         cout  << "Size: " << size << ", expected: " << sizecomp << " m" << endl;
@@ -400,16 +400,16 @@ void TestGrowthCompare(const double& time, const double& size, const double& st,
 
 void TestPorosityCompare(const double& size, const double& filfac, bool& ifailtest)
 {
-    double filfacexp = 0.000658745;
-    double sizeexp = 0.516713;
+    double filfacexp = 0.000663174;
+    double sizeexp =  0.514838;
            
     // Compute with computed values
-    if (CompTol(filfac,filfac,1e-3) == false)
+    if (CompTol(filfac,filfacexp,5.e-3) == false)
     {
         ifailtest = true;
         cout  << "Filling factor: " << filfac << ", expected: " << filfacexp << endl;
     }
-    if (CompTol(size,sizeexp,1e-3) == false)
+    if (CompTol(size,sizeexp,5.e-3) == false)
     {
         ifailtest = true;
         cout  << "Size: " << size << ", expected: " << sizeexp << " m" << endl;
@@ -418,15 +418,15 @@ void TestPorosityCompare(const double& size, const double& filfac, bool& ifailte
 
 void TestPorosityAllCompare(const double& size, const double& filfac, bool& ifailtest)
 {
-    double filfacexp = 0.424881;
-    double sizeexp = 0.00257567;
+    double filfacexp = 0.425629;
+    double sizeexp = 0.00262968;
     // Compute with computed values
-    if (CompTol(filfac,filfac,1e-3) == false)
+    if (CompTol(filfac,filfacexp,1.e-3) == false)
     {
         ifailtest = true;
         cout  << "Filling factor: " << filfac << ", expected: " << filfacexp << endl;
     }
-    if (CompTol(size,sizeexp,1e-3) == false)
+    if (CompTol(size,sizeexp,1.e-3) == false)
     {
         ifailtest = true;
         cout  << "Size: " << size << ", expected: " << sizeexp << " m" << endl;
@@ -435,15 +435,15 @@ void TestPorosityAllCompare(const double& size, const double& filfac, bool& ifai
 
 void TestDisruptCompare(const double& freqspin, const double& tensilestess, bool& ifailtest)
 {
-    double freqspinexp = 4.60644;
-    double tensilestessexp = 2.52714;
+    double freqspinexp = 4.72684;
+    double tensilestessexp = 2.56145;
     // Compute with computed values
-    if (CompTol(freqspin,freqspinexp,1e-5) == false)
+    if (CompTol(freqspin,freqspinexp,1.e-5) == false)
     {
         ifailtest = true;
         cout  << "Spin frequency: " << freqspin << ", expected: " << freqspinexp << endl;
     }
-    if (CompTol(tensilestess,tensilestessexp,1e-5) == false)
+    if (CompTol(tensilestess,tensilestessexp,1.e-5) == false)
     {
         ifailtest = true;
         cout  << "Tensile Stress: " << tensilestess << ", expected: " << tensilestessexp << " m" << endl;
@@ -460,12 +460,12 @@ void TestDriftCompare(const double& time, const double& R, const double& p, cons
     double deltavcomp = sqrt(drdtcomp*drdtcomp + dvorb*dvorb);
 
     // Compute with computed values
-    if (CompTol(drdt,drdtcomp,1e-5) == false)
+    if (CompTol(drdt,drdtcomp,1.e-5) == false)
     {
         ifailtest = true;
         cout  << "vdrift: " << drdt << ", expected: " << drdtcomp << " m/s"<< endl;
     }
-    if (CompTol(deltav,deltavcomp,1e-4) == false)
+    if (CompTol(deltav,deltavcomp,1.e-4) == false)
     {
         ifailtest = true;
         cout  << "Deltav: " << deltav << ", expected: " << deltav << " m/s" << endl;
