@@ -57,7 +57,7 @@ double FilFacBounce(const double& sizei, const double& filfaci, const double& rh
     double coeffrest = CoeffRest(vrel,vstick,vyield);
     double volume = GrainVolumeSize(sizei,filfaci,rhos);
     double ekin = Ekin(sizei,filfaci,rhos,vrel);
-    double varvolbounce  = (1.-coeffrest*coeffrest)*ekin/(eroll*pow(filfaci/(maxpacking-filfaci)/a0,3));
+    double varvolbounce  = (1.-coeffrest*coeffrest)*ekin/(eroll*pow((1./filfaci-1./maxpacking)*a0,-3));
     if (varvolbounce >= volume)   
     {   varvolbounce = volume;    }
     double filfacbounce = filfaci*pow(1./(1.-0.5*(varvolbounce/volume)),ncoll);
@@ -303,7 +303,7 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
                         double Ecomp = Ekin(massi,vrel) - (2.*massi-massf)*Ebreak/m0;
                         if (Ecomp<0) Ecomp=0;
 
-                        double deltaVol = (Ecomp/(eroll*pow(filfaci/(maxpacking-filfaci)/a0,3)));
+                        double deltaVol = (Ecomp/(eroll*pow((1./filfaci-1./maxpacking)*a0,-3)));
                         if (deltaVol > Vi)  deltaVol = Vi;
 
                         filfacf = filfaci*pow( 1./ (1. - 0.5*exp(1-pow(vrel/vfrag,2))*(deltaVol/Vi) ),ncoll);

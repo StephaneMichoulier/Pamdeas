@@ -184,12 +184,7 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
             else                                ErrorValue(error, "Error", "Rbump > Rout");
         }
 
-        if (dustfracmax < dustfrac0 || dustfracmax > 1)
-        {
-            if (dustfracmax > 1 )               ErrorValue(error, "Error", "dustfracmax > 1");
-            else                                ErrorValue(error, "Error", "dustfracmax < dustfrac0");
-        }
-
+        if (dustfracmax < dustfrac0)            ErrorValue(error, "Error", "dustfracmax < dustfrac0");
         if (bumpwidth <= 0)                     ErrorValue(error, "Error", "bumpwidth <= 0");
         if (bumpheight <= 0)                    ErrorValue(error, "Error", "bumpheight <= 0");
     }
