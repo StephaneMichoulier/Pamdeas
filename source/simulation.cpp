@@ -36,7 +36,7 @@ void PresentationAnim()
 {
     cout << "\e[1m" << endl;
     cout << "!+-----                 -----+!" << endl;
-    cout << "      Welcome in PAMPEAS !" << endl;
+    cout << "      Welcome in PAMDEAS !" << endl;
     cout << "!+-----                 -----+!" << endl;
     cout << "\e[0m" << endl;
 }
