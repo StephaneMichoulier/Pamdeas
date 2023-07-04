@@ -105,7 +105,7 @@ double Ekin(const double& size, const double& filfac, const double& rhos, const 
 {   return M_PI*rhos*filfac*size*size*size*vrel*vrel/3.;   }
 
 double YoungMod(const double& filfac, const double& youngmod0)
-{   // No used anymore, see Vstick
+{   // Not used anymore, see Vstick
     if (filfac >= 0.4)
     {   return youngmod0*pow(filfac,2.41);    }
     else
@@ -117,13 +117,13 @@ double Eroll(const double& a0, const double& esurf, const double& youngmod0)
     return 302.455974078*pow(pow(esurf,5.)*pow(a0,4.)/(youngmod0*youngmod0),1./3.);   // Garcia's formula
 }
 
-double Yd(const double& filfac, const double& filfaclim, const double& Yd0, const double& Ydpower)
-{
-    if (filfac >= filfaclim)
-    {   return Yd0*pow(filfac,Ydpower); }
-    else
-    {   return Yd0*pow(filfaclim,Ydpower);  }
-}
+//double Yd(const double& filfac, const double& filfaclim, const double& Yd0, const double& Ydpower)
+//{
+//    if (filfac >= filfaclim)
+//    {   return Yd0*pow(filfac,Ydpower); }
+//    else
+//    {   return Yd0*pow(filfaclim,Ydpower);  }
+//}
 
 double Vstick(const double& size, const double& filfac, const double& rhos, const double& esurf, const double& youngmod0)
 {

@@ -18,8 +18,8 @@ double CParam(const double& R, const double& mstar, const double& rhog, const do
 double ProbaBounce(const double& filfac, const double& filfacbnc, const double& vrel, const double& vstick, const double& vend);
 
 // Compute the variation in volume after bouncing [m³]
-double VarVolumeBounce(const double& filfac, const double& filfaclim, const double& coeffrest, const double& ekin,//->
-                       const double& volume, const double& Yd0, const double& Ydpower);
+//double VarVolumeBounce(const double& filfac, const double& filfaclim, const double& coeffrest, const double& ekin,//->
+//                       const double& volume, const double& Yd0, const double& Ydpower);
 
 // Compute the filling factor after bouncing
 double FilFacBounce(const double& sizei, const double& filfaci, const double& rhos,//->

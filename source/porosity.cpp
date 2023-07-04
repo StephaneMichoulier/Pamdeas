@@ -39,16 +39,16 @@ double ProbaBounce(const double& filfac, const double& filfacbnc, const double& 
     {   return 1.;  }
 }
 
-double VarVolumeBounce(const double& filfac, const double& filfaclim, const double& coeffrest, const double& ekin,//->
-                       const double& volume, const double& Yd0, const double& Ydpower)
-{
-    double compactvol = (1.-coeffrest*coeffrest)*ekin/Yd(filfac,filfaclim,Yd0,Ydpower);
-    
-    if (compactvol >= volume)   
-    {   compactvol = volume;    }
-    
-    return compactvol;
-}
+//double VarVolumeBounce(const double& filfac, const double& filfaclim, const double& coeffrest, const double& ekin,//->
+//                       const double& volume, const double& Yd0, const double& Ydpower)
+//{
+//    double compactvol = (1.-coeffrest*coeffrest)*ekin/Yd(filfac,filfaclim,Yd0,Ydpower);
+//
+//    if (compactvol >= volume)
+//    {   compactvol = volume;    }
+//
+//    return compactvol;
+//}
 
 double FilFacBounce(const double& sizei, const double& filfaci, const double& rhos,//->
                     const double& vrel, const double& vstick, const double& vyield, const double& ncoll,//->
@@ -247,7 +247,7 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
                     if (icomp == 1)
                     {
                         double Vi = GrainVolumeSize(sizei,filfaci,rhos);
-                        double Ebreak = 1.5*48./302.46*eroll;
+                        double Ebreak = 3*1.8*48./302.46*eroll;
                         double Ecomp = Ekin(massi,vrel) - (2.*massi-massf)*Ebreak/m0;
                         if (Ecomp<0) Ecomp=0;
 
@@ -299,7 +299,7 @@ double FilFacMFinal(const double& R, const double& mstar, const double& rhog, co
                     if (icomp == 1)
                     {
                         double Vi = GrainVolumeSize(sizei,filfaci,rhos);
-                        double Ebreak = 1.5*48./302.46*eroll;
+                        double Ebreak = 3*1.8*48./302.46*eroll;
                         double Ecomp = Ekin(massi,vrel) - (2.*massi-massf)*Ebreak/m0;
                         if (Ecomp<0) Ecomp=0;
 

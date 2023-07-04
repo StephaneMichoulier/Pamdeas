@@ -70,11 +70,11 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader, 5);     CheckType(Reader, idisrupt, "idisrupt");
     ReadVoid(Reader, 6);     CheckType(Reader, ifrag, "ifrag");
     ReadVoid(Reader, 6);     CheckType(Reader, vfragi, "vfragi");
+    ReadVoid(Reader, 7);     CheckType(Reader, icomp, "icomp");
     ReadVoid(Reader, 7);     CheckType(Reader, ieros, "ieros");
     ReadVoid(Reader, 5);     CheckType(Reader, ejectasize,"ejectasize");
     ReadVoid(Reader, 9);     CheckType(Reader, cohacc,"cohacc");
-    ReadVoid(Reader, 8);     CheckType(Reader, icomp, "icomp");
-    ReadVoid(Reader, 7);     CheckType(Reader, maxsize, "maxsize");
+    ReadVoid(Reader, 8);     CheckType(Reader, maxsize, "maxsize");
 
     ReadVoid(Reader, 24);    CheckType(Reader, isnow, "isnow");
     ReadVoid(Reader, 7);     CheckType(Reader, Rsnow, "Rsnow");
@@ -82,12 +82,12 @@ void ReadFile(int& massorsize, double& tend, int& stepmethod, double& step, int&
     ReadVoid(Reader, 6);     CheckType(Reader, vfragout, "vfragout");
 
     ReadVoid(Reader, 13);    CheckType(Reader, youngmod0, "youngmod0");
-    ReadVoid(Reader, 11);    CheckType(Reader, esurf, "esurf");
-    ReadVoid(Reader, 13);    CheckType(Reader, Yd0, "Yd0");
-    ReadVoid(Reader, 9);     CheckType(Reader, Ydpower, "Ydpower");
-    ReadVoid(Reader, 10);    CheckType(Reader, constvfrag, "constvfrag");
+    ReadVoid(Reader, 8);    CheckType(Reader, esurf, "esurf");
+    //ReadVoid(Reader, 13);    CheckType(Reader, Yd0, "Yd0");
+    //ReadVoid(Reader, 9);     CheckType(Reader, Ydpower, "Ydpower");
+    ReadVoid(Reader, 8);    CheckType(Reader, constvfrag, "constvfrag");
     ReadVoid(Reader, 7);     CheckType(Reader, filfaclim, "filfaclim");
-    ReadVoid(Reader, 8);     CheckType(Reader, filfacbnc, "filfacbnc");
+    ReadVoid(Reader, 7);     CheckType(Reader, filfacbnc, "filfacbnc");
     ReadVoid(Reader, 6);     CheckType(Reader, gammaft, "gammaft");
     ReadVoid(Reader, 9);     CheckType(Reader, disrupteq, "disrupteq");
     ReadVoid(Reader, 6);     CheckType(Reader, weirmod, "weirmod");
@@ -208,13 +208,14 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
     if (ifrag != 0 && ifrag != 1 && ifrag != 2) ErrorValue(error, "Error", "ifrag != 0 & != 1 & != 2");
     if (vfragi < 0 && isnow == 0)               ErrorValue(error, "Error", "vfragi < 0");
 
+    if (icomp != 0 && icomp != 1)               ErrorValue(error, "Error", "icomp != 0 & != 1");
+    if (icomp ==1 && iporosity == 0)            ErrorValue(error, "Error", "icomp == 1 & iporosity == 0 not compatible");
+
     if (ieros != 0 && ieros != 1)               ErrorValue(error, "Error", "ieros != 0 & != 1");
 
     if (ejectasize <= 0)                        ErrorValue(error, "Error", "ejectasize <= 0");
     if (cohacc <= 0)                            ErrorValue(error, "Error", "cohacc <= 0");
 
-    if (icomp != 0 && icomp != 1)               ErrorValue(error, "Error", "icomp != 0 & != 1");
-    if (icomp ==1 && iporosity == 0)            ErrorValue(error, "Error", "icomp == 1 & iporosity == 0 not compatible");
     if (ieros ==1 && iporosity == 1)            ErrorValue(error, "Error", "ieros == 1 & iporosity == 1 not compatible");
 
 
@@ -236,15 +237,17 @@ void CheckData(const int& massorsize, const double& tend, const int& stepmethod,
     if (iporosity == 1)
     {   if (youngmod0 <= 0)                     ErrorValue(error, "Error", "Youngmod0 <= 0");
         if (esurf <= 0)                         ErrorValue(error, "Error", "Esurf <= 0");
-        if (Yd0 <= 0)                           ErrorValue(error, "Error", "Yd0 <= 0");
+
+        //if (Yd0 <= 0)                           ErrorValue(error, "Error", "Yd0 <= 0");
         if (constvfrag != 0 && constvfrag != 1) ErrorValue(error, "Error", "constvfrag != 0 & != 1");
 
+        /*
         if (filfaclim < 0 || filfaclim > 1)
         {
             if(filfaclim > 1)                   ErrorValue(error, "Error", "filfaclim > 1");
             else                                ErrorValue(error, "Error", "filfaclim < 0");
         }
-
+        */
         if (filfacbnc < 0 || filfacbnc > 1)
         {
             if(filfacbnc > 1)                   ErrorValue(error, "Error", "filfacbnc > 1");
@@ -351,10 +354,10 @@ void WriteInputFile()
     writerinput << "  idisrupt = 0          >Rotationnal disruption (0=no, 1=yes)" << endl;
     writerinput << "     ifrag = 0          >Fragmentation (0=no, 1=hardfrag, 2=smoothfrag)" << endl;
     writerinput << "     vfrag = 15         >Fragmentation threshold (m/s), if isnow=0" << endl;
+    writerinput << "     icomp = 0          >Compaction during fragmentation (0=no, 1=yes)" << endl;
     writerinput << "     ieros = 0          >Erosion (0=no, 1=yes)" << endl;
     writerinput << "ejectasize = 1.0e-3     >Size of ejected grains during erosion (m)" << endl;
     writerinput << "    cohacc = 0.1        >Strength of the cohesive acceleration (kg/s^2)" << endl;
-    writerinput << "     icomp = 0          >Compaction during fragmentation (0=no, 1=yes)" << endl;
     writerinput << "   maxsize = 1.0e3      >Max size to stop the simulation (=-1 to stop after first disruption if idisrupt=1)" << endl;
     writerinput << endl;
     writerinput << "#-Snow line option, available if ifrag != 0" << endl;
@@ -365,12 +368,12 @@ void WriteInputFile()
     writerinput << endl;
     writerinput << "#-Porosity properties, available if iporosity = 1" << endl;
     writerinput << endl;
-    writerinput << " Youngmod0 = 9.4e9      >Young Modulus for ice [Yamamoto et al. 2014] (Pa)" << endl;
-    writerinput << "     Esurf = 7.3e-2     >Surface energy for ice grains J/m² [Yamamoto et al. 2014] (J/m²)" << endl;
-    writerinput << "       Yd0 = 9.8e6      >Dynamic compression resistance constant for ice (Pa)" << endl;
-    writerinput << "   Ydpower = 4          >Dynamic compression resistance power for ice [Mellor, 1975]" << endl;
+    writerinput << " Youngmod0 = 9.4e9      >Young Modulus of the grains (Pa)" << endl;
+    writerinput << "     Esurf = 7.3e-2     >Surface energy of the grains (J/m²)" << endl;
+  //writerinput << "       Yd0 = 9.8e6      >Dynamic compression resistance constant for ice (Pa)" << endl;
+  //writerinput << "   Ydpower = 4          >Dynamic compression resistance power for ice [Mellor, 1975]" << endl;
     writerinput << "constvfrag = 1          >Constant fragmentation threshold (0=no, 1=yes)" << endl;
-    writerinput << " filfaclim = 0.01       >Filling factor dynamic compression resistance limit" << endl;
+    writerinput << " filfaclim = 0.01       >Filling factor for variable vfrag" << endl;
     writerinput << " filfacbnc = 0.3        >Filling factor bounce limit" << endl;
     writerinput << "   gammaft = 0.1        >Force-to-torque efficiency (Disruption) [Tatsuuma et al. 2021]" << endl;
     writerinput << " disrupteq = 0          >Disruption equation (0=Tatsuuma2019, 1=Kimura2020)" << endl;

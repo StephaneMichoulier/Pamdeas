@@ -45,7 +45,7 @@ double Ekin(const double& mass, const double& vrel);
 double Ekin(const double& size, const double& filfac, const double& rhos, const double& vrel);
 
 // Young Modulus (Shimaki 2010) [Pa]
-double YoungMod(const double& filfac, const double& youngmod0);
+//double YoungMod(const double& filfac, const double& youngmod0);
 
 // Rolling Energy [J]
 double Eroll(const double& a0, const double& esurf, const double& youngmod0);
