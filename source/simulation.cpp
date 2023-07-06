@@ -34,10 +34,12 @@ void checksize(double& mass, double& filfac,const double& rhos, double& sdustmin
 // Presentation animation
 void PresentationAnim()
 {
-    cout << "\e[1m" << endl;
-    cout << "!+-----                 -----+!" << endl;
-    cout << "      Welcome in PAMDEAS !" << endl;
-    cout << "!+-----                 -----+!" << endl;
+    cout << "\e[1m";
+    cout << " ______  ______   __    __   _____    ______   ______   ______   " << endl;
+    cout << "/\\  == \\/\\  __ \\ /\\ '-./  \\ /\\  __-. /\\  ___\\ /\\  __ \\ /\\  ___\\  " << endl;
+    cout << "\\ \\  _-/\\ \\  __ \\\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __\\ \\ \\  __ \\\\ \\___  \\ " << endl;
+    cout << " \\ \\_\\   \\ \\_\\ \\_\\\\ \\_\\ \\ \\_\\\\ \\____- \\ \\_____\\\\ \\_\\ \\_\\\\/\\_____\\" << endl;
+    cout << "  \\/_/    \\/_/\\/_/ \\/_/  \\/_/ \\/____/  \\/_____/ \\/_/\\/_/ \\/_____/" << endl;
     cout << "\e[0m" << endl;
 }
 
